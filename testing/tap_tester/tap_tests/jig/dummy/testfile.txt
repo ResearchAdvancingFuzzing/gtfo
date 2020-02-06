@@ -1,0 +1,12 @@
+VERSION 1
+ENVS
+none
+hello.inp
+hello.out
+NULL
+xello.inp
+xello.out
+NULL
+helln.inp
+helln.out
+crash

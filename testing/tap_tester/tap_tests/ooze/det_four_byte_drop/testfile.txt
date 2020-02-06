@@ -1,0 +1,9 @@
+VERSION 1
+ENVS
+det 8 0
+det_four_byte_drop_hello_0.begin_state.yaml
+hello.txt
+det_four_byte_drop_hello_0.mutated_data.txt
+det_four_byte_drop_hello_1.begin_state.yaml
+hello.txt
+det_four_byte_drop_hello_1.mutated_data.txt

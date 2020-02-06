@@ -1,0 +1,15 @@
+VERSION 1
+ENVS
+det 8 0
+A_32_0.begin_state.yaml
+A_32.txt
+A_32_0.mutated_data.txt
+A_32_34.begin_state.yaml
+A_32.txt
+A_32_34.mutated_data.txt
+A_32_35.begin_state.yaml
+A_32.txt
+A_32_35.mutated_data.txt
+A_16_525.begin_state.yaml
+A_16.txt
+A_16_525.mutated_data.txt

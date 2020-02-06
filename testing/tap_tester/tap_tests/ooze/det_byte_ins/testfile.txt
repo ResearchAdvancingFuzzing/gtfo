@@ -1,0 +1,18 @@
+VERSION 1
+ENVS
+det 8 0
+det_byte_ins_hello_0_5.begin_state.yaml
+hello.txt
+det_byte_ins_hello_0_5.mutated_data.txt
+det_byte_ins_hello_0_6.begin_state.yaml
+hello.txt
+det_byte_ins_hello_0_6.mutated_data.txt
+det_byte_ins_hello_3_6.begin_state.yaml
+hello.txt
+det_byte_ins_hello_3_6.mutated_data.txt
+det_byte_ins_hello_256_6.begin_state.yaml
+hello.txt
+det_byte_ins_hello_256_6.mutated_data.txt
+det_byte_ins_hello_1280_5.begin_state.yaml
+hello.txt
+det_byte_ins_hello_1280_5.mutated_data.txt

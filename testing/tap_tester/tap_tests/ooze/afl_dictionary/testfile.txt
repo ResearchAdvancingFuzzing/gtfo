@@ -1,0 +1,11 @@
+VERSION 1
+ENVS
+det 8 0
+# Test first iteration of user_overwrite:
+hello_overwrite_0.begin_state.yaml
+hello.txt
+hello_overwrite_0.mutated_data.txt
+# Test first iteration of user_insert
+hello_insert_0.begin_state.yaml
+hello.txt
+hello_insert_0.mutated_data.txt

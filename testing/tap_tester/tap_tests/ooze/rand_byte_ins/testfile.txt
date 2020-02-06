@@ -1,0 +1,15 @@
+VERSION 1
+ENVS
+det 8 0
+rand_byte_ins_hello_0_5.begin_state.yaml
+hello.txt
+rand_byte_ins_hello_0_5.mutated_data.txt
+rand_byte_ins_hello_0_6.begin_state.yaml
+hello.txt
+rand_byte_ins_hello_0_6.mutated_data.txt
+rand_byte_ins_hello_3_6.begin_state.yaml
+hello.txt
+rand_byte_ins_hello_3_6.mutated_data.txt
+rand_byte_ins_hello_6_6.begin_state.yaml
+hello.txt
+rand_byte_ins_hello_6_6.mutated_data.txt

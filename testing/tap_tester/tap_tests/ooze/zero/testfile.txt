@@ -1,0 +1,30 @@
+VERSION 1
+ENVS
+det 8 0
+hello_0.begin_state.yaml
+hello.txt
+hello_0.mutated_data.txt
+hello_5.begin_state.yaml
+hello.txt
+hello_5.mutated_data.txt
+hello_9.begin_state.yaml
+hello.txt
+hello_9.mutated_data.txt
+hello_10.begin_state.yaml
+hello.txt
+hello_10.mutated_data.txt
+hello_18.begin_state.yaml
+hello.txt
+hello_18.mutated_data.txt
+hello_19.begin_state.yaml
+hello.txt
+hello_19.mutated_data.txt
+hello_25.begin_state.yaml
+hello.txt
+hello_25.mutated_data.txt
+hello_26.begin_state.yaml
+hello.txt
+hello_26.mutated_data.txt
+hello_28.begin_state.yaml
+hello.txt
+hello_28.mutated_data.txt

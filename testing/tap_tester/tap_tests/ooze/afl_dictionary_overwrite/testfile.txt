@@ -1,0 +1,31 @@
+VERSION 1
+ENVS
+det 8 0
+# test out of bounds overwrite
+hello.begin_state.yaml
+hello.txt
+hello.txt
+# test first iteration
+Aello.begin_state.yaml
+hello.txt
+Aello.mutated_data.txt
+# test last iteration of position 0
+EEEEE.begin_state.yaml
+hello.txt
+EEEEE.mutated_data.txt
+# test first iteration of pos 1
+hAllo.begin_state.yaml
+hello.txt
+hAllo.mutated_data.txt
+# test write from pos 1 to max_size
+hDDDD.begin_state.yaml
+hello.txt
+hDDDD.mutated_data.txt
+# test write past max size
+hello2.begin_state.yaml
+hello.txt
+hello.txt
+# test write that extends size
+hEEEEE.begin_state.yaml
+hello.txt
+hEEEEE.mutated_data.txt

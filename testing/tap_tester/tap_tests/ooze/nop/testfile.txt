@@ -1,0 +1,7 @@
+VERSION 1
+ENVS
+inf
+# no matter what you give the NOP strategy, it returns what you gave it
+hello.begin_state.yaml
+hello.txt
+hello.txt

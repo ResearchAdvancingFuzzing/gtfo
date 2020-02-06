@@ -1,0 +1,36 @@
+VERSION 1
+ENVS
+det 0 0
+zero_0.begin_state.yaml
+zero
+zero_0.mutated_data.txt
+zero_30.begin_state.yaml
+zero
+zero_30.mutated_data.txt
+zero_60.begin_state.yaml
+zero
+zero_60.mutated_data.txt
+zero_90.begin_state.yaml
+zero
+zero_90.mutated_data.txt
+zero_120.begin_state.yaml
+zero
+zero_120.mutated_data.txt
+zero_150.begin_state.yaml
+zero
+zero_150.mutated_data.txt
+zero_180.begin_state.yaml
+zero
+zero_180.mutated_data.txt
+zero_210.begin_state.yaml
+zero
+zero_210.mutated_data.txt
+zero_240.begin_state.yaml
+zero
+zero_240.mutated_data.txt
+zero_270.begin_state.yaml
+zero
+zero_270.mutated_data.txt
+zero_300.begin_state.yaml
+zero
+zero_300.mutated_data.txt

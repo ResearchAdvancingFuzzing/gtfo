@@ -1,0 +1,12 @@
+VERSION 1
+ENVS JIG_MAP_SIZE=65536 JIG_TARGET=./tiff2rgba JIG_TARGET_ARGV="-c jpeg fuzzfile /dev/null"
+none
+1a4b70ac.input
+1a4b70ac.results
+NULL
+1a5cb31f.input
+1a5cb31f.results
+NULL
+47ab3f9d.input
+47ab3f9d.results
+crash

@@ -1,0 +1,78 @@
+---
+strategy_name: afl_dictionary_insert
+file_format_version: 0
+strategy_state:
+  version: 1
+  seed:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - a
+  - b
+  - c
+  - d
+  - e
+  - f
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 1a
+  - 1b
+  - 1c
+  - 1d
+  - 1e
+  - 1f
+  iteration: 4
+  max_size: a
+...
+---
+dictionary:
+  version: 0
+  max_entry_cnt: 5
+  max_token_len: 5
+  entries:
+  - len: 1
+    hit_cnt: 0
+    token:
+    - 41
+  - len: 2
+    hit_cnt: 0
+    token:
+    - 42
+    - 42
+  - len: 3
+    hit_cnt: 0
+    token:
+    - 43
+    - 43
+    - 43
+  - len: 4
+    hit_cnt: 0
+    token:
+    - 44
+    - 44
+    - 44
+    - 44
+  - len: 5
+    hit_cnt: 0
+    token:
+    - 45
+    - 45
+    - 45
+    - 45
+    - 45
+...

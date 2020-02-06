@@ -1,0 +1,250 @@
+---
+strategy_name: afl_bit_flip
+file_format_version: 0
+strategy_state:
+  version: 1
+  seed:
+  - 30
+  - 30
+  - 30
+  - 31
+  - 30
+  - 32
+  - 30
+  - 33
+  - 30
+  - 34
+  - 30
+  - 35
+  - 30
+  - 36
+  - 30
+  - 37
+  - 30
+  - 38
+  - 30
+  - 39
+  - 30
+  - 41
+  - 30
+  - 42
+  - 30
+  - 43
+  - 30
+  - 44
+  - 30
+  - 45
+  - 30
+  - 46
+  iteration: 0
+  max_size: 14
+...
+---
+current_substrategy: 1
+substrategy_complete: 0
+...
+---
+strategy_name: det_two_bit_flip
+file_format_version: 0
+strategy_state:
+  version: 1
+  seed:
+  - 30
+  - 30
+  - 30
+  - 31
+  - 30
+  - 32
+  - 30
+  - 33
+  - 30
+  - 34
+  - 30
+  - 35
+  - 30
+  - 36
+  - 30
+  - 37
+  - 30
+  - 38
+  - 30
+  - 39
+  - 30
+  - 41
+  - 30
+  - 42
+  - 30
+  - 43
+  - 30
+  - 44
+  - 30
+  - 45
+  - 30
+  - 46
+  iteration: 0
+  max_size: 14
+...
+---
+strategy_name: det_four_bit_flip
+file_format_version: 0
+strategy_state:
+  version: 1
+  seed:
+  - 30
+  - 30
+  - 30
+  - 31
+  - 30
+  - 32
+  - 30
+  - 33
+  - 30
+  - 34
+  - 30
+  - 35
+  - 30
+  - 36
+  - 30
+  - 37
+  - 30
+  - 38
+  - 30
+  - 39
+  - 30
+  - 41
+  - 30
+  - 42
+  - 30
+  - 43
+  - 30
+  - 44
+  - 30
+  - 45
+  - 30
+  - 46
+  iteration: 0
+  max_size: 14
+...
+---
+strategy_name: det_byte_flip
+file_format_version: 0
+strategy_state:
+  version: 1
+  seed:
+  - 30
+  - 30
+  - 30
+  - 31
+  - 30
+  - 32
+  - 30
+  - 33
+  - 30
+  - 34
+  - 30
+  - 35
+  - 30
+  - 36
+  - 30
+  - 37
+  - 30
+  - 38
+  - 30
+  - 39
+  - 30
+  - 41
+  - 30
+  - 42
+  - 30
+  - 43
+  - 30
+  - 44
+  - 30
+  - 45
+  - 30
+  - 46
+  iteration: 0
+  max_size: 14
+...
+---
+strategy_name: det_two_byte_flip
+file_format_version: 0
+strategy_state:
+  version: 1
+  seed:
+  - 30
+  - 30
+  - 30
+  - 31
+  - 30
+  - 32
+  - 30
+  - 33
+  - 30
+  - 34
+  - 30
+  - 35
+  - 30
+  - 36
+  - 30
+  - 37
+  - 30
+  - 38
+  - 30
+  - 39
+  - 30
+  - 41
+  - 30
+  - 42
+  - 30
+  - 43
+  - 30
+  - 44
+  - 30
+  - 45
+  - 30
+  - 46
+  iteration: 0
+  max_size: 14
+...
+---
+strategy_name: det_four_byte_flip
+file_format_version: 0
+strategy_state:
+  version: 1
+  seed:
+  - 30
+  - 30
+  - 30
+  - 31
+  - 30
+  - 32
+  - 30
+  - 33
+  - 30
+  - 34
+  - 30
+  - 35
+  - 30
+  - 36
+  - 30
+  - 37
+  - 30
+  - 38
+  - 30
+  - 39
+  - 30
+  - 41
+  - 30
+  - 42
+  - 30
+  - 43
+  - 30
+  - 44
+  - 30
+  - 45
+  - 30
+  - 46
+  iteration: 0
+  max_size: 14
+...

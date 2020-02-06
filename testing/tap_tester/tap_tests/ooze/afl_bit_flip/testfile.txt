@@ -1,0 +1,11 @@
+VERSION 1
+ENVS
+det 8 0
+# test two_bit_flip
+hello_0.begin_state.yaml
+hello.txt
+hello_0.mutated_data.txt
+# test four_bit_flip
+hello_four_0.begin_state.yaml
+hello.txt
+hello_four_0.mutated_data.txt

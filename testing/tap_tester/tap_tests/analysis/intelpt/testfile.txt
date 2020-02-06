@@ -1,0 +1,17 @@
+VERSION 1
+ENVS ANALYSIS_SIZE=1200
+none
+loop-tnt-tnt.pt
+false
+loop-tnt.pt
+false
+tip_pgd-tnt_not_taken.pt
+false
+tip_pgd-tnt_taken.pt
+false
+tip_pge-fup-tip_pgd.pt
+false
+tnt-tip_pgd_noip-sysret.pt
+false
+vmcs-far_call.pt
+false

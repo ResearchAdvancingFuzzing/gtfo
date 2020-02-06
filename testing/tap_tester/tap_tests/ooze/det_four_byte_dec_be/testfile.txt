@@ -1,0 +1,15 @@
+VERSION 1
+ENVS
+det 8 0
+det_four_byte_dec_be_hello_0.begin_state.yaml
+hello.txt
+det_four_byte_dec_be_hello_0.mutated_data.txt
+det_four_byte_dec_be_hello_3.begin_state.yaml
+hello.txt
+det_four_byte_dec_be_hello_3.mutated_data.txt
+det_four_byte_dec_be_hello_8.begin_state.yaml
+hello.txt
+det_four_byte_dec_be_hello_8.mutated_data.txt
+det_four_byte_dec_be_hello_5_6.begin_state.yaml
+hello.txt
+det_four_byte_dec_be_hello_5_6.mutated_data.txt

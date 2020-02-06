@@ -1,0 +1,13 @@
+VERSION 1
+ENVS ANALYSIS_SIZE=64
+none
+a0
+false
+b0
+false
+c0
+false
+d0
+false
+e0
+false

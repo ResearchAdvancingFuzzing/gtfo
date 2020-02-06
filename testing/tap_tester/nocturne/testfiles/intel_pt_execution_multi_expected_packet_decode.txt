@@ -1,0 +1,45 @@
+0	psb
+13	mode.tsx
+15	mode.exec lma=0 cs.d=1
+17	fup	3: 40104a
+26	pip	67c7000
+36	vmcs	cdb363000
+40	cbr	33
+44	psbend
+47	tip.pge	3: 40104a
+57	fup	3: 40104a
+60	tip.pgd	0: 0
+70	psb
+83	mode.tsx
+85	mode.exec lma=0 cs.d=1
+87	fup	3: 40104a
+96	pip	67c7000
+a6	vmcs	cdb363000
+b0	cbr	33
+b4	psbend
+b7	tip.pge	3: 40104a
+c7	fup	3: 40104a
+d0	tip.pgd	0: 0
+e0	psb
+f3	mode.tsx
+f5	mode.exec lma=0 cs.d=1
+f7	fup	3: 40104a
+106	pip	67c7000
+116	vmcs	cdb363000
+120	cbr	33
+124	psbend
+127	tip.pge	3: 40104a
+137	fup	3: 40104a
+140	tip.pgd	0: 0
+150	psb
+163	mode.tsx
+165	mode.exec lma=0 cs.d=1
+167	fup	3: 40104a
+176	pip	67c7000
+186	vmcs	cdb363000
+190	cbr	33
+194	psbend
+197	tip.pge	3: 40104a
+1a7	fup	3: 40104d
+1b0	tip.pgd	0: 0
+

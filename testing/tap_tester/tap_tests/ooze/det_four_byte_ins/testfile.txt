@@ -1,0 +1,15 @@
+VERSION 1
+ENVS
+det 8 0
+output_0_16.begin_state.yaml
+input.txt
+output_0_16.mutated_data.txt
+output_0_20.begin_state.yaml
+input.txt
+output_0_20.mutated_data.txt
+output_16705_20.begin_state.yaml
+input.txt
+output_16705_20.mutated_data.txt
+output_278849_20.begin_state.yaml
+input.txt
+output_278849_20.mutated_data.txt
