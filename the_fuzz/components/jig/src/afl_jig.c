@@ -297,11 +297,11 @@ static char *
 fork_run()
 {
 	static struct itimerval it;
-	static bool             prev_timed_out = false;
+	static u32              prev_timed_out = false;
 	memset(trace_bits, 0, map_size);
 	MEM_BARRIER();
 
-	if (write(fsrv_ctl_fd, &prev_timed_out, 1) != 1) {
+	if (write(fsrv_ctl_fd, &prev_timed_out, 4) != 4) {
 		log_fatal("Unable to request new process from fork server (OOM?)");
 	}
 
@@ -484,5 +484,5 @@ create_api(jig_api *j)
 	j->destroy     = destroy;
 }
 
-jig_api_getter get_jig_api = create_api;
+jig_api_getter           get_jig_api = create_api;
 #pragma clang diagnostic pop
