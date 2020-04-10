@@ -407,8 +407,10 @@ init()
 	char * target_argv[20] = {0};
 	char **target_argv_ptr;
 
+	target_argv[0] = target;
+
 	// very simple argument parsing that doesn't support quotes
-	for (target_argv_ptr = target_argv; (*target_argv_ptr = strsep(&env_target_argv, " \t")) != NULL;) {
+	for (target_argv_ptr = &target_argv[1]; (*target_argv_ptr = strsep(&env_target_argv, " \t")) != NULL;) {
 		if (**target_argv_ptr != '\0') {
 			if (++target_argv_ptr >= &target_argv[20]) {
 				break;
