@@ -102,6 +102,7 @@ set(STRATEGIES
   ${CMAKE_CURRENT_SOURCE_DIR}/strategies/src/strategies/nop
   ${CMAKE_CURRENT_SOURCE_DIR}/strategies/src/strategies/rand_byte_ins
   ${CMAKE_CURRENT_SOURCE_DIR}/strategies/src/strategies/rand_byte_replace
+  ${CMAKE_CURRENT_SOURCE_DIR}/strategies/src/strategies/restrict_bytes
   ${CMAKE_CURRENT_SOURCE_DIR}/strategies/src/strategies/sage_test
   ${CMAKE_CURRENT_SOURCE_DIR}/strategies/src/strategies/zero)
   
