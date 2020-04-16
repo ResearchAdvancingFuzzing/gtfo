@@ -86,10 +86,10 @@ restrict_bytes_print(strategy_state *state)
 
 
 static void * load_module(char *module_name) {
-    printf("module_name: %s\n", module_name); 
+    //printf("module_name: %s\n", module_name); 
     void * handle = NULL;
-
     handle = dlopen(module_name, RTLD_LAZY);
+    
     char *error = dlerror();
     if (error) 
         log_fatal(error); 
@@ -111,29 +111,31 @@ restrict_bytes_create(u8 *seed, size_t max_size, ...)
     }
     char * ooze_strategy = env_ooze_strategy; 
 
-    char *env_fbs_file = getenv("OOZE_FBS_FILE"); 
-    if (env_fbs_file == NULL) { 
-        log_fatal("Missing OOZE_FBS_FILE envrionment variable"); 
+    char *env_labels = getenv("OOZE_LABELS"); 
+    if (env_labels == NULL) { 
+        log_fatal("Missing OOZE_LABELS envrionment variable"); 
     }
 
-    char *env_num_labels = getenv("NUM_LABELS"); 
+    char *env_num_labels = getenv("OOZE_LABELS_SIZE"); 
     if (env_num_labels == NULL) {
-        log_fatal("Missing NUM_LABELS environment variable"); 
+        log_fatal("Missing OOZE_LABELS_SIZE environment variable"); 
     }
     num_labels = (size_t) atoi(env_num_labels); 
 
-    // Get the FBS: Read in the file into an int* array 
-    FILE *fbs_file = fopen(env_fbs_file, "r"); 
-    if (fbs_file == NULL) { 
-        printf("OOZE_FBS_FILE not found."); 
-        exit(1);
-    }
     //printf("Num labels: %lu\n", num_labels); 
+    //printf("Ooze labels: %s\n", env_labels); 
+
     fbs = (int*) malloc(sizeof(int) * num_labels); 
-    int i;
+    
+    char delim[] = ","; 
+    char *ptr = strtok(env_labels, delim); 
+    int i = 0; 
+    while (ptr != NULL) { 
+        fbs[i++] = atoi(ptr);  
+        ptr = strtok(NULL, delim); 
+    }
     for (i = 0; i < (int) num_labels; i++) { 
-        fscanf(fbs_file, "%d\n", &fbs[i]);
-        //printf("%d\n", fbs[i]); 
+        printf("%d\n", fbs[i]); 
     }
 
     // Get the strategy lib 
