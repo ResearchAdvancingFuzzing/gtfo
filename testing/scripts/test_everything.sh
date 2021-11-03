@@ -20,7 +20,6 @@ fi
 results_dir=$(date "+%Y.%m.%d.%H.%M.%S")
 results_folder=/home/testing/test_results_$results_dir
 mkdir -p $results_folder
-chown -R gtfo_testuser:gtfo_testuser $results_folder/
 
 echo "[+] Compiling TAP testers..."
 mkdir -p /home/testing/tap_tester/make
@@ -33,13 +32,8 @@ echo "[+] Done!"
 ####	Add test scripts below here	####
 echo "------------------------------------------------------------"
 /home/testing/scripts/the_fuzz.sh $results_folder
-chown -R gtfo_testuser:gtfo_testuser $results_folder/
 echo "------------------------------------------------------------"
 /home/testing/scripts/ooze.sh $results_folder
-chown -R gtfo_testuser:gtfo_testuser $results_folder/
-echo "------------------------------------------------------------"
-/home/testing/scripts/nocturne.sh $results_folder
-chown -R gtfo_testuser:gtfo_testuser $results_folder/
 echo "------------------------------------------------------------"
 
 echo "[+] Testing complete, performing final cleanup..." 1>&2
@@ -50,7 +44,6 @@ rm -rf /home/common/build/
 find $results_folder/ -size 0 -print0 | xargs -0 rm
 echo "[+] Done!" 1>&2
 
-chown -R gtfo_testuser:gtfo_testuser $results_folder/
 echo [+] Your results have been saved to ./test_results_$results_dir/
 echo
 
