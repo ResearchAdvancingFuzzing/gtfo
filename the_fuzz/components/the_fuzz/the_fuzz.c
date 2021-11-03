@@ -428,6 +428,7 @@ main(int argc, char *argv[])
 				usage(argv[0]);
 			}
 			jig_library_name = strdup(optarg);
+			break;
 		case 'i':
 			if (optarg == NULL) {
 				usage(argv[0]);
