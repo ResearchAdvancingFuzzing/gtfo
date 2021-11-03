@@ -15,11 +15,6 @@
 #include "common/types.h"
 
 /*
-	This header file and its sibling .c file provide common functions used by
-	multiple Nocturne plugins.
-*/
-
-/*
 	A sized buffer is simply a chunk of memory and an amount of content.
 */
 typedef struct sized_buffer {

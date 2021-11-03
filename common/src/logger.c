@@ -110,10 +110,10 @@ log_report_crash(char *crash)
 	output("\n");
 }
 
-// Nocturne and plugins may call_logging() as well as client (test) software.
+// Plugins may call_logging() as well as client (test) software.
 // But given that all invocations would either log to the $LOG_FILENAME or stdout,
 // there shouldn't be a conflict between these two client classes. If filenames could
-// be supplied to this call, then set the policy that Nocturne/plugins cannot supply a filename
+// be supplied to this call, then set the policy that plugins cannot supply a filename
 // and use whatever is open.
 void
 init_logging(void)
