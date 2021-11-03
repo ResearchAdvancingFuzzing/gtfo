@@ -25,7 +25,7 @@
 	and the pcg32_state object.
 */
 
-// This function copies a strategy state
+// This function copies a strategy state:9
 // note that it does copy the internal_state pointer but zeroes it.
 inline strategy_state *
 strategy_state_copy(strategy_state *state)
@@ -76,24 +76,24 @@ strategy_state_serialize(strategy_state *state, char *name)
 	helper = yaml_serializer_init("");
 
 	// Provide a name for humans. The deserializer is not expected to process it.
-	YAML_SERIALIZE_STRING_KV(helper, strategy_name, name);
+	YAML_SERIALIZE_STRING_KV(helper, strategy_name, name)
 
 	// This is the version of the yaml file format, not the version of the encoded structure(s).
 	// It is possible that they will differ.
-	YAML_SERIALIZE_32HEX_KV(helper, file_format_version, 0);
+	YAML_SERIALIZE_32HEX_KV(helper, file_format_version, 0)
 
 	// Serialization of the strategy_state structure:
 
 	// We also name the structure for readability.
-	YAML_SERIALIZE_NEST_MAP(helper, strategy_state);
-	YAML_SERIALIZE_START_MAPPING(helper);
+	YAML_SERIALIZE_NEST_MAP(helper, strategy_state)
+	YAML_SERIALIZE_START_MAPPING(helper)
 
-	YAML_SERIALIZE_64HEX_KV(helper, version, state->version);
-	YAML_SERIALIZE_8HEX_ARRAY(helper, state->seed, seed, 32);
-	YAML_SERIALIZE_64HEX_KV(helper, iteration, state->iteration);
-	YAML_SERIALIZE_64HEX_KV(helper, max_size, (u64) state->max_size);
+	YAML_SERIALIZE_64HEX_KV(helper, version, state->version)
+	YAML_SERIALIZE_8HEX_ARRAY(helper, state->seed, seed, 32)
+	YAML_SERIALIZE_64HEX_KV(helper, iteration, state->iteration)
+	YAML_SERIALIZE_64HEX_KV(helper, max_size, (u64) state->max_size)
 
-	YAML_SERIALIZE_END_MAPPING(helper);
+	YAML_SERIALIZE_END_MAPPING(helper)
 	yaml_serializer_end(helper, &mybuffer, &mybuffersize);
 
 	return mybuffer;
@@ -109,9 +109,9 @@ strategy_state_deserialize(char *s_state_buffer, size_t s_state_buffer_size)
 	helper = yaml_deserializer_init(NULL, s_state_buffer, s_state_buffer_size);
 
 	// Get to the document start
-	YAML_DESERIALIZE_PARSE(helper);
+	YAML_DESERIALIZE_PARSE(helper)
 	while (helper->event.type != YAML_DOCUMENT_START_EVENT) {
-	  YAML_DESERIALIZE_EAT(helper);
+	  YAML_DESERIALIZE_EAT(helper)
 	}
 
 	// Read the strategy name

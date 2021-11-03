@@ -91,14 +91,14 @@ prng_state_serialize(prng_state *prng_st)
     helper = yaml_serializer_init("");
 
     // We want to name the structure for readability.
-    YAML_SERIALIZE_NEST_MAP(helper, prng_state);
-    YAML_SERIALIZE_START_MAPPING(helper);
-    YAML_SERIALIZE_32HEX_KV(helper, version, 0);
+    YAML_SERIALIZE_NEST_MAP(helper, prng_state)
+    YAML_SERIALIZE_START_MAPPING(helper)
+    YAML_SERIALIZE_32HEX_KV(helper, version, 0)
 
-    YAML_SERIALIZE_64HEX_KV(helper, state, prng_st->state);
-    YAML_SERIALIZE_64HEX_KV(helper, inc, (u64) prng_st->inc);
+    YAML_SERIALIZE_64HEX_KV(helper, state, prng_st->state)
+    YAML_SERIALIZE_64HEX_KV(helper, inc, (u64) prng_st->inc)
 
-    YAML_SERIALIZE_END_MAPPING(helper);
+    YAML_SERIALIZE_END_MAPPING(helper)
     yaml_serializer_end(helper, &mybuffer, &mybuffersize);
 
     return mybuffer;
@@ -114,9 +114,9 @@ prng_state_deserialize(char *s_state, size_t s_state_size)
 	helper = yaml_deserializer_init(NULL, s_state, s_state_size);
 
 	// Get to the document start
-	YAML_DESERIALIZE_PARSE(helper);
+	YAML_DESERIALIZE_PARSE(helper)
 	while (helper->event.type != YAML_DOCUMENT_START_EVENT) {
-	  YAML_DESERIALIZE_EAT(helper);
+	  YAML_DESERIALIZE_EAT(helper)
 	}
 
 	// Deserialize the prng_state structure:
@@ -125,11 +125,11 @@ prng_state_deserialize(char *s_state, size_t s_state_size)
 
 	u32 version = 0;
 
-	YAML_DESERIALIZE_EAT(helper);
-	YAML_DESERIALIZE_MAPPING_START(helper, "prng_state");
+	YAML_DESERIALIZE_EAT(helper)
+	YAML_DESERIALIZE_MAPPING_START(helper, "prng_state")
 
 	// Deserialize the structure version. We have only one version, so we don't do anything with it.
-	YAML_DESERIALIZE_GET_KV_U32(helper, "version", &version);
+	YAML_DESERIALIZE_GET_KV_U32(helper, "version", &version)
 
 	YAML_DESERIALIZE_GET_KV_U64(helper, "state", &prng_st->state)
 	YAML_DESERIALIZE_GET_KV_U64(helper, "inc",  &prng_st->inc)

@@ -469,16 +469,16 @@ dictionary_serialize(dictionary *dict)
 	u32 version = 0;
 
 	// We want to name the structure for readability
-	YAML_SERIALIZE_NEST_MAP(helper, dictionary);
-	YAML_SERIALIZE_START_MAPPING(helper);
-	YAML_SERIALIZE_32HEX_KV(helper, version, version);
+	YAML_SERIALIZE_NEST_MAP(helper, dictionary)
+	YAML_SERIALIZE_START_MAPPING(helper)
+	YAML_SERIALIZE_32HEX_KV(helper, version, version)
 
-	YAML_SERIALIZE_64HEX_PSTRUCT(helper, dict, max_entry_cnt);
-	YAML_SERIALIZE_64HEX_PSTRUCT(helper, dict, max_token_len);
+	YAML_SERIALIZE_64HEX_PSTRUCT(helper, dict, max_entry_cnt)
+	YAML_SERIALIZE_64HEX_PSTRUCT(helper, dict, max_token_len)
 
-	YAML_SERIALIZE_STRUCT_ARRAY(helper, (*dict->entries), entries, dict->max_entry_cnt, SERIALIZE_DICTIONARY_ENTRY);
+	YAML_SERIALIZE_STRUCT_ARRAY(helper, (*dict->entries), entries, dict->max_entry_cnt, SERIALIZE_DICTIONARY_ENTRY)
 
-	YAML_SERIALIZE_END_MAPPING(helper);
+	YAML_SERIALIZE_END_MAPPING(helper)
 	yaml_serializer_end(helper, &s_dict, &mybuffersize);
 
 	free(s_entries);
@@ -492,7 +492,7 @@ dictionary_entry_deserialize_yaml(yaml_deserializer *helper, __attribute__((unus
 
 	dictionary_entry *new_entry;
 
-        YAML_DESERIALIZE_EAT(helper);
+        YAML_DESERIALIZE_EAT(helper)
 
 	if (helper->event.type == YAML_SEQUENCE_END_EVENT) {
 	  return;
@@ -500,20 +500,20 @@ dictionary_entry_deserialize_yaml(yaml_deserializer *helper, __attribute__((unus
 
 	new_entry = calloc(1, sizeof(dictionary_entry));
 
-	YAML_DESERIALIZE_GET_KV_U64(helper, "len", &new_entry->len);
-	YAML_DESERIALIZE_GET_KV_U64(helper, "hit_cnt", &new_entry->hit_cnt);
+	YAML_DESERIALIZE_GET_KV_U64(helper, "len", &new_entry->len)
+	YAML_DESERIALIZE_GET_KV_U64(helper, "hit_cnt", &new_entry->hit_cnt)
 
 	new_entry->token = calloc(1, new_entry->len);
 
 	// deserialize the token
-	YAML_DESERIALIZE_SEQUENCE_U8(helper, "token", new_entry->token);
+	YAML_DESERIALIZE_SEQUENCE_U8(helper, "token", new_entry->token)
 
 	if (!dictionary_add_entry(dict, new_entry)) {
 
 	  dictionary_entry_free(new_entry);
 	}
 
-	YAML_DESERIALIZE_MAPPING_END(helper);
+	YAML_DESERIALIZE_MAPPING_END(helper)
 }
 
 // This function deserializes a dictionary.
@@ -533,29 +533,29 @@ dictionary_deserialize(char *s_dict, size_t s_dict_size)
       helper = yaml_deserializer_init(NULL, s_dict, s_dict_size);
 
       // Get to the document start
-      YAML_DESERIALIZE_PARSE(helper);
+      YAML_DESERIALIZE_PARSE(helper)
       while (helper->event.type != YAML_DOCUMENT_START_EVENT) {
-	YAML_DESERIALIZE_EAT(helper);
+	YAML_DESERIALIZE_EAT(helper)
       }
 
       // Deserialize the dictionary structure:
       // This is coded like LL(1) parsing, not event-driven, because we only support one version of file_format_version and
       // no structure members are optional in the yaml file.
 
-      YAML_DESERIALIZE_EAT(helper);
-      YAML_DESERIALIZE_MAPPING_START(helper, "dictionary");
+      YAML_DESERIALIZE_EAT(helper)
+      YAML_DESERIALIZE_MAPPING_START(helper, "dictionary")
 
       // Deserialize the structure version. We have only one version, so we don't do anything with it.
-      YAML_DESERIALIZE_GET_KV_U32(helper, "version", &version);
+      YAML_DESERIALIZE_GET_KV_U32(helper, "version", &version)
 
-      YAML_DESERIALIZE_GET_KV_U64(helper, "max_entry_cnt", &max_entry_cnt);
-      YAML_DESERIALIZE_GET_KV_U64(helper, "max_token_len", &max_token_len);
+      YAML_DESERIALIZE_GET_KV_U64(helper, "max_entry_cnt", &max_entry_cnt)
+      YAML_DESERIALIZE_GET_KV_U64(helper, "max_token_len", &max_token_len)
 
       new_dict = dictionary_create(max_entry_cnt, max_token_len);
 
-      YAML_DESERIALIZE_SEQUENCE(helper, "entries", dictionary_entry_deserialize_yaml, (*new_dict->entries), new_dict);
+      YAML_DESERIALIZE_SEQUENCE(helper, "entries", dictionary_entry_deserialize_yaml, (*new_dict->entries), new_dict)
 
-      YAML_DESERIALIZE_MAPPING_END(helper);
+      YAML_DESERIALIZE_MAPPING_END(helper)
       yaml_deserializer_end(helper);
 
       return new_dict;

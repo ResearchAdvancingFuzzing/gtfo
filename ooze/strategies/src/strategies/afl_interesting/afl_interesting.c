@@ -133,8 +133,8 @@ afl_interesting_serialize(strategy_state *state)
 
 	// serialize current_strategy header
 	helper = yaml_serializer_init("");
-	YAML_SERIALIZE_8HEX_KV(helper, current_substrategy, substates->current_substrategy);
-	YAML_SERIALIZE_8HEX_KV(helper, substrategy_complete, substates->substrategy_complete);
+	YAML_SERIALIZE_8HEX_KV(helper, current_substrategy, substates->current_substrategy)
+	YAML_SERIALIZE_8HEX_KV(helper, substrategy_complete, substates->substrategy_complete)
 	yaml_serializer_end(helper, &s_substrategy_header, &mybuffersize);
 
 	size_t total_size = strlen(s_state);
@@ -202,17 +202,17 @@ afl_interesting_deserialize(char *serialized_state, size_t serialized_state_size
 	helper = yaml_deserializer_init(NULL, s_substrategy_header, serialized_state_size - (size_t)(s_substrategy_header - serialized_state));
 
 	// Get to the document start
-	YAML_DESERIALIZE_PARSE(helper);
+	YAML_DESERIALIZE_PARSE(helper)
 	while (helper->event.type != YAML_DOCUMENT_START_EVENT) {
-	  YAML_DESERIALIZE_EAT(helper);
+	  YAML_DESERIALIZE_EAT(helper)
 	}
 
-	YAML_DESERIALIZE_EAT(helper);
-	YAML_DESERIALIZE_GET_KV_U8(helper, "current_substrategy", &substates->current_substrategy);
-	YAML_DESERIALIZE_GET_KV_U8(helper, "substrategy_complete", &substates->substrategy_complete);
+	YAML_DESERIALIZE_EAT(helper)
+	YAML_DESERIALIZE_GET_KV_U8(helper, "current_substrategy", &substates->current_substrategy)
+	YAML_DESERIALIZE_GET_KV_U8(helper, "substrategy_complete", &substates->substrategy_complete)
 
 	// Prevent leaking memory
-	YAML_DESERIALIZE_EVENT_DELETE(helper);
+	YAML_DESERIALIZE_EVENT_DELETE(helper)
 
 	yaml_deserializer_end(helper);
 
