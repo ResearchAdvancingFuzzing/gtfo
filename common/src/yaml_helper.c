@@ -23,7 +23,7 @@ yaml_serializer_init(char *outfile_name)
 	yaml_serializer *helper = calloc(1, sizeof(yaml_serializer));
 	size_t len;
 
-	if (outfile_name && (len = strlen(outfile_name)) != 0) {;
+	if (outfile_name && (len = strlen(outfile_name)) != 0) {
 	  helper->outfile_name = calloc(1, len + 1);
 	  memcpy(helper->outfile_name, outfile_name, len);
 	  helper->outfile = fopen(helper->outfile_name, "wb");
@@ -32,8 +32,8 @@ yaml_serializer_init(char *outfile_name)
 	  helper->outfile = open_memstream(&(helper->memstream_buffer), &(helper->memstream_buffer_size));
 	}
 
-	YAML_SERIALIZE_INIT(helper);
-	YAML_SERIALIZE_START_MAPPING(helper);
+	YAML_SERIALIZE_INIT(helper)
+	YAML_SERIALIZE_START_MAPPING(helper)
 	return helper;
 }
 
@@ -42,8 +42,8 @@ yaml_serializer_init(char *outfile_name)
 void
 yaml_serializer_end(yaml_serializer *helper, char ** buffer, size_t * buffer_size)
 {
-	YAML_SERIALIZE_END_MAPPING(helper);
-	YAML_SERIALIZE_END(helper);
+	YAML_SERIALIZE_END_MAPPING(helper)
+	YAML_SERIALIZE_END(helper)
 	fclose(helper->outfile);       // This will flush & update the buffer pointer,size.
 	free(helper->outfile_name);
 
