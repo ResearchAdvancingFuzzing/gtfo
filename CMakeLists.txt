@@ -14,7 +14,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(gtfo)
 
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/nocturne")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ooze")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/the_fuzz")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/testing/tap_tester")
