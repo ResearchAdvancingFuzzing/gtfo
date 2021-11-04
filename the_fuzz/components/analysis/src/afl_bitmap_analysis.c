@@ -58,18 +58,21 @@ afl_hash32(const void *key, u32 len, u32 seed)
 static int
 load_from_file(char *filename)
 {
-	int file_fd = open(filename, O_RDONLY);
-	if (file_fd == -1) {
-		log_fatal("loading analysis open failed");
+	if(strlen(filename)) {
+
+		int file_fd = open(filename, O_RDONLY);
+		if (file_fd == -1) {
+			log_fatal("loading analysis open failed");
+		}
+		ssize_t read_size = read(file_fd, virgin_bits, map_size);
+		if (read_size == -1) {
+			log_fatal("loading analysis read failed");
+		}
+		if (read_size >= 0 && (size_t)read_size != map_size) {
+			log_fatal("file wrong size");
+		}
+		close(file_fd);
 	}
-	ssize_t read_size = read(file_fd, virgin_bits, map_size);
-	if (read_size == -1) {
-		log_fatal("loading analysis read failed");
-	}
-	if (read_size >= 0 && (size_t)read_size != map_size) {
-		log_fatal("file wrong size");
-	}
-	close(file_fd);
 	return 0;
 }
 
