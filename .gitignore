@@ -1,3 +1,5 @@
+ooze/make
+testing/tap_tester/make
 bin/*
 build/
 cmake-build*
