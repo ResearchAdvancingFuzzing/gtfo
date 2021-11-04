@@ -65,3 +65,9 @@ grep -Rl "ERROR" $results_folder/ 1>&2
 echo "------------------------------------------------------------"
 echo
 
+
+echo [+] A fatal error occured when generating the following output files
+echo "------------------------------------------------------------"
+grep -Rl "\[X\]" $results_folder/ 1>&2
+echo "------------------------------------------------------------"
+
