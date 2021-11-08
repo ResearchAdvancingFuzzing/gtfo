@@ -283,7 +283,7 @@ write_to_testcase(void *input, size_t input_size)
 		log_fatal("write failed");
 	}
 	if (!out_file) {
-		if (ftruncate(fd, (s16)input_size)) {
+		if (ftruncate(fd, (off_t)input_size)) {
 			log_fatal("ftruncate() failed");
 		}
 		lseek(fd, 0, SEEK_SET);
