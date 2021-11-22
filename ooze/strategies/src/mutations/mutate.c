@@ -316,7 +316,7 @@ byte_add(u8 *buf, u64 pos, u8 val)
  	Little-endian.
 */
 inline void
-two_byte_add_le(u8 *buf, u64 pos, u16 val)
+two_byte_add_be(u8 *buf, u64 pos, u16 val)
 {
 	u16 *foo = (u16 *)&buf[pos];
 	*foo     = SWAP16(*foo);
@@ -355,7 +355,7 @@ eight_byte_add_le(u8 *buf, u64 pos, u64 val)
  	Big-endian.
 */
 inline void
-two_byte_add_be(u8 *buf, u64 pos, u16 val)
+two_byte_add_le(u8 *buf, u64 pos, u16 val)
 {
 	u16 *foo = (u16 *)&buf[pos];
 	*foo     = *foo + val;
