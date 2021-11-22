@@ -26,6 +26,7 @@ typedef struct afl_bit_flip_substates {
 	u8   substrategy_complete;
 	char pad[sizeof(void (*)(void)) - sizeof(u8) * 2];
 	// strategy_state for each substrategy
+	strategy_state *det_bit_flip_substate;
 	strategy_state *det_two_bit_flip_substate;
 	strategy_state *det_four_bit_flip_substate;
 	strategy_state *det_byte_flip_substate;
@@ -33,6 +34,7 @@ typedef struct afl_bit_flip_substates {
 	strategy_state *det_four_byte_flip_substate;
 	// fuzzing_strategy object for each substrategy,
 	// provides access to each strategy's api.
+	fuzzing_strategy *det_bit_flip_strategy;
 	fuzzing_strategy *det_two_bit_flip_strategy;
 	fuzzing_strategy *det_four_bit_flip_strategy;
 	fuzzing_strategy *det_byte_flip_strategy;
