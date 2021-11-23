@@ -651,7 +651,7 @@ byte_interesting(u8 *buf, u64 pos, u8 which)
  	Little-endian.
 */
 inline void
-two_byte_interesting_le(u8 *buf, u64 pos, u8 which)
+two_byte_interesting_be(u8 *buf, u64 pos, u8 which)
 {
 	u16 *foo = (u16 *)&buf[pos];
 	*foo     = (u16)SWAP16(*foo);
@@ -665,7 +665,7 @@ two_byte_interesting_le(u8 *buf, u64 pos, u8 which)
  	Little-endian.
 */
 inline void
-four_byte_interesting_le(u8 *buf, u64 pos, u8 which)
+four_byte_interesting_be(u8 *buf, u64 pos, u8 which)
 {
 	u32 *foo = (u32 *)&buf[pos];
 	*foo     = (u32)SWAP32(*foo);
@@ -679,7 +679,7 @@ four_byte_interesting_le(u8 *buf, u64 pos, u8 which)
  	Big-endian.
 */
 inline void
-two_byte_interesting_be(u8 *buf, u64 pos, u8 which)
+two_byte_interesting_le(u8 *buf, u64 pos, u8 which)
 {
 	u16 *foo = (u16 *)&buf[pos];
 	*foo     = (u16)interesting_16[which % INTERESTING_16_ELEMENTS];
@@ -692,7 +692,7 @@ two_byte_interesting_be(u8 *buf, u64 pos, u8 which)
  	Big-endian.
 */
 inline void
-four_byte_interesting_be(u8 *buf, u64 pos, u8 which)
+four_byte_interesting_le(u8 *buf, u64 pos, u8 which)
 {
 	u32 *foo = (u32 *)&buf[pos];
 	*foo     = (u32)interesting_32[which % INTERESTING_32_ELEMENTS];
