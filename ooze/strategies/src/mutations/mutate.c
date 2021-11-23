@@ -329,7 +329,7 @@ two_byte_add_be(u8 *buf, u64 pos, u16 val)
  	Little-endian.
 */
 inline void
-four_byte_add_le(u8 *buf, u64 pos, u32 val)
+four_byte_add_be(u8 *buf, u64 pos, u32 val)
 {
 	u32 *foo = (u32 *)&buf[pos];
 	*foo     = SWAP32(*foo);
@@ -367,7 +367,7 @@ two_byte_add_le(u8 *buf, u64 pos, u16 val)
  	Big-endian.
 */
 inline void
-four_byte_add_be(u8 *buf, u64 pos, u32 val)
+four_byte_add_le(u8 *buf, u64 pos, u32 val)
 {
 	u32 *foo = (u32 *)&buf[pos];
 	*foo     = *foo + val;
