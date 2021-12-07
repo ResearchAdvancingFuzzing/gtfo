@@ -49,6 +49,7 @@ endif()
 # Avoid odr-violation by compiling in other strategies instead of linking them as
 # the libraries "det_two_bit_flip" "det_four_bit_flip" "det_byte_flip" "det_two_byte_flip" "det_four_byte_flip"
 add_library(${STRATEGY_NAME} SHARED ${MUTATE_SRC} ${STRATEGY_SRC} ${AFL_SRC} ${PRNG_SRC} "${STRATEGY_NAME}.c"
+  ${CMAKE_CURRENT_SOURCE_DIR}/../det_bit_flip/det_bit_flip.c
   ${CMAKE_CURRENT_SOURCE_DIR}/../det_two_bit_flip/det_two_bit_flip.c
   ${CMAKE_CURRENT_SOURCE_DIR}/../det_four_bit_flip/det_four_bit_flip.c
   ${CMAKE_CURRENT_SOURCE_DIR}/../det_byte_flip/det_byte_flip.c
