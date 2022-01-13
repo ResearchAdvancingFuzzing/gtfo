@@ -511,7 +511,7 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 		}
 	}
 
-	free(prng_state);
+	prng_state_free(prng_state);
 	return size;
 }
 
