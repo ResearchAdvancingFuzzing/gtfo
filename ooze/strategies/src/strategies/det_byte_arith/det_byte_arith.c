@@ -24,67 +24,35 @@ PRINT_FUNC(det_byte_arith_print, "det_byte_arith")
 get_fuzzing_strategy_function get_fuzzing_strategy = det_byte_arith_populate;
 #endif
 
-static u8 could_be_bitflip(u32 xor_val) { 
-
-    u32 sh = 0;
-    if (!xor_val) return 1;
-
-    /* Shift left until first bit set. */
-    while (!(xor_val & 1)) { sh++; xor_val >>= 1; }
-
-    /* 1-, 2-, and 4-bit patterns are OK anywhere. */
-    if (xor_val == 1 || xor_val == 3 || xor_val == 15) return 1;
-
-    /* 8-, 16-, and 32-bit patterns are OK only if shift factor is
-       divisible by 8, since that's the stepover for these ops. */
-    if (sh & 7) return 0;
-    if (xor_val == 0xff || xor_val == 0xffff || xor_val == 0xffffffff)
-        return 1;
-
-    return 0;
-
-}
-
-    static inline size_t
+static inline size_t
 det_byte_arith(u8 *buf, size_t size, strategy_state *state)
 {
     u8 val;
     u8 r;
-    u64 pos; 
-    u8 result;
-    do {
-        u64 range_len = (MAX_ARITH * 2) + 1; // how many iterations per byte 
-        pos       = state->iteration / range_len; // which byte we are mutating
+    u64 pos;
 
-        if (pos >= state->max_size) { 
-            return 0;
-        }
+	u64 range_len = (MAX_ARITH * 2) + 1; // how many iterations per byte
+	pos       = state->iteration / range_len; // which byte we are mutating
+
+	if (pos >= state->max_size) {
+		return 0;
+	}
         
-        u8 iter = (u8) (state->iteration % range_len); 
-        u8 abs_val = (u8) ((iter + 1) / 2); 
+	u8 iter = (u8) (state->iteration % range_len);
+	u8 abs_val = (u8) ((iter + 1) / 2);
 
-        if ((iter + 1) % 2) { 
-            // If iteration has remainder, we want to subtract 
-            r = buf[pos] ^ (buf[pos]  - abs_val);
-            val = -(abs_val);
-        }
-        else {
-            r = buf[pos] ^ (buf[pos]  + abs_val);
-            val = abs_val;  
-        }
-        // We want to do arithmetic operations only if the result couldn't
-        // be a product of a bitflip 
-
-        //printf("r: %d could_be_bitflip: %d\n", r, could_be_bitflip(r)); 
-        result = could_be_bitflip(r); 
-        if (result) { // skip this iteration
-            state->iteration++; 
-        }
-    } while (result); 
+	if ((iter + 1) % 2) {
+		// If iteration has remainder, we want to subtract
+		r = buf[pos] ^ (buf[pos]  - abs_val);
+		val = -(abs_val);
+	}
+	else {
+		r = buf[pos] ^ (buf[pos]  + abs_val);
+		val = abs_val;
+	}
 
     // Byte add
     byte_add(buf, pos, val);
-    // printf("buf: %s\n", buf);
 
     // if edited outside of buf, extend buf's size.
     if (pos >= size) {

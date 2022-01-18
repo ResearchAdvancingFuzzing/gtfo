@@ -56,3 +56,4 @@ enum {
 };
 
 u64 afl_choose_block_len(prng_state *prng_state, u64 limit);
+u8 could_be_bitflip(u32 xor_val);

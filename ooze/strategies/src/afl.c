@@ -66,3 +66,23 @@ afl_choose_block_len(prng_state *prng_state, u64 limit)
 	// randomly choose a block size in the range {min_value, max_value};
 	return min_value + prng_state_UR(prng_state, max_value - min_value + 1);
 }
+
+inline u8 could_be_bitflip(u32 xor_val) {
+
+	u32 sh = 0;
+	if (!xor_val) return 1;
+
+	/* Shift left until first bit set. */
+	while (!(xor_val & 1)) { sh++; xor_val >>= 1; }
+
+	/* 1-, 2-, and 4-bit patterns are OK anywhere. */
+	if (xor_val == 1 || xor_val == 3 || xor_val == 15) return 1;
+
+	/* 8-, 16-, and 32-bit patterns are OK only if shift factor is
+	   divisible by 8, since that's the stepover for these ops. */
+	if (sh & 7) return 0;
+	if (xor_val == 0xff || xor_val == 0xffff || xor_val == 0xffffffff)
+		return 1;
+
+	return 0;
+}
