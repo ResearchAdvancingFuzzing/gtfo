@@ -377,18 +377,40 @@ static inline size_t
 afl_arith(u8 *buf, size_t size, strategy_state *state)
 {
 	afl_arith_substates *substates = (afl_arith_substates *)state->internal_state;
-        size_t orig_size = size;
-
+	size_t orig_size = size;
+	u64 pos;
+	u32 orig_bytes = 0;
 	// invoke the correct substrategy
 	switch (substates->current_substrategy) {
 
 	case BYTE_ARITH:
-		size = substates->det_byte_arith_strategy->mutate(buf, size, substates->det_byte_arith_substate);
-		// if substrategy is complete
-		if (!size) {
-			substates->substrategy_complete = 1;
-                        size = orig_size;
-                }
+		while(size) {
+			// record to-be-mutated bytes in case we need to restore them
+			pos = substates->det_byte_arith_substate->iteration / ((MAX_ARITH * 2) + 1);
+			printf("pos-: %lu\n", pos);
+			printf("buf[pos]-: 0x%hhx\n", buf[pos]);
+			memcpy(&orig_bytes, &buf[pos], 1);
+			printf("orig_bytes-: 0x%x\n", orig_bytes);
+			// perform mutation
+			size = substates->det_byte_arith_strategy->mutate(buf, size, substates->det_byte_arith_substate);
+			// if substrategy is complete
+			printf("size-: %lu\n", size);
+			printf("buf[pos]-: 0x%hhx\n", buf[pos]);
+			if (!size) {
+				substates->substrategy_complete = 1;
+				size                            = orig_size;
+				break;
+			}
+			// if the mutation could not be produced by bit_flip
+			else if (!could_be_bitflip(buf[pos])) {
+				printf("could NOT BE BITFLIP\n");
+				break;
+			}
+			printf("could be bitflip\n");
+			// restore old content, and move on to the next iteration.
+			memcpy(&buf[pos], &orig_bytes, 1);
+			substates->det_byte_arith_strategy->update_state(substates->det_byte_arith_substate);
+		}
 		break;
 
 	case TWO_BYTE_ARITH_LE:
