@@ -36,17 +36,20 @@ det_two_byte_arith_be(u8 *buf, size_t size, strategy_state *state)
 	u64 pos       = state->iteration / range_len;
 	if (pos + 2 > state->max_size) {
 		return 0;
-	} // val is from range {-MAX_ARITH, ..., MAX_ARITH}
+	}
 	//u16 val = (u16)((state->iteration % range_len) - MAX_ARITH);
-        u8 iter = (u8) (state->iteration % range_len); 
-        u16 abs_val = (u16) ((iter + 1) / 2);
-        u16 val;
+	u8 iter = (u8) (state->iteration % range_len);
+	if (!iter) {
+		iter++;
+	}
+	u16 abs_val = (u16) ((iter + 1) / 2);
+	u16 val;
 
-        if ((iter + 1) % 2) { 
-            val = -(abs_val); 
-        }else { 
-            val = abs_val;
-        }
+	if ((iter + 1) % 2) {
+		val = -(abs_val);
+	}else {
+		val = abs_val;
+	}
 
 	two_byte_add_be(buf, pos, val);
 	if (pos + 2 > size) {
