@@ -27,12 +27,8 @@ get_fuzzing_strategy_function get_fuzzing_strategy = det_byte_arith_populate;
 static inline size_t
 det_byte_arith(u8 *buf, size_t size, strategy_state *state)
 {
-    u8 val;
-    u8 r;
-    u64 pos;
-
 	u64 range_len = (MAX_ARITH * 2) + 1; // how many iterations per byte
-	pos       = state->iteration / range_len; // which byte we are mutating
+	u64 pos       = state->iteration / range_len; // which byte we are mutating
 
 	if (pos >= state->max_size) {
 		return 0;
@@ -44,14 +40,11 @@ det_byte_arith(u8 *buf, size_t size, strategy_state *state)
 		iter++;
 	}
 	u8 abs_val = (u8) ((iter + 1) / 2);
-
+	u8 val;
 	if ((iter + 1) % 2) {
-		// If iteration has remainder, we want to subtract
-		r = buf[pos] ^ (buf[pos]  - abs_val);
 		val = -(abs_val);
 	}
 	else {
-		r = buf[pos] ^ (buf[pos]  + abs_val);
 		val = abs_val;
 	}
 
