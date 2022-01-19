@@ -37,8 +37,12 @@ det_byte_arith(u8 *buf, size_t size, strategy_state *state)
 	if (pos >= state->max_size) {
 		return 0;
 	}
-        
+
 	u8 iter = (u8) (state->iteration % range_len);
+
+	if(!iter){
+		iter++;
+	}
 	u8 abs_val = (u8) ((iter + 1) / 2);
 
 	if ((iter + 1) % 2) {
