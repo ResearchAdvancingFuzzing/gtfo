@@ -37,14 +37,18 @@ det_four_byte_arith_le(u8 *buf, size_t size, strategy_state *state)
 	if (pos + 4 > state->max_size) {
 		return 0;
 	}
-        u8 iter = (u8) (state->iteration % range_len); 
-        u32 abs_val = (u32) ((iter + 1) / 2);
-        u32 val;
-        if ((iter + 1) % 2) { 
-            val = -(abs_val);
-        } else {
-            val = abs_val;
-        }
+	u8 iter = (u8) (state->iteration % range_len);
+	if(!iter) {
+		iter++;
+	}
+	u32 abs_val = (u32) ((iter + 1) / 2);
+	u32 val;
+
+	if ((iter + 1) % 2) {
+		val = -(abs_val);
+	} else {
+		val = abs_val;
+	}
 
 	four_byte_add_le(buf, pos, val);
 	if (pos + 4 > size) {
