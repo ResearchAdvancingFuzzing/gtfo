@@ -29,11 +29,12 @@ det_four_byte_arith_be(u8 *buf, size_t size, strategy_state *state)
 {
 	/*
 		for MAX_ARITH = 35,
-		iterations 0 through 71 will add a value to byte 0.
-		iteration 72 will add a value to byte 1.
+		iterations 0 through 69 will add a value to byte 0.
+		iteration 70 will add a value to byte 1.
 	*/
-	u64 range_len = (MAX_ARITH * 2) + 1;
+	u64 range_len = MAX_ARITH * 2;
 	u64 pos       = state->iteration / range_len;
+
 	if (pos + 4 > state->max_size) {
 		return 0;
 	}
@@ -41,9 +42,9 @@ det_four_byte_arith_be(u8 *buf, size_t size, strategy_state *state)
 	if(!iter) {
 		iter++;
 	}
-	u32 abs_val = (u32) ((iter + 1) / 2);
+	u32 abs_val = (u32) ((iter / 2) + 1);
 	u32 val;
-	if ((iter + 1) % 2) {
+	if (iter % 2) {
 		val = -(abs_val);
 	} else {
 		val = abs_val;

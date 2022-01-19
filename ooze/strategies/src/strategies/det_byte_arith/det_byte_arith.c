@@ -27,21 +27,21 @@ get_fuzzing_strategy_function get_fuzzing_strategy = det_byte_arith_populate;
 static inline size_t
 det_byte_arith(u8 *buf, size_t size, strategy_state *state)
 {
-	u64 range_len = (MAX_ARITH * 2) + 1; // how many iterations per byte
+	u64 range_len = MAX_ARITH * 2; // how many iterations per byte
 	u64 pos       = state->iteration / range_len; // which byte we are mutating
 
 	if (pos >= state->max_size) {
 		return 0;
 	}
-
+	// iter in range [0 -> 70]
 	u8 iter = (u8) (state->iteration % range_len);
 
-	if(!iter){
-		iter++;
-	}
-	u8 abs_val = (u8) ((iter + 1) / 2);
+	// abs_val in range [ 1 -> 35]
+	u8 abs_val = (u8) ((iter / 2) + 1);
 	u8 val;
-	if ((iter + 1) % 2) {
+
+	// val = [ 1, -1, 2, -2, ... , 35, -35 ]
+	if (iter % 2) {
 		val = -(abs_val);
 	}
 	else {

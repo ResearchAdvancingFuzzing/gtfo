@@ -403,10 +403,10 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 			}
 			// if the mutation could not be produced by bit_flip
 			else if (!could_be_bitflip(buf[pos])) {
-				printf("could NOT BE BITFLIP\n");
+				printf("------could NOT BE BITFLIP------\n");
 				break;
 			}
-			printf("could be bitflip\n");
+			printf("------could be bitflip------\n");
 			// restore old content, and move on to the next iteration.
 			memcpy(&buf[pos], &orig_bytes, 1);
 			substates->det_byte_arith_strategy->update_state(substates->det_byte_arith_substate);
