@@ -13,9 +13,9 @@ A_32_35.mutated_data.txt
 A_32_36.begin_state.yaml
 A_32.txt
 A_32_36.mutated_data.txt
-A_32_71.begin_state.yaml
+A_32_70.begin_state.yaml
 A_32.txt
-A_32_71.mutated_data.txt
+A_32_70.mutated_data.txt
 A_16_1065.begin_state.yaml
 A_16.txt
 A_16_1065.mutated_data.txt

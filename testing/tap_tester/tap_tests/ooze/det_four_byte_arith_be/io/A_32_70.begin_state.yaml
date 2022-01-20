@@ -36,6 +36,6 @@ strategy_state:
   - 1d
   - 1e
   - 1f
-  iteration: 47
+  iteration: 46
   max_size: 20
 ...

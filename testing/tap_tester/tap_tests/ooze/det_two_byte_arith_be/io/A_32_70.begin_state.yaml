@@ -1,5 +1,5 @@
 ---
-strategy_name: det_byte_arith
+strategy_name: det_two_byte_arith_be
 file_format_version: 0
 strategy_state:
   version: 1
@@ -36,6 +36,6 @@ strategy_state:
   - 1d
   - 1e
   - 1f
-  iteration: 47
+  iteration: 46
   max_size: 20
 ...
