@@ -11,11 +11,6 @@
 // Delivered to the U.S. Government with Unlimited Rights, as defined in DFARS Part 252.227-7013 or 7014 (Feb 2014). Notwithstanding any copyright notice, U.S. Government rights in this work are defined by DFARS 252.227-7013 or DFARS 252.227-7014 as detailed above. Use of this work other than as specifically authorized by the U.S. Government may violate any copyrights that exist in this work.
 
 #include "afl_arith.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "afl.h"
 #include "common/yaml_helper.h"
 #include "det_byte_arith.h"
@@ -373,84 +368,202 @@ afl_arith_free_state(strategy_state *state)
 	}
 }
 
+
+static inline u64
+afl_arith_get_pos(strategy_state *state) {
+	afl_arith_substates *substates = (afl_arith_substates *)state->internal_state;
+
+	u64 pos = 0;
+	switch (substates->current_substrategy) {
+	case BYTE_ARITH:
+		printf("afl_arith_get_pos: det_byte_arith iteration = %lu\n", substates->det_byte_arith_substate->iteration);
+		pos = substates->det_byte_arith_substate->iteration / (MAX_ARITH * 2);
+		break;
+	case TWO_BYTE_ARITH_LE:
+		printf("afl_arith_get_pos: det_two_byte_arith_le iteration = %lu\n", substates->det_two_byte_arith_le_substate->iteration);
+
+		pos = substates->det_two_byte_arith_le_substate->iteration / (MAX_ARITH * 2);
+		break;
+	case TWO_BYTE_ARITH_BE:
+		printf("afl_arith_get_pos: det_two_byte_arith_be iteration = %lu\n", substates->det_two_byte_arith_be_substate->iteration);
+
+		pos = substates->det_two_byte_arith_be_substate->iteration / (MAX_ARITH * 2);
+		break;
+	case FOUR_BYTE_ARITH_LE:
+		printf("afl_arith_get_pos: det_four_byte_arith_le iteration = %lu\n", substates->det_four_byte_arith_le_substate->iteration);
+
+		pos = substates->det_four_byte_arith_le_substate->iteration / (MAX_ARITH * 2);
+		break;
+	case FOUR_BYTE_ARITH_BE:
+		printf("afl_arith_get_pos: det_four_byte_arith_be iteration = %lu\n", substates->det_four_byte_arith_be_substate->iteration);
+		pos = substates->det_four_byte_arith_be_substate->iteration / (MAX_ARITH * 2);
+		break;
+	}
+	printf("afl_arith_get_pos: pos = %lu\n", pos);
+	return pos;
+}
+
+static inline void
+afl_arith_copy_bytes(u32 * src, u32 * dest, strategy_state *state) {
+	afl_arith_substates *substates = (afl_arith_substates *)state->internal_state;
+
+	switch (substates->current_substrategy) {
+	case BYTE_ARITH:
+		memcpy(dest, src, 1);
+		break;
+	case TWO_BYTE_ARITH_LE:
+		memcpy(dest, src, 2);
+		break;
+	case TWO_BYTE_ARITH_BE:
+		memcpy(dest, src, 2);
+		break;
+	case FOUR_BYTE_ARITH_LE:
+		memcpy(dest, src, 4);
+		break;
+	case FOUR_BYTE_ARITH_BE:
+		memcpy(dest, src, 4);
+		break;
+	}
+}
+
+static inline bool
+afl_arith_check_pos(u64 pos, strategy_state *state)
+{
+	afl_arith_substates *substates = (afl_arith_substates *)state->internal_state;
+
+	switch(substates->current_substrategy){
+	case BYTE_ARITH:
+		return pos >= state->max_size;
+	case TWO_BYTE_ARITH_LE:
+		return pos +2 > state->max_size;
+	case TWO_BYTE_ARITH_BE:
+		return pos + 2 > state->max_size;
+	case FOUR_BYTE_ARITH_LE:
+		return pos + 4 > state->max_size;
+	case FOUR_BYTE_ARITH_BE:
+		return pos + 4 > state->max_size;
+	default:
+		return 0;
+	}
+}
+
 static inline size_t
 afl_arith(u8 *buf, size_t size, strategy_state *state)
 {
 	afl_arith_substates *substates = (afl_arith_substates *)state->internal_state;
 	size_t orig_size = size;
-	u64 pos;
 	u32 orig_bytes = 0;
-	// invoke the correct substrategy
-	switch (substates->current_substrategy) {
+	// get initial position
+	u64 pos = afl_arith_get_pos(state);
+	bool pos_changed = true;
+	while(size) {
+		printf("strategy iteration: %lu\n", state->iteration);
+		// if the position would lead to an out of bounds mutation,
+		// skip to the next mutation.
+		if (afl_arith_check_pos(pos, state)) {
+			printf("Invalid position, skipping to next mutation substrategy\n");
+			substates->substrategy_complete = 1;
+			afl_arith_update(state);
+		}
+		// if the position we are mutating changed, we need to make a new backup
+		// of the bytes at that position.
+		if (pos_changed) {
 
-	case BYTE_ARITH:
-		while(size) {
-			// record to-be-mutated bytes in case we need to restore them
-			pos = substates->det_byte_arith_substate->iteration / ((MAX_ARITH * 2) + 1);
-			printf("pos-: %lu\n", pos);
-			printf("buf[pos]-: 0x%hhx\n", buf[pos]);
-			memcpy(&orig_bytes, &buf[pos], 1);
-			printf("orig_bytes-: 0x%x\n", orig_bytes);
+			printf("Position changed: pos: %lu\n", pos);
+			afl_arith_copy_bytes((void *)&buf[pos], &orig_bytes, state);
+			printf("bytes at buf[pos]: 0x%08x\n bytes saved: 0x%08x\n", (u32)buf[pos], orig_bytes);
+			pos_changed = false;
+		}
+
+		// invoke the correct substrategy
+		switch (substates->current_substrategy) {
+
+		case BYTE_ARITH:
+			printf("Substrategy iteration: %lu\n", substates->det_byte_arith_substate->iteration);
 			// perform mutation
 			size = substates->det_byte_arith_strategy->mutate(buf, size, substates->det_byte_arith_substate);
 			// if substrategy is complete
-			printf("size-: %lu\n", size);
-			printf("buf[pos]-: 0x%hhx\n", buf[pos]);
 			if (!size) {
 				substates->substrategy_complete = 1;
 				size                            = orig_size;
-				break;
 			}
-			// if the mutation could not be produced by bit_flip
-			else if (!could_be_bitflip(buf[pos])) {
-				printf("------could NOT BE BITFLIP------\n");
-				break;
+			break;
+
+		case TWO_BYTE_ARITH_LE:
+			printf("Substrategy iteration: %lu\n", substates->det_two_byte_arith_le_substate->iteration);
+			size = substates->det_two_byte_arith_le_strategy->mutate(buf, size, substates->det_two_byte_arith_le_substate);
+			// if substrategy is complete
+			if (!size) {
+				substates->substrategy_complete = 1;
+				size                            = orig_size;
 			}
-			printf("------could be bitflip------\n");
-			// restore old content, and move on to the next iteration.
-			memcpy(&buf[pos], &orig_bytes, 1);
-			substates->det_byte_arith_strategy->update_state(substates->det_byte_arith_substate);
+			break;
+
+		case TWO_BYTE_ARITH_BE:
+			printf("Substrategy iteration: %lu\n", substates->det_two_byte_arith_be_substate->iteration);
+			size = substates->det_two_byte_arith_be_strategy->mutate(buf, size, substates->det_two_byte_arith_be_substate);
+			// if substrategy is complete
+			if (!size) {
+				substates->substrategy_complete = 1;
+				size                            = orig_size;
+			}
+			break;
+
+		case FOUR_BYTE_ARITH_LE:
+			printf("Substrategy iteration: %lu\n", substates->det_four_byte_arith_le_substate->iteration);
+
+			size = substates->det_four_byte_arith_le_strategy->mutate(buf, size, substates->det_four_byte_arith_le_substate);
+			// if substrategy is complete
+			if (!size) {
+				substates->substrategy_complete = 1;
+				size                            = orig_size;
+			}
+			break;
+
+		case FOUR_BYTE_ARITH_BE:
+			printf("Substrategy iteration: %lu\n", substates->det_four_byte_arith_be_substate->iteration);
+			size = substates->det_four_byte_arith_be_strategy->mutate(buf, size, substates->det_four_byte_arith_be_substate);
+			// if substrategy is complete
+			if (!size)
+				substates->substrategy_complete = 1;
+			break;
+		// no more substrategies left
+		default:
+			// size of 0 signifies mutation is finished.
+			size = 0;
+			break;
 		}
-		break;
+		//u32 check_buf = 0;
+		//afl_arith_copy_bytes((void *) &buf[pos], &check_buf, state);
 
-	case TWO_BYTE_ARITH_LE:
-		size = substates->det_two_byte_arith_le_strategy->mutate(buf, size, substates->det_two_byte_arith_le_substate);
-		// if substrategy is complete
-		if (!size) {
-			substates->substrategy_complete = 1;
-                        size = orig_size;
-                }
-		break;
+		// if mutations are finished or a new input is generated that was not generated by the bitflip phase
+		// we're done mutating.
+		if(!size || !could_be_bitflip((u32)buf[pos])) {
+			if(!size) {
+				puts("Size is 0, strategy done.\n");
+			}
+			else {
+				puts("COULD NOT be bitflip, mutation done.\n");
+				printf("After Mutation: bytes at buf[pos]: 0x%08x\n", (u32)buf[pos]);
+			}
+			return size;
+		}
+		// if we get here, the mutation could be produced by bitflip and we need to mutate again.
+		//restore the original bytes.
+		puts("COULD be bitflip, restoring old bytes.\n");
+		printf("BEFORE RESTORE: bytes at buf[pos]: 0x%08x\n bytes saved: 0x%08x\n", (u32)buf[pos], orig_bytes);
+		afl_arith_copy_bytes(&orig_bytes, (void *) &buf[pos], state);
+		printf("AFTER RESTORE: bytes at buf[pos]: 0x%08x\n bytes saved: 0x%08x\n", (u32)buf[pos], orig_bytes);
 
-	case TWO_BYTE_ARITH_BE:
-		size = substates->det_two_byte_arith_be_strategy->mutate(buf, size, substates->det_two_byte_arith_be_substate);
-		// if substrategy is complete
-		if (!size) {
-			substates->substrategy_complete = 1;
-                        size = orig_size;
-                }
-		break;
-
-	case FOUR_BYTE_ARITH_LE:
-		size = substates->det_four_byte_arith_le_strategy->mutate(buf, size, substates->det_four_byte_arith_le_substate);
-		// if substrategy is complete
-		if (!size) {
-			substates->substrategy_complete = 1;
-                        size = orig_size;
-                }
-		break;
-
-	case FOUR_BYTE_ARITH_BE:
-		size = substates->det_four_byte_arith_be_strategy->mutate(buf, size, substates->det_four_byte_arith_be_substate);
-		// if substrategy is complete
-		if (!size)
-			substates->substrategy_complete = 1;
-		break;
-	// no more substrategies left
-	default:
-		// size of 0 signifies mutation is finished.
-		size = 0;
-		break;
+		// increment the state forward to the next mutation.
+		afl_arith_update(state);
+		// check for position change.
+		u64 new_pos = afl_arith_get_pos(state);
+		if(pos != new_pos) {
+			pos_changed = true;
+			printf("positon changed, old pos: %lu, new pos %lu\n", pos, new_pos);
+			pos         = new_pos;
+		}
 	}
 
 	return size;
