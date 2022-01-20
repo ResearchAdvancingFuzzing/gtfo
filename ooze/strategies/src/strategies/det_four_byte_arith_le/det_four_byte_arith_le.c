@@ -38,9 +38,7 @@ det_four_byte_arith_le(u8 *buf, size_t size, strategy_state *state)
 		return 0;
 	}
 	u8 iter = (u8) (state->iteration % range_len);
-	if(!iter) {
-		iter++;
-	}
+
 	u32 abs_val = (u32) ((iter / 2) + 1);
 	u32 val;
 
