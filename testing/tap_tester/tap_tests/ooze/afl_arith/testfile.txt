@@ -34,3 +34,6 @@ zero_270.mutated_data.txt
 zero_300.begin_state.yaml
 zero
 zero_300.mutated_data.txt
+zero_349.begin_state.yaml
+zero
+zero_349.mutated_data.txt
