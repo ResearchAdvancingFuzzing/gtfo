@@ -512,19 +512,16 @@ afl_interesting(u8 *buf, size_t size, strategy_state *state)
 	u64 pos = afl_interesting_get_pos(state);
 
 	while(size) {
-		printf("Substrategy: %hhu, Iteration count: %lu, Pos: %lu\n", substates->current_substrategy, state->iteration, pos);
 
 		// if the position would lead to an out of bounds mutation,
 		// skip to the next mutation substrategy.
 		if(afl_interesting_check_pos(pos, state)) {
-			printf("Invalid position, skipping to next strategy.");
 			substates->substrategy_complete = 1;
 			afl_interesting_update(state);
 			pos = afl_interesting_get_pos(state);
 		}
 		// If the input we are about to generate was not produced by a previous mutation strategy.
 		else if(afl_interesting_check_could_be_list(buf, state)) {
-			printf("Mutation passed the 'could_be' checklist, performing mutation.\n");
 
 			// invoke the correct substrategy
 			switch (substates->current_substrategy) {
@@ -583,7 +580,6 @@ afl_interesting(u8 *buf, size_t size, strategy_state *state)
 		}
 		// Duplicate mutation, skip it and go to the next one.
 		else {
-			printf("Mutation did not pass the 'could_be' checklist, skipping to the next mutation.\n");
 			afl_interesting_update(state);
 			pos = afl_interesting_get_pos(state);
 		}
