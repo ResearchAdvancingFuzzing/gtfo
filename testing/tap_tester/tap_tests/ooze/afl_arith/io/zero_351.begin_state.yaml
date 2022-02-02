@@ -122,7 +122,7 @@ strategy_state:
   - 48
   - 48
   - 48
-  iteration: 1
+  iteration: 0
   max_size: 5
 ...
 ---

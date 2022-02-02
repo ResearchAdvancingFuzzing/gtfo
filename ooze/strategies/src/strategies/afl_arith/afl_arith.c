@@ -456,7 +456,9 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 	// get initial position
 	u64 pos = afl_arith_get_pos(state);
 	bool pos_changed = true;
+
 	while(size) {
+
 		// if the position would lead to an out of bounds mutation,
 		// skip to the next mutation.
 		if (afl_arith_check_pos(pos, state)) {
@@ -503,7 +505,6 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 			break;
 
 		case FOUR_BYTE_ARITH_LE:
-
 			size = substates->det_four_byte_arith_le_strategy->mutate(buf, size, substates->det_four_byte_arith_le_substate);
 			// if substrategy is complete
 			if (!size) {
@@ -513,7 +514,6 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 			break;
 
 		case FOUR_BYTE_ARITH_BE:
-			//("Substrategy iteration: %lu\n", substates->det_four_byte_arith_be_substate->iteration);
 			size = substates->det_four_byte_arith_be_strategy->mutate(buf, size, substates->det_four_byte_arith_be_substate);
 			// if substrategy is complete
 			if (!size)

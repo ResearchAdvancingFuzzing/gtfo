@@ -40,7 +40,7 @@ strategy_state:
   max_size: 5
 ...
 ---
-current_substrategy: 8
+current_substrategy: 7
 substrategy_complete: 0
 ...
 ---
