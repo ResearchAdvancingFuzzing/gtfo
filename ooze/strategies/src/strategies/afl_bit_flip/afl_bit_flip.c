@@ -40,7 +40,6 @@ afl_bit_flip_update(strategy_state *state)
 	if (substates->substrategy_complete) {
 		substates->current_substrategy++;
 		substates->substrategy_complete = 0;
-                printf("INCREMENTING\n");
 	} else {
 		// update the correct substate
 		switch (substates->current_substrategy) {
@@ -410,7 +409,7 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
 	// invoke the correct substrategy
 	switch (substates->current_substrategy) {
 
-        case BIT_FLIP: 
+        case BIT_FLIP:
 		size = substates->det_bit_flip_strategy->mutate(buf, size, substates->det_bit_flip_substate);
 		// if substrategy is complete
 		if (!size) {
@@ -431,7 +430,6 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
 		break;
 
 	case FOUR_BIT_FLIP:
-            printf("FOUR_BIT_FLIP\n");
 		size = substates->det_four_bit_flip_strategy->mutate(buf, size, substates->det_four_bit_flip_substate);
 		// if substrategy is complete
 		if (!size) {
@@ -441,7 +439,6 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
 		break;
 
 	case BYTE_FLIP:
-                printf("BYTE_FLIP\n");
 		size = substates->det_byte_flip_strategy->mutate(buf, size, substates->det_byte_flip_substate);
 		// if substrategy is complete
 		if (!size) {
@@ -451,7 +448,6 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
 		break;
 
 	case TWO_BYTE_FLIP:
-                printf("TWO_BYTE_FLIP\n");
 		size = substates->det_two_byte_flip_strategy->mutate(buf, size, substates->det_two_byte_flip_substate);
 		// if substrategy is complete
 		if (!size) {
@@ -461,7 +457,6 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
 		break;
 
 	case FOUR_BYTE_FLIP:
-                printf("FOUR_BYTE_FLIP\n");
 		size = substates->det_four_byte_flip_strategy->mutate(buf, size, substates->det_four_byte_flip_substate);
 		// if substrategy is complete
 		if (!size) {
