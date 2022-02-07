@@ -1,3 +1,6 @@
+#ifndef PRNG_H
+#define PRNG_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -13,8 +16,8 @@
 #pragma once
 #include <bits/stdint-uintn.h>
 
-#include "ooze.h"
 #include "common/types.h"
+#include "ooze.h"
 
 // This object stores state information related to our prng.
 typedef struct prng_state {
@@ -33,3 +36,5 @@ char       *prng_state_serialize(prng_state *prng_st);
 prng_state *prng_state_deserialize(char *s_state, size_t s_state_size);
 char       *prng_state_print(prng_state *prng_st);
 u64         prng_state_UR(prng_state *prng_state, u64 limit);
+
+#endif

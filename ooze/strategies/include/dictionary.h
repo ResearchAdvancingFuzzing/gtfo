@@ -1,3 +1,6 @@
+#ifndef DICTIONARY_H
+#define DICTIONARY_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -15,9 +18,9 @@
 #include <stddef.h>
 
 #include "afl_config.h"
+#include "common/types.h"
 #include "mutate.h"
 #include "strategy.h"
-#include "common/types.h"
 
 /*
     Methods for manipulating dictionary and dictionary_entry objects.
@@ -78,3 +81,5 @@ dictionary *dictionary_load_file(char *filename, size_t max_entries, size_t max_
 
 char       *dictionary_serialize(dictionary *dict);
 dictionary *dictionary_deserialize(char *s_dict, size_t s_dict_size);
+
+#endif

@@ -18,12 +18,12 @@
 
 #include "afl.h"
 #include "common/yaml_helper.h"
+#include "det_bit_flip.h"
 #include "det_byte_flip.h"
 #include "det_four_bit_flip.h"
 #include "det_four_byte_flip.h"
 #include "det_two_bit_flip.h"
 #include "det_two_byte_flip.h"
-#include "det_bit_flip.h"
 #include "strategy.h"
 
 #ifdef AFL_BIT_FLIP_IS_MASTER

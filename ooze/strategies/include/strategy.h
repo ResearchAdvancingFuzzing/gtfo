@@ -1,3 +1,6 @@
+#ifndef STRATEGY_H
+#define STRATEGY_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -13,8 +16,8 @@
 #pragma once
 #include <stddef.h>
 
-#include "ooze.h"
 #include "common/types.h"
+#include "ooze.h"
 
 /*
     These functions are used to manipulate common strategy_state objects (defined in ooze.h).
@@ -45,3 +48,5 @@ strategy_state *strategy_state_deserialize(char *s_state_buffer, size_t s_state_
 char           *strategy_state_print(strategy_state *state, char *strategy_name);
 void            strategy_state_update(strategy_state *state);
 strategy_state *strategy_state_create(u8 *seed, size_t max_size, ...);
+
+#endif

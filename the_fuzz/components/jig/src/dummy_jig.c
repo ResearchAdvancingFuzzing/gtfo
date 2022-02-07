@@ -13,8 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "jig.h"
 #include "common/types.h"
+#include "jig.h"
 
 static unsigned char ___test_data_intelpt_loop_tnt_pt[] = {
     0x02, 0x82, 0x02, 0x82, 0x02, 0x82, 0x02, 0x82, 0x02, 0x82, 0x02, 0x82,

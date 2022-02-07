@@ -1,3 +1,6 @@
+#ifndef COMMON_H
+#define COMMON_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -12,11 +15,11 @@
 
 #pragma once
 
-#include "common/definitions.h"
-#include "common/types.h"
 #include "common/annotations.h"
+#include "common/definitions.h"
 #include "common/logger.h"
 #include "common/sized_buffer.h"
+#include "common/types.h"
 
 #ifdef KVM_VMX_PT_SUPPORTED
 #include <intel-pt.h>
@@ -26,4 +29,6 @@
 
 int  pt_inst_decode(uint8_t *trace_buffer, size_t trace_size, read_memory_callback_t *read_image_callback, void *context);
 void pt_packet_decode(unsigned char *trace_buffer, size_t trace_size);
+#endif
+
 #endif

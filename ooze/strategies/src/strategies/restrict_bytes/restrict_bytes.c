@@ -12,14 +12,14 @@
 
 #include "restrict_bytes.h"
 
+#include <dlfcn.h>
+#include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dlfcn.h>
-#include <stdio.h>
-#include <stdint.h>
 
-#include "common/types.h"
 #include "common/logger.h"
+#include "common/types.h"
 #include "mutate.h"
 #include "strategy.h"
 

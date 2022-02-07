@@ -1,3 +1,6 @@
+#ifndef OOZE_H
+#define OOZE_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -11,15 +14,15 @@
 // Delivered to the U.S. Government with Unlimited Rights, as defined in DFARS Part 252.227-7013 or 7014 (Feb 2014). Notwithstanding any copyright notice, U.S. Government rights in this work are defined by DFARS 252.227-7013 or DFARS 252.227-7014 as detailed above. Use of this work other than as specifically authorized by the U.S. Government may violate any copyrights that exist in this work.
 
 #pragma once
-#include <stdbool.h>
+#include "common.h"
+#include <assert.h>
+#include <ctype.h> // for qsort
 #include <inttypes.h>
 #include <stdarg.h>
-#include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include <ctype.h> // for qsort
-#include "common.h"
+#include <string.h>
 #define VERSION_ONE 1
 
 // This is the standard strategy state object, used by every strategy to maintain state information.
@@ -92,3 +95,5 @@ typedef void (*get_fuzzing_strategy_function)(fuzzing_strategy *strategy);
 
 // For a given strategy library, this function pointer points to the function that populates the fuzzing_strategy object.
 extern __attribute__((visibility("default"))) get_fuzzing_strategy_function get_fuzzing_strategy;
+
+#endif

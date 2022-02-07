@@ -1,3 +1,6 @@
+#ifndef COMMON_YAML_SERIALIZER_H
+#define COMMON_YAML_SERIALIZER_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -12,11 +15,11 @@
 
 #pragma once
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <yaml.h>
-#include <signal.h>
 #include <inttypes.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <yaml.h>
 //#include "common.h"
 
 typedef struct yaml_serializer {
@@ -173,3 +176,5 @@ typedef struct yaml_serializer {
 		}                                                                                                                                                      \
 		YAML_SERIALIZE_SEQ_END(HELPER);                                                                                                                        \
 	} while (0);
+
+#endif

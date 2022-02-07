@@ -1,3 +1,6 @@
+#ifndef AFL_DICTIONARY_H
+#define AFL_DICTIONARY_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -13,8 +16,8 @@
 #pragma once
 #include "afl_dictionary_insert.h"
 #include "afl_dictionary_overwrite.h"
-#include "ooze.h"
 #include "common/types.h"
+#include "ooze.h"
 
 // substrategies and substrategy states used by the afl_dictionary strategy.
 typedef struct afl_dictionary_substates {
@@ -32,3 +35,5 @@ typedef struct afl_dictionary_substates {
 
 void
 afl_dictionary_populate(fuzzing_strategy *strategy);
+
+#endif

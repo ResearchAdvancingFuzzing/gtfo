@@ -1,3 +1,6 @@
+#ifndef AFL_H
+#define AFL_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -12,8 +15,8 @@
 
 #pragma once
 #include "afl_config.h"
-#include "prng.h"
 #include "common/types.h"
+#include "prng.h"
 
 /*
     This file holds afl-related options and functions that should not be touched.
@@ -59,3 +62,5 @@ u64 afl_choose_block_len(prng_state *prng_state, u64 limit);
 u8  could_be_bitflip(u32 xor_val);
 u8  could_be_arith(u32 old_val, u32 new_val, u8 blen);
 u8  could_be_interest(u32 old_val, u32 new_val, u8 blen, u8 check_le);
+
+#endif

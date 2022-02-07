@@ -1,3 +1,6 @@
+#ifndef AFL_HAVOC_H
+#define AFL_HAVOC_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -27,3 +30,5 @@ typedef struct afl_havoc_substates {
 
 } afl_havoc_substates;
 void afl_havoc_populate(fuzzing_strategy *strategy);
+
+#endif

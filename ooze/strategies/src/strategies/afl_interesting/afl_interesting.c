@@ -458,7 +458,7 @@ afl_interesting_check_pos(u64 pos, strategy_state *state)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-statement-expression"
 static inline bool
-afl_interesting_check_could_be_list(u8 *buf, strategy_state *state)
+afl_interesting_check_could_be_list(const u8 *buf, strategy_state *state)
 {
 	afl_interesting_substates *substates = (afl_interesting_substates *)state->internal_state;
 

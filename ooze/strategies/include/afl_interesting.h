@@ -1,3 +1,6 @@
+#ifndef AFL_INTERESTING_H
+#define AFL_INTERESTING_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -12,13 +15,13 @@
 
 #pragma once
 #include "afl.h"
+#include "common/types.h"
 #include "det_byte_interesting.h"
 #include "det_four_byte_interesting_be.h"
 #include "det_four_byte_interesting_le.h"
 #include "det_two_byte_interesting_be.h"
 #include "det_two_byte_interesting_le.h"
 #include "ooze.h"
-#include "common/types.h"
 
 // this struct holds substrategies and substrategy states used by the afl_interesting strategy.
 typedef struct afl_interesting_substates {
@@ -43,3 +46,5 @@ typedef struct afl_interesting_substates {
 } afl_interesting_substates;
 
 void afl_interesting_populate(fuzzing_strategy *strategy);
+
+#endif

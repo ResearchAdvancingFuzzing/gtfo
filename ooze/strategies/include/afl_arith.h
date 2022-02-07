@@ -1,3 +1,6 @@
+#ifndef AFL_ARITH_H
+#define AFL_ARITH_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -12,13 +15,13 @@
 
 #pragma once
 #include "afl.h"
+#include "common/types.h"
 #include "det_byte_arith.h"
 #include "det_four_byte_arith_be.h"
 #include "det_four_byte_arith_le.h"
 #include "det_two_byte_arith_be.h"
 #include "det_two_byte_arith_le.h"
 #include "ooze.h"
-#include "common/types.h"
 
 typedef struct afl_arith_substates {
 
@@ -42,3 +45,5 @@ typedef struct afl_arith_substates {
 } afl_arith_substates;
 
 void afl_arith_populate(fuzzing_strategy *strategy);
+
+#endif

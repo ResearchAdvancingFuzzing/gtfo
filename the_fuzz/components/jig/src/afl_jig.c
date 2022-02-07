@@ -26,9 +26,9 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include "jig.h"
 #include "common/logger.h"
 #include "common/types.h"
+#include "jig.h"
 
 // These are in common, unclear why this is needed but the compiler is complaining
 #define unlikely(x) __builtin_expect(!!(x), 0)

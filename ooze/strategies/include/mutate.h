@@ -1,3 +1,6 @@
+#ifndef MUTATE_H
+#define MUTATE_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -17,8 +20,8 @@
 #include <string.h>
 
 #include "afl_config.h"
-#include "ooze.h"
 #include "common/types.h"
+#include "ooze.h"
 
 #define SWAP16(_x) ({                 \
 	u16 _ret = (_x);                  \
@@ -131,3 +134,5 @@ void four_byte_interesting_be(u8 *buf, u64 pos, u8 which);
 
 void n_byte_copy_and_ins(u8 *buf, size_t size, size_t src_offset, size_t dest_offset, size_t n);
 void n_byte_delete(u8 *buf, size_t size, size_t pos, size_t n);
+
+#endif

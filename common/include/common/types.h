@@ -1,3 +1,6 @@
+#ifndef COMMON_TYPES_H
+#define COMMON_TYPES_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -64,4 +67,6 @@ typedef enum {
 		u32 _bf  = (u32)(_b);                                 \
 		_arf[(_bf) >> (u8)3] ^= ((u8)128 >> ((_bf) & (u8)7)); \
 	} while (0)
+#endif
+
 #endif

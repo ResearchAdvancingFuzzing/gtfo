@@ -1,3 +1,6 @@
+#ifndef AFL_BIT_FLIP_H
+#define AFL_BIT_FLIP_H
+
 // DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
 //
 // This material is based upon work supported by the Department of the Air Force under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Department of the Air Force.
@@ -12,14 +15,14 @@
 
 #pragma once
 #include "afl.h"
+#include "common/types.h"
+#include "det_bit_flip.h"
 #include "det_byte_flip.h"
 #include "det_four_bit_flip.h"
 #include "det_four_byte_flip.h"
 #include "det_two_bit_flip.h"
 #include "det_two_byte_flip.h"
-#include "det_bit_flip.h"
 #include "ooze.h"
-#include "common/types.h"
 
 typedef struct afl_bit_flip_substates {
 
@@ -45,3 +48,5 @@ typedef struct afl_bit_flip_substates {
 } afl_bit_flip_substates;
 
 void afl_bit_flip_populate(fuzzing_strategy *strategy);
+
+#endif
