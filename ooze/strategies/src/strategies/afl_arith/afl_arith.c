@@ -612,16 +612,18 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 		// size will be zero if all substrategies are complete.
 		if(!size)
 			return size;
+		// if the current substrategy is done, or the mutation is a repeat of a bitflip mutation,
+		// restore the original bytes, update the state to the next substrategy, and try mutating again.
+		if(substates->substrategy_complete || could_be_bitflip((u32)buf[pos])) {
+			afl_arith_copy_bytes(&orig_bytes, (void *)&buf[pos], state);
+			afl_arith_update(state);
+			continue;
+		}
 		// if the mutated input is not one that could have been created by the bit flip phase, we're done.
-		if(!could_be_bitflip((u32)buf[pos]))
-			return size;
-		// if we get here, the mutation is a duplicate of one created in the bitflip phase.
-		// restore the original bytes
-		afl_arith_copy_bytes(&orig_bytes, (void *)&buf[pos], state);
-		// update the state so we loop again and do a new mutation.
-		afl_arith_update(state);
+		return size;
 	}
-	return size;
+	// we shouldn't reach this.
+	log_fatal("afl_arith exited mutation loop somehow.");
 }
 
 // this function populates a fuzzing_strategy object with afl_arith's function pointers.
