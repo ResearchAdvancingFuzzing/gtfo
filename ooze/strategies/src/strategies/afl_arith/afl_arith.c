@@ -464,7 +464,9 @@ afl_arith_should_skip_mutation(strategy_state *state, u32 orig_bytes)
 
 	case TWO_BYTE_ARITH_LE:
 		// first two bytes of the original bytes to be mutated
-		orig_bytes_u16 = (u16)(orig_bytes >> 16);
+		orig_bytes_u16 = (u16)(orig_bytes); // >> 16); 
+                //orig_bytes has only 2 bytes copied from copy fn; shifting always makes this 0
+                //can either change copy to all bytes and shift or not shift and just cast 
 		which          = (substates->det_two_byte_arith_le_substate->iteration % (MAX_ARITH * 2));
 		abs_val        = (u16)(which / 2) + 1;
 
@@ -478,7 +480,7 @@ afl_arith_should_skip_mutation(strategy_state *state, u32 orig_bytes)
 		break;
 	case TWO_BYTE_ARITH_BE:
 		// first two bytes of the original bytes to be mutated
-		orig_bytes_u16 = (u16)(orig_bytes >> 16);
+		orig_bytes_u16 = (u16)(orig_bytes); // >> 16);
 		which          = (substates->det_two_byte_arith_be_substate->iteration % (MAX_ARITH * 2));
 		abs_val        = (u16)(which / 2) + 1;
 
@@ -614,7 +616,7 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 			return size;
 		// if the current substrategy is done, or the mutation is a repeat of a bitflip mutation,
 		// restore the original bytes, update the state to the next substrategy, and try mutating again.
-		if (substates->substrategy_complete || could_be_bitflip((u32)buf[pos])) {
+		if (substates->substrategy_complete || could_be_bitflip((u32)(orig_bytes ^ buf[pos]))) {
 			afl_arith_copy_bytes(&orig_bytes, (void *)&buf[pos], state);
 			afl_arith_update(state);
 			continue;
