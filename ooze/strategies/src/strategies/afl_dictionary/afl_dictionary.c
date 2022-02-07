@@ -97,11 +97,11 @@ afl_dictionary_serialize(strategy_state *state)
 	char *s_afl_dictionary_state    = NULL;
 
 	yaml_serializer *helper;
-	size_t total_size;
-	size_t mybuffersize;
+	size_t           total_size;
+	size_t           mybuffersize;
 
 	// First, serialize the topmost dictionary state structure
-	s_state = strategy_state_serialize(state, "afl_dictionary");
+	s_state    = strategy_state_serialize(state, "afl_dictionary");
 	total_size = strlen(s_state);
 
 	// serialize current_strategy header
@@ -131,9 +131,12 @@ afl_dictionary_serialize(strategy_state *state)
 	// concatenate all.
 	strcat(s_afl_dictionary_state, s_state);
 	strcat(s_afl_dictionary_state, s_substrategy_header);
-	if (s_user_overwrite_substate) strcat(s_afl_dictionary_state, s_user_overwrite_substate);
-	if (s_user_insert_substate) strcat(s_afl_dictionary_state, s_user_insert_substate);
-	if (s_auto_overwrite_substate) strcat(s_afl_dictionary_state, s_auto_overwrite_substate);
+	if (s_user_overwrite_substate)
+		strcat(s_afl_dictionary_state, s_user_overwrite_substate);
+	if (s_user_insert_substate)
+		strcat(s_afl_dictionary_state, s_user_insert_substate);
+	if (s_auto_overwrite_substate)
+		strcat(s_afl_dictionary_state, s_auto_overwrite_substate);
 
 	// free these old chunks
 	free(s_state);
@@ -159,24 +162,24 @@ static inline strategy_state *
 afl_dictionary_deserialize(char *serialized_state, size_t serialized_state_size)
 {
 	// create new state object and substates object
-	strategy_state *new_state;
+	strategy_state           *new_state;
 	afl_dictionary_substates *new_substates = calloc(1, sizeof(afl_dictionary_substates));
 
 	// strategy objects, exposes API of substrategies.
 	new_substates->overwrite_strategy = calloc(1, sizeof(fuzzing_strategy));
 	new_substates->insert_strategy    = calloc(1, sizeof(fuzzing_strategy));
-	new_state = strategy_state_deserialize(serialized_state, serialized_state_size);
+	new_state                         = strategy_state_deserialize(serialized_state, serialized_state_size);
 
 	// deserialize substates header
 	yaml_deserializer *helper;
-	char *s_substrategy_header      = strstr(serialized_state, "...") + 4;
+	char              *s_substrategy_header = strstr(serialized_state, "...") + 4;
 
 	helper = yaml_deserializer_init(NULL, s_substrategy_header, serialized_state_size - (size_t)(s_substrategy_header - serialized_state));
 
 	// Get to the document start
 	YAML_DESERIALIZE_PARSE(helper)
 	while (helper->event.type != YAML_DOCUMENT_START_EVENT) {
-	  YAML_DESERIALIZE_EAT(helper)
+		YAML_DESERIALIZE_EAT(helper)
 	}
 
 	YAML_DESERIALIZE_EAT(helper)
@@ -191,37 +194,37 @@ afl_dictionary_deserialize(char *serialized_state, size_t serialized_state_size)
 	// Loop on deserializing states that follow the initial strategy_state and substate_header belonging to afl_dictionary.
 	// Since serialized substates are not manditory, we identify which of three types by the serialized strategy_name.
 
-	char * serialized_substrategy;
+	char *serialized_substrategy;
 
 	for (serialized_substrategy = strstr(s_substrategy_header, "...") + 4;
-	     serialized_substrategy != (void *) 4;
+	     serialized_substrategy != (void *)4;
 	     serialized_substrategy = strstr(serialized_substrategy, "...") + 4) {
 
-	  char substrategy_name[40];
+		char substrategy_name[40];
 
-	  // We ignore cases where a strategy_name is not seen as that is probably part of a dictionary paired with the preceeding strategy.
-	  if (sscanf(serialized_substrategy, "---\nstrategy_name: %s", substrategy_name) == 1) {
+		// We ignore cases where a strategy_name is not seen as that is probably part of a dictionary paired with the preceeding strategy.
+		if (sscanf(serialized_substrategy, "---\nstrategy_name: %s", substrategy_name) == 1) {
 
-	    if (strcmp(substrategy_name, "afl_dictionary_overwrite") == 0) {
+			if (strcmp(substrategy_name, "afl_dictionary_overwrite") == 0) {
 
-	      afl_dictionary_overwrite_populate(new_substates->overwrite_strategy);
-	      new_substates->user_overwrite_substate = new_substates->overwrite_strategy->deserialize(serialized_substrategy, serialized_state_size - (size_t)(serialized_substrategy - serialized_state));
+				afl_dictionary_overwrite_populate(new_substates->overwrite_strategy);
+				new_substates->user_overwrite_substate = new_substates->overwrite_strategy->deserialize(serialized_substrategy, serialized_state_size - (size_t)(serialized_substrategy - serialized_state));
 
-	    } else if (strcmp(substrategy_name, "afl_dictionary_insert") == 0) {
+			} else if (strcmp(substrategy_name, "afl_dictionary_insert") == 0) {
 
-	      afl_dictionary_insert_populate(new_substates->insert_strategy);
-	      new_substates->user_insert_substate = new_substates->insert_strategy->deserialize(serialized_substrategy, serialized_state_size - (size_t)(serialized_substrategy - serialized_state));
+				afl_dictionary_insert_populate(new_substates->insert_strategy);
+				new_substates->user_insert_substate = new_substates->insert_strategy->deserialize(serialized_substrategy, serialized_state_size - (size_t)(serialized_substrategy - serialized_state));
 
-	    } else if (strcmp(substrategy_name, "afl_dictionary_auto_overwrite") == 0) {
+			} else if (strcmp(substrategy_name, "afl_dictionary_auto_overwrite") == 0) {
 
-	      afl_dictionary_insert_populate(new_substates->auto_overwrite_strategy);
-	      new_substates->auto_overwrite_substate = new_substates->auto_overwrite_strategy->deserialize(serialized_substrategy, serialized_state_size - (size_t)(serialized_substrategy - serialized_state));
+				afl_dictionary_insert_populate(new_substates->auto_overwrite_strategy);
+				new_substates->auto_overwrite_substate = new_substates->auto_overwrite_strategy->deserialize(serialized_substrategy, serialized_state_size - (size_t)(serialized_substrategy - serialized_state));
 
-	    } else {
+			} else {
 
-	      fprintf (stderr, "\nUnknown serialized strategy %s seen.\n\n", serialized_substrategy);
-	    }
-	  }
+				fprintf(stderr, "\nUnknown serialized strategy %s seen.\n\n", serialized_substrategy);
+			}
+		}
 	}
 
 	// fixup internal_state pointer.
@@ -312,7 +315,7 @@ afl_dictionary_copy(strategy_state *state)
 {
 	afl_dictionary_substates *substates = (afl_dictionary_substates *)state->internal_state;
 
-	strategy_state *          copy_state     = strategy_state_copy(state);
+	strategy_state           *copy_state     = strategy_state_copy(state);
 	afl_dictionary_substates *copy_substates = calloc(1, sizeof(afl_dictionary_substates));
 
 	copy_substates->current_substrategy  = substates->current_substrategy;
@@ -369,7 +372,7 @@ afl_dictionary_free(strategy_state *state)
 static inline strategy_state *
 afl_dictionary_create(u8 *seed, size_t max_size, ...)
 {
-	strategy_state *          new_state     = strategy_state_create(seed, max_size);
+	strategy_state           *new_state     = strategy_state_create(seed, max_size);
 	afl_dictionary_substates *new_substates = calloc(1, sizeof(afl_dictionary_substates));
 	// get path to files describing dictionaries to use.
 	char *user_dict_file = getenv("USER_DICTIONARY_FILE");

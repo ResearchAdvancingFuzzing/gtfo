@@ -11,9 +11,10 @@
  
 (Delivered to the U.S. Government with Unlimited Rights, as defined in DFARS Part 252.227-7013 or 7014 (Feb 2014). Notwithstanding any copyright notice, U.S. Government rights in this work are defined by DFARS 252.227-7013 or DFARS 252.227-7014 as detailed above. Use of this work other than as specifically authorized by the U.S. Government may violate any copyrights that exist in this work.)
 -->
-# The Fuzz
-This is the beginning of the fuzz 2.0. Here's a rough sketch of how it's going to work.
 
+# The Fuzz
+
+This is the beginning of the fuzz 2.0. Here's a rough sketch of how it's going to work.
 
 ```text
                              +-------------------+
@@ -78,11 +79,13 @@ This is the beginning of the fuzz 2.0. Here's a rough sketch of how it's going t
 # APIs
 
 ## Analysis
+
 Provides an internal analysis for the fuzz (like the AFL bitmap).
 
 ```c
 void (*get_analysis_api)(analysis_api *s);
 ```
+
 Each analysis provides this global function pointer.
 
 Use this function to obtain an instance of an analysis' API.
@@ -97,6 +100,7 @@ const char * description; // A description of the analysis.
 ### Analysis API Functions
 
 #### analysis_add_function
+
 ```c
 bool analysis_add_function(u8 *element, size_t element_size);
 ```
@@ -108,6 +112,7 @@ bool analysis_add_function(u8 *element, size_t element_size);
 ##### Description
 
 #### analysis_init_function
+
 ```c
 void analysis_init_function(char *filename);
 ```
@@ -119,6 +124,7 @@ void analysis_init_function(char *filename);
 ##### Description
 
 #### analysis_save_function
+
 ```c
 void analysis_save_function(char *filename);
 ```
@@ -130,6 +136,7 @@ void analysis_save_function(char *filename);
 ##### Description
 
 #### analysis_destroy_function
+
 ```c
 void analysis_destroy_function(void);
 ```
@@ -141,6 +148,7 @@ void analysis_destroy_function(void);
 ##### Description
 
 #### analysis_merge_function
+
 ```c
 void analysis_merge_function(char *a, char *b, char *merged);
 ```
@@ -154,6 +162,7 @@ void analysis_merge_function(char *a, char *b, char *merged);
 ### Jig API Functions
 
 #### jig_init_function
+
 ```c
 void jig_init_function(void);
 ```
@@ -165,6 +174,7 @@ void jig_init_function(void);
 ##### Description
 
 #### jig_run_function
+
 ```c
 char *jig_run_function(u8 *input, size_t input_size, u8 **results, size_t *results_size);
 ```
@@ -176,6 +186,7 @@ char *jig_run_function(u8 *input, size_t input_size, u8 **results, size_t *resul
 ##### Description
 
 #### jig_destroy_function
+
 ```c
 void jig_destroy_function**(void);
 ```

@@ -42,26 +42,26 @@ afl_havoc_serialize(strategy_state *state)
 {
 	afl_havoc_substates *substates = (afl_havoc_substates *)state->internal_state;
 
-	char *s_state      = NULL;
-	char *s_user_dict  = NULL;
-	char *s_auto_dict  = NULL;
-	char *s_prng_state = NULL;
-	char *s_all        = NULL;
+	char  *s_state      = NULL;
+	char  *s_user_dict  = NULL;
+	char  *s_auto_dict  = NULL;
+	char  *s_prng_state = NULL;
+	char  *s_all        = NULL;
 	size_t total_len;
 
-	s_state = strategy_state_serialize(state, "afl_havoc");
+	s_state   = strategy_state_serialize(state, "afl_havoc");
 	total_len = strlen(s_state);
 
 	s_prng_state = prng_state_serialize(substates->prng_state);
 	total_len += strlen(s_prng_state);
 
 	if (substates->user_dict) {
-	        s_user_dict = dictionary_serialize(substates->user_dict);
+		s_user_dict = dictionary_serialize(substates->user_dict);
 		total_len += strlen(s_user_dict);
 	}
 
 	if (substates->auto_dict) {
-	        s_auto_dict = dictionary_serialize(substates->auto_dict);
+		s_auto_dict = dictionary_serialize(substates->auto_dict);
 		total_len += strlen(s_auto_dict);
 	}
 
@@ -90,25 +90,25 @@ static inline strategy_state *
 afl_havoc_deserialize(char *s_state, size_t s_state_size)
 {
 	afl_havoc_substates *substates = calloc(1, sizeof(afl_havoc_substates));
-	strategy_state *state = strategy_state_deserialize(s_state, s_state_size);
-	char * serialized_substrategy;
+	strategy_state      *state     = strategy_state_deserialize(s_state, s_state_size);
+	char                *serialized_substrategy;
 
 	// prng_state must be present and follow strategy_state.
 	serialized_substrategy = strstr(s_state + 1, "\n---") + 1;
-	substates->prng_state = prng_state_deserialize(serialized_substrategy, s_state_size - (size_t)(serialized_substrategy - s_state));
+	substates->prng_state  = prng_state_deserialize(serialized_substrategy, s_state_size - (size_t)(serialized_substrategy - s_state));
 
 	// if a dictionary follows, it must be the user_dictionary
 	serialized_substrategy = strstr(serialized_substrategy + 1, "\n---") + 1;
-	if (serialized_substrategy != (void *) 1) {
+	if (serialized_substrategy != (void *)1) {
 
-	  substates->user_dict = dictionary_deserialize(serialized_substrategy, s_state_size - (size_t)(serialized_substrategy - s_state));
+		substates->user_dict = dictionary_deserialize(serialized_substrategy, s_state_size - (size_t)(serialized_substrategy - s_state));
 
-	  // if yet another dictionary follows, it must be the auto_dictionary
-	  serialized_substrategy = strstr(serialized_substrategy + 1, "\n---") + 1;
-	  if (serialized_substrategy != (void *) 1) {
+		// if yet another dictionary follows, it must be the auto_dictionary
+		serialized_substrategy = strstr(serialized_substrategy + 1, "\n---") + 1;
+		if (serialized_substrategy != (void *)1) {
 
-	    substates->auto_dict = dictionary_deserialize(serialized_substrategy, s_state_size - (size_t)(serialized_substrategy - s_state));
-	  }
+			substates->auto_dict = dictionary_deserialize(serialized_substrategy, s_state_size - (size_t)(serialized_substrategy - s_state));
+		}
 	}
 
 	state->internal_state = substates;
@@ -166,7 +166,7 @@ afl_havoc_print(strategy_state *state)
 static inline strategy_state *
 afl_havoc_copy(strategy_state *state)
 {
-	strategy_state *     new_state     = strategy_state_copy(state);
+	strategy_state      *new_state     = strategy_state_copy(state);
 	afl_havoc_substates *substates     = (afl_havoc_substates *)state->internal_state;
 	afl_havoc_substates *new_substates = calloc(1, sizeof(afl_havoc_substates));
 
@@ -204,7 +204,7 @@ afl_havoc_free(strategy_state *state)
 static inline strategy_state *
 afl_havoc_create(u8 *seed, size_t max_size, ...)
 {
-	strategy_state *     state     = strategy_state_create(seed, max_size);
+	strategy_state      *state     = strategy_state_create(seed, max_size);
 	afl_havoc_substates *substates = calloc(1, sizeof(afl_havoc_substates));
 	// get path to files describing dictionaries to use.
 	char *user_dict_file = getenv("USER_DICTIONARY_FILE");
@@ -242,14 +242,16 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 	u32 use_stacking = (u8)1 << ((u32)1 + prng_state_UR(prng_state, HAVOC_STACK_POW2));
 
 	u64 mutation_limit = 15;
-	if (substates->user_dict && substates->user_dict->entry_cnt) mutation_limit++;
-	if (substates->auto_dict && substates->auto_dict->entry_cnt) mutation_limit++;
+	if (substates->user_dict && substates->user_dict->entry_cnt)
+		mutation_limit++;
+	if (substates->auto_dict && substates->auto_dict->entry_cnt)
+		mutation_limit++;
 
-	for (i=0; i < use_stacking; i++) {
+	for (i = 0; i < use_stacking; i++) {
 
-	        // exit if buffer has been obliterated.
+		// exit if buffer has been obliterated.
 		if (!size) {
-		  break;
+			break;
 		}
 
 		u64 mutation_choice = prng_state_UR(prng_state, mutation_limit);
@@ -257,13 +259,13 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 
 		// Flip a single bit somewhere
 		case 0: {
-		    bit_flip(buf, prng_state_UR(prng_state, size << 3));
+			bit_flip(buf, prng_state_UR(prng_state, size << 3));
 			break;
 		}
 
 		// set byte to a random interesting value
 		case 1: {
-		    byte_interesting(buf, prng_state_UR(prng_state, size), (u8)prng_state_UR(prng_state, 256));
+			byte_interesting(buf, prng_state_UR(prng_state, size), (u8)prng_state_UR(prng_state, 256));
 			break;
 		}
 
@@ -295,12 +297,12 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 		}
 		// random subtract from byte at random position
 		case 4: {
-		    byte_add(buf, prng_state_UR(prng_state, size), (u8)(-((s8)prng_state_UR(prng_state, MAX_ARITH))));
+			byte_add(buf, prng_state_UR(prng_state, size), (u8)(-((s8)prng_state_UR(prng_state, MAX_ARITH))));
 			break;
 		}
 		// random add to byte at random position
 		case 5: {
-		    byte_add(buf, prng_state_UR(prng_state, size), (u8)prng_state_UR(prng_state, MAX_ARITH));
+			byte_add(buf, prng_state_UR(prng_state, size), (u8)prng_state_UR(prng_state, MAX_ARITH));
 			break;
 		}
 		// random subtract from word, random endian
@@ -356,7 +358,7 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 		}
 		// set a random byte to rand value
 		case 10: {
-		    byte_replace(buf, size, prng_state_UR(prng_state, size), (u8)1 + (u8)prng_state_UR(prng_state, 255));
+			byte_replace(buf, size, prng_state_UR(prng_state, size), (u8)1 + (u8)prng_state_UR(prng_state, 255));
 			break;
 		}
 		// delete bytes
@@ -454,11 +456,11 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 			// Start by assuming the preferred dictionary for case 16, user_dict, exists.
 			if (substates->user_dict && substates->user_dict->entry_cnt) {
 				// get a token
-			  entry = (*substates->user_dict->entries)[prng_state_UR(prng_state, substates->user_dict->entry_cnt)];
+				entry = (*substates->user_dict->entries)[prng_state_UR(prng_state, substates->user_dict->entry_cnt)];
 			}
 			// no user dict, so try auto dict if it exists
 			else if (substates->auto_dict && substates->auto_dict->entry_cnt) {
-			  entry = (*substates->auto_dict->entries)[prng_state_UR(prng_state, substates->auto_dict->entry_cnt)];
+				entry = (*substates->auto_dict->entries)[prng_state_UR(prng_state, substates->auto_dict->entry_cnt)];
 			}
 			// neither dict existed with entries.
 			else {
@@ -485,7 +487,7 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 
 			if (substates->auto_dict && substates->auto_dict->entry_cnt) {
 				// get token
-			  entry = (*substates->auto_dict->entries)[prng_state_UR(prng_state, substates->auto_dict->entry_cnt)];
+				entry = (*substates->auto_dict->entries)[prng_state_UR(prng_state, substates->auto_dict->entry_cnt)];
 			}
 			// dictionary was empty
 			else {

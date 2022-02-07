@@ -72,7 +72,7 @@ afl_arith_create(u8 *seed, size_t max_size, ...)
 {
 
 	// create new state and substates objects
-	strategy_state *     new_state = strategy_state_create(seed, max_size);
+	strategy_state      *new_state = strategy_state_create(seed, max_size);
 	afl_arith_substates *substates = calloc(1, sizeof(afl_arith_substates));
 
 	// fill in substates
@@ -121,7 +121,7 @@ afl_arith_serialize(strategy_state *state)
 	char *s_det_four_byte_arith_be_substate = substates->det_four_byte_arith_be_strategy->serialize(substates->det_four_byte_arith_be_substate);
 
 	yaml_serializer *helper;
-	size_t mybuffersize;
+	size_t           mybuffersize;
 
 	// serialize base strategy structure
 	s_state = strategy_state_serialize(state, "afl_arith");
@@ -177,7 +177,7 @@ afl_arith_deserialize(char *serialized_state, size_t serialized_state_size)
 	char *s_det_four_byte_arith_be_substate;
 
 	// create new state object and substates object
-	strategy_state *     new_state;
+	strategy_state      *new_state;
 	afl_arith_substates *substates = calloc(1, sizeof(afl_arith_substates));
 
 	new_state = strategy_state_deserialize(serialized_state, serialized_state_size);
@@ -198,7 +198,7 @@ afl_arith_deserialize(char *serialized_state, size_t serialized_state_size)
 	// Get to the document start
 	YAML_DESERIALIZE_PARSE(helper)
 	while (helper->event.type != YAML_DOCUMENT_START_EVENT) {
-	  YAML_DESERIALIZE_EAT(helper)
+		YAML_DESERIALIZE_EAT(helper)
 	}
 
 	YAML_DESERIALIZE_EAT(helper)
@@ -352,7 +352,6 @@ afl_arith_free_state(strategy_state *state)
 		substates->det_four_byte_arith_le_strategy->free_state(substates->det_four_byte_arith_le_substate);
 		substates->det_four_byte_arith_be_strategy->free_state(substates->det_four_byte_arith_be_substate);
 
-
 		// free fuzzing_strategies
 		free(substates->det_byte_arith_strategy);
 		free(substates->det_two_byte_arith_le_strategy);
@@ -368,9 +367,9 @@ afl_arith_free_state(strategy_state *state)
 	}
 }
 
-
 static inline u64
-afl_arith_get_pos(strategy_state *state) {
+afl_arith_get_pos(strategy_state *state)
+{
 	afl_arith_substates *substates = (afl_arith_substates *)state->internal_state;
 
 	u64 pos = 0;
@@ -404,7 +403,8 @@ afl_arith_get_pos(strategy_state *state) {
 }
 
 static inline void
-afl_arith_copy_bytes(u32 * src, u32 * dest, strategy_state *state) {
+afl_arith_copy_bytes(u32 *src, u32 *dest, strategy_state *state)
+{
 	afl_arith_substates *substates = (afl_arith_substates *)state->internal_state;
 
 	switch (substates->current_substrategy) {
@@ -431,11 +431,11 @@ afl_arith_check_pos(u64 pos, strategy_state *state)
 {
 	afl_arith_substates *substates = (afl_arith_substates *)state->internal_state;
 
-	switch(substates->current_substrategy){
+	switch (substates->current_substrategy) {
 	case BYTE_ARITH:
 		return pos >= state->max_size;
 	case TWO_BYTE_ARITH_LE:
-		return pos +2 > state->max_size;
+		return pos + 2 > state->max_size;
 	case TWO_BYTE_ARITH_BE:
 		return pos + 2 > state->max_size;
 	case FOUR_BYTE_ARITH_LE:
@@ -453,23 +453,23 @@ static inline bool
 afl_arith_should_skip_mutation(strategy_state *state, u32 orig_bytes)
 {
 	afl_arith_substates *substates = (afl_arith_substates *)state->internal_state;
-	u8 which;
-	u16 abs_val;
-	u16 orig_bytes_u16;
+	u8                   which;
+	u16                  abs_val;
+	u16                  orig_bytes_u16;
 
-	switch(substates->current_substrategy) {
+	switch (substates->current_substrategy) {
 
 	case BYTE_ARITH:
 		return false;
 
 	case TWO_BYTE_ARITH_LE:
 		// first two bytes of the original bytes to be mutated
-		orig_bytes_u16 = (u16) (orig_bytes >> 16);
-		which = (substates->det_two_byte_arith_le_substate->iteration % (MAX_ARITH * 2));
-		abs_val = (u16)(which / 2) + 1;
+		orig_bytes_u16 = (u16)(orig_bytes >> 16);
+		which          = (substates->det_two_byte_arith_le_substate->iteration % (MAX_ARITH * 2));
+		abs_val        = (u16)(which / 2) + 1;
 
 		// if we're doing addition,and addition would cause an overflow of the first byte, we should not skip
-		if(!(which % 2) && (orig_bytes_u16 & 0xFF) + abs_val > 0xFF)
+		if (!(which % 2) && (orig_bytes_u16 & 0xFF) + abs_val > 0xFF)
 			return false;
 		// if we're doing subtraction, and subtraction would cause an underflow of the first byte, we should not skip.
 		if ((which % 2) && (orig_bytes_u16 & 0xFF) < abs_val)
@@ -478,12 +478,12 @@ afl_arith_should_skip_mutation(strategy_state *state, u32 orig_bytes)
 		break;
 	case TWO_BYTE_ARITH_BE:
 		// first two bytes of the original bytes to be mutated
-		orig_bytes_u16 = (u16) (orig_bytes >> 16);
-		which = (substates->det_two_byte_arith_be_substate->iteration % (MAX_ARITH * 2));
-		abs_val = (u16)(which / 2) + 1;
+		orig_bytes_u16 = (u16)(orig_bytes >> 16);
+		which          = (substates->det_two_byte_arith_be_substate->iteration % (MAX_ARITH * 2));
+		abs_val        = (u16)(which / 2) + 1;
 
 		// if we're doing addition,and addition would cause an overflow of the first byte, we should not skip
-		if(!(which % 2) && ((orig_bytes_u16 >> 8) + abs_val) > 0xFF)
+		if (!(which % 2) && ((orig_bytes_u16 >> 8) + abs_val) > 0xFF)
 			return false;
 		// if we're doing subtraction, and subtraction would cause an underflow of the first byte, we should not skip.
 		if ((which % 2) && ((orig_bytes_u16 >> 8) < abs_val))
@@ -492,11 +492,11 @@ afl_arith_should_skip_mutation(strategy_state *state, u32 orig_bytes)
 		break;
 
 	case FOUR_BYTE_ARITH_LE:
-		which = (substates->det_four_byte_arith_le_substate->iteration % (MAX_ARITH * 2));
+		which   = (substates->det_four_byte_arith_le_substate->iteration % (MAX_ARITH * 2));
 		abs_val = (u16)(which / 2) + 1;
 
 		// if we're doing addition,and addition would cause an overflow of the first two bytes, we should not skip
-		if(!(which % 2) && ((orig_bytes & 0xFFFF) + abs_val) > 0xFFFF)
+		if (!(which % 2) && ((orig_bytes & 0xFFFF) + abs_val) > 0xFFFF)
 			return false;
 		// if we're doing subtraction, and subtraction would cause an underflow of the first two bytes, we should not skip.
 		if ((which % 2) && (orig_bytes & 0xFFFF) < abs_val)
@@ -505,11 +505,11 @@ afl_arith_should_skip_mutation(strategy_state *state, u32 orig_bytes)
 		break;
 
 	case FOUR_BYTE_ARITH_BE:
-		which = (substates->det_four_byte_arith_be_substate->iteration % (MAX_ARITH * 2));
+		which   = (substates->det_four_byte_arith_be_substate->iteration % (MAX_ARITH * 2));
 		abs_val = (u16)(which / 2) + 1;
 
 		// if we're doing addition,and addition would cause an overflow of the first two bytes, we should not skip
-		if(!(which % 2) && ((SWAP32(orig_bytes) & 0xFFFF) + abs_val) > 0xFFFF)
+		if (!(which % 2) && ((SWAP32(orig_bytes) & 0xFFFF) + abs_val) > 0xFFFF)
 			return false;
 		// if we're doing subtraction, and subtraction would cause an underflow of the first two bytes, we should not skip.
 		if ((which % 2) && (SWAP32(orig_bytes) & 0xFFFF) < abs_val)
@@ -524,17 +524,17 @@ afl_arith_should_skip_mutation(strategy_state *state, u32 orig_bytes)
 static inline size_t
 afl_arith(u8 *buf, size_t size, strategy_state *state)
 {
-	afl_arith_substates *substates = (afl_arith_substates *)state->internal_state;
-	size_t orig_size = size;
-	u32 orig_bytes = 0;
+	afl_arith_substates *substates  = (afl_arith_substates *)state->internal_state;
+	size_t               orig_size  = size;
+	u32                  orig_bytes = 0;
 	// get initial position
-	u64 pos = 0;
+	u64  pos         = 0;
 	bool pos_changed = true;
 
-	while(size) {
+	while (size) {
 		u64 new_pos = afl_arith_get_pos(state);
 		// check for position change, if position changed, we need to update orig_bytes later.
-		if(pos != new_pos) {
+		if (pos != new_pos) {
 			pos         = new_pos;
 			pos_changed = true;
 		}
@@ -553,7 +553,7 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 		}
 		// if doing a two or four byte strategy, check for mutations that could have been produced by
 		// previous arith strategies.
-		if(substates->current_substrategy > BYTE_ARITH && afl_arith_should_skip_mutation(state, orig_bytes)) {
+		if (substates->current_substrategy > BYTE_ARITH && afl_arith_should_skip_mutation(state, orig_bytes)) {
 			afl_arith_update(state);
 			continue;
 		}
@@ -610,11 +610,11 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 			break;
 		}
 		// size will be zero if all substrategies are complete.
-		if(!size)
+		if (!size)
 			return size;
 		// if the current substrategy is done, or the mutation is a repeat of a bitflip mutation,
 		// restore the original bytes, update the state to the next substrategy, and try mutating again.
-		if(substates->substrategy_complete || could_be_bitflip((u32)buf[pos])) {
+		if (substates->substrategy_complete || could_be_bitflip((u32)buf[pos])) {
 			afl_arith_copy_bytes(&orig_bytes, (void *)&buf[pos], state);
 			afl_arith_update(state);
 			continue;

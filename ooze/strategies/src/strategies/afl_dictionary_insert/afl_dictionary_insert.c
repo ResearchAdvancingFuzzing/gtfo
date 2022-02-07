@@ -31,7 +31,7 @@ afl_dictionary_insert_serialize(strategy_state *state)
 {
 	// serialize the state, and the dictionary
 	char *serialized_state = strategy_state_serialize(state, "afl_dictionary_insert");
-	char *serialized_dict = dictionary_serialize((dictionary *)state->internal_state);
+	char *serialized_dict  = dictionary_serialize((dictionary *)state->internal_state);
 
 	// get their serialized lengths
 	size_t s_state_len = strlen(serialized_state);
@@ -57,7 +57,7 @@ static inline strategy_state *
 afl_dictionary_insert_deserialize(char *serialized, size_t serialized_state_size)
 {
 	// get ptrs to serialized state and serialized dict
-        char *s_dict = strstr(serialized, "...") + 4;
+	char *s_dict = strstr(serialized, "...") + 4;
 
 	strategy_state *state = strategy_state_deserialize(serialized, serialized_state_size);
 	dictionary     *dict  = dictionary_deserialize(s_dict, serialized_state_size - (size_t)(s_dict - serialized));
@@ -72,9 +72,9 @@ static inline char *
 afl_dictionary_insert_print(strategy_state *state)
 {
 	dictionary *dict          = (dictionary *)state->internal_state;
-	char *      printed_state = strategy_state_print(state, "afl_dictionary_insert");
-	char *      printed_dict  = dictionary_print(dict);
-	char *      printed_both  = calloc(1, strlen(printed_state) + strlen(printed_dict) + 1);
+	char       *printed_state = strategy_state_print(state, "afl_dictionary_insert");
+	char       *printed_dict  = dictionary_print(dict);
+	char       *printed_both  = calloc(1, strlen(printed_state) + strlen(printed_dict) + 1);
 	strcat(printed_both, printed_state);
 	strcat(printed_both, printed_dict);
 
@@ -127,7 +127,7 @@ static inline size_t
 afl_dictionary_insert(u8 *buf, size_t size, strategy_state *state)
 {
 
-	dictionary *      dict  = (dictionary *)state->internal_state;
+	dictionary       *dict  = (dictionary *)state->internal_state;
 	u32               pos   = (u32)(state->iteration / dict->entry_cnt);
 	u32               which = (u32)(state->iteration % dict->entry_cnt);
 	dictionary_entry *entry = (*dict->entries)[which];

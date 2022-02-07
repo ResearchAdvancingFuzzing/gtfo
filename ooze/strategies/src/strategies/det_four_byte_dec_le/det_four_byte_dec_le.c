@@ -47,18 +47,18 @@ det_four_byte_dec_le(u8 *buf, size_t size, strategy_state *state)
 void
 det_four_byte_dec_le_populate(fuzzing_strategy *strategy)
 {
-	strategy->version      = VERSION_ONE;
-	strategy->name         = "det_four_byte_dec_le";
-	strategy->create_state = strategy_state_create;
-	strategy->mutate       = det_four_byte_dec_le;
-	strategy->serialize    = det_four_byte_dec_le_serialize;
-	strategy->deserialize  = strategy_state_deserialize;
-	strategy->print_state  = det_four_byte_dec_le_print;
-	strategy->copy_state   = strategy_state_copy;
-	strategy->free_state   = strategy_state_free;
-	strategy->description  = "Deterministically decrements four bytes in the buffer. "
-	                        "The four bytes in question are treated as a single little-endian integer. "
-	                        "it moves forward a single byte position in the buffer and repeats.";
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "det_four_byte_dec_le";
+	strategy->create_state     = strategy_state_create;
+	strategy->mutate           = det_four_byte_dec_le;
+	strategy->serialize        = det_four_byte_dec_le_serialize;
+	strategy->deserialize      = strategy_state_deserialize;
+	strategy->print_state      = det_four_byte_dec_le_print;
+	strategy->copy_state       = strategy_state_copy;
+	strategy->free_state       = strategy_state_free;
+	strategy->description      = "Deterministically decrements four bytes in the buffer. "
+	                             "The four bytes in question are treated as a single little-endian integer. "
+	                             "it moves forward a single byte position in the buffer and repeats.";
 	strategy->update_state     = strategy_state_update;
 	strategy->is_deterministic = true;
 }

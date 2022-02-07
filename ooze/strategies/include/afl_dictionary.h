@@ -20,7 +20,7 @@
 typedef struct afl_dictionary_substates {
 	u8              current_substrategy;
 	u8              substrategy_complete;
-	char            pad[sizeof(void (*)(void)) - sizeof(u8) * 2];
+	char            pad[sizeof(void(*)(void)) - sizeof(u8) * 2];
 	strategy_state *user_overwrite_substate;
 	strategy_state *user_insert_substate;
 	strategy_state *auto_overwrite_substate;

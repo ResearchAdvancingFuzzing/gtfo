@@ -15,10 +15,10 @@
 #include "common/types.h"
 
 /*
-	A sized buffer is simply a chunk of memory and an amount of content.
+    A sized buffer is simply a chunk of memory and an amount of content.
 */
 typedef struct sized_buffer {
-	u8 *   content;
+	u8    *content;
 	size_t content_size;
 } sized_buffer;
 

@@ -17,31 +17,31 @@
 #include "common/types.h"
 
 /*
-	These functions are used to manipulate common strategy_state objects (defined in ooze.h).
+    These functions are used to manipulate common strategy_state objects (defined in ooze.h).
 */
 
 // These macro wraps the strategy_state_print/serialize functions.
 // We do this so that the fuzzing_strategy->print_state/serialize function pointers
 // only need to take one argument.
 
-#define PRINT_FUNC(func_name, strategy_name)                       \
-	static inline char *                                       \
-	func_name(strategy_state *state)                           \
-	{                                                          \
+#define PRINT_FUNC(func_name, strategy_name)               \
+	static inline char *                                   \
+	func_name(strategy_state *state)                       \
+	{                                                      \
 		return strategy_state_print(state, strategy_name); \
 	}
 
-#define SERIALIZE_FUNC(func_name, strategy_name)                       \
-	static inline char *                                           \
-	func_name(strategy_state *state)                               \
-	{                                                              \
+#define SERIALIZE_FUNC(func_name, strategy_name)               \
+	static inline char *                                       \
+	func_name(strategy_state *state)                           \
+	{                                                          \
 		return strategy_state_serialize(state, strategy_name); \
 	}
 
 strategy_state *strategy_state_copy(strategy_state *state);
 void            strategy_state_free(strategy_state *state);
-char *          strategy_state_serialize(strategy_state *state, char * name);
+char           *strategy_state_serialize(strategy_state *state, char *name);
 strategy_state *strategy_state_deserialize(char *s_state_buffer, size_t s_state_buffer_size);
-char *          strategy_state_print(strategy_state *state, char * strategy_name);
+char           *strategy_state_print(strategy_state *state, char *strategy_name);
 void            strategy_state_update(strategy_state *state);
 strategy_state *strategy_state_create(u8 *seed, size_t max_size, ...);

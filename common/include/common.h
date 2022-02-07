@@ -24,6 +24,6 @@
 #include "intel_pt/pt_cpuid.h"
 #include "intel_pt/pt_version.h"
 
-int pt_inst_decode(uint8_t *trace_buffer, size_t trace_size, read_memory_callback_t *read_image_callback, void *context);
+int  pt_inst_decode(uint8_t *trace_buffer, size_t trace_size, read_memory_callback_t *read_image_callback, void *context);
 void pt_packet_decode(unsigned char *trace_buffer, size_t trace_size);
 #endif

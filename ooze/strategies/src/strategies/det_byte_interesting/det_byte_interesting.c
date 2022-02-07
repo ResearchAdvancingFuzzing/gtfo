@@ -45,20 +45,20 @@ det_byte_interesting(u8 *buf, size_t size, strategy_state *state)
 void
 det_byte_interesting_populate(fuzzing_strategy *strategy)
 {
-	strategy->version      = VERSION_ONE;
-	strategy->name         = "det_byte_interesting";
-	strategy->create_state = strategy_state_create;
-	strategy->mutate       = det_byte_interesting;
-	strategy->serialize    = det_byte_interesting_serialize;
-	strategy->deserialize  = strategy_state_deserialize;
-	strategy->print_state  = det_byte_interesting_print;
-	strategy->copy_state   = strategy_state_copy;
-	strategy->free_state   = strategy_state_free;
-	strategy->description  = "Deterministically replace a byte with an interesting value. "
-	                        "This strategy iterates through the INTERESTING_8 values. "
-	                        "INTERESTING_8 is defined in afl_config.h. "
-	                        "It replaces a byte with a single value, depending on the iteration number. "
-	                        "Once it is done iterating through the values, it moves to the next byte in the buffer and repeats.";
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "det_byte_interesting";
+	strategy->create_state     = strategy_state_create;
+	strategy->mutate           = det_byte_interesting;
+	strategy->serialize        = det_byte_interesting_serialize;
+	strategy->deserialize      = strategy_state_deserialize;
+	strategy->print_state      = det_byte_interesting_print;
+	strategy->copy_state       = strategy_state_copy;
+	strategy->free_state       = strategy_state_free;
+	strategy->description      = "Deterministically replace a byte with an interesting value. "
+	                             "This strategy iterates through the INTERESTING_8 values. "
+	                             "INTERESTING_8 is defined in afl_config.h. "
+	                             "It replaces a byte with a single value, depending on the iteration number. "
+	                             "Once it is done iterating through the values, it moves to the next byte in the buffer and repeats.";
 	strategy->update_state     = strategy_state_update;
 	strategy->is_deterministic = true;
 }

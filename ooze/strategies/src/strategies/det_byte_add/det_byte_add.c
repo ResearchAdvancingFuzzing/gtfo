@@ -47,19 +47,19 @@ det_byte_add(u8 *buf, size_t size, strategy_state *state)
 void
 det_byte_add_populate(fuzzing_strategy *strategy)
 {
-	strategy->version      = VERSION_ONE;
-	strategy->name         = "det_byte_add";
-	strategy->create_state = strategy_state_create;
-	strategy->mutate       = det_byte_add;
-	strategy->serialize    = det_byte_add_serialize;
-	strategy->deserialize  = strategy_state_deserialize;
-	strategy->print_state  = det_byte_add_print;
-	strategy->copy_state   = strategy_state_copy;
-	strategy->free_state   = strategy_state_free;
-	strategy->description  = "Deterministically adds a number to a byte. "
-	                        "This strategy iterates through the range {1, UCHAR_MAX}. "
-	                        "It adds a single value from the range, depending on the iteration number. "
-	                        "Once it is done iterating through the range, it moves to the next byte in the buffer and repeats.";
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "det_byte_add";
+	strategy->create_state     = strategy_state_create;
+	strategy->mutate           = det_byte_add;
+	strategy->serialize        = det_byte_add_serialize;
+	strategy->deserialize      = strategy_state_deserialize;
+	strategy->print_state      = det_byte_add_print;
+	strategy->copy_state       = strategy_state_copy;
+	strategy->free_state       = strategy_state_free;
+	strategy->description      = "Deterministically adds a number to a byte. "
+	                             "This strategy iterates through the range {1, UCHAR_MAX}. "
+	                             "It adds a single value from the range, depending on the iteration number. "
+	                             "Once it is done iterating through the range, it moves to the next byte in the buffer and repeats.";
 	strategy->update_state     = strategy_state_update;
 	strategy->is_deterministic = true;
 }

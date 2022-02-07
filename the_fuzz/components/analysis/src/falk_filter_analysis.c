@@ -20,7 +20,7 @@
 #include "common/logger.h"
 #include "common/types.h"
 
-static u8 *   analysis_buffer;
+static u8    *analysis_buffer;
 static size_t analysis_buffer_size;
 
 // this should be replaces with a Bloom filter / Quotient filter
@@ -114,9 +114,9 @@ falkhash(void *pbuf, uint64_t len, uint64_t pseed)
 static __m128i
 hash_func128(void *to_hash, size_t size)
 {
-	volatile __m128i hash;
-	hash = falkhash(to_hash, size, 0x1337133713371337ULL);
-	return hash;
+        volatile __m128i hash;
+        hash = falkhash(to_hash, size, 0x1337133713371337ULL);
+        return hash;
 }
 */
 static u64
@@ -233,5 +233,5 @@ create_analysis(analysis_api *s)
 	s->merge       = bit_merge;
 }
 
-analysis_api_getter get_analysis_api = create_analysis;
+analysis_api_getter      get_analysis_api = create_analysis;
 #pragma clang diagnostic pop

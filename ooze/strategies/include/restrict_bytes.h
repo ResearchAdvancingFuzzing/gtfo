@@ -15,5 +15,4 @@
 #include "ooze.h"
 #include "strategy.h"
 
-
 void restrict_bytes_populate(fuzzing_strategy *strategy);

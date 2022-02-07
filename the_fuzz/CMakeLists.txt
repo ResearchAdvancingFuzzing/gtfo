@@ -18,21 +18,21 @@ set(CMAKE_C_FLAGS_DEBUG "-Werror -Wno-padded -O0 -ggdb3 -maes -msse4.2 -march=na
 set(CMAKE_C_FLAGS "-Werror -Wno-padded -Ofast -flto -fno-common -maes -msse4.2 -march=native -std=c11")
 
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -Weverything -Wno-unknown-warning-option")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Weverything -Wno-unknown-warning-option")
-else()
-  message(FATAL_ERROR "UNSUPPORTED COMPILER ${CMAKE_C_COMPILER_ID}, exiting.")
-  return()
-endif()
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -Weverything -Wno-unknown-warning-option")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Weverything -Wno-unknown-warning-option")
+else ()
+    message(FATAL_ERROR "UNSUPPORTED COMPILER ${CMAKE_C_COMPILER_ID}, exiting.")
+    return()
+endif ()
 
 set(LIB_SUFFIX ".so")
 add_definitions(-D_GNU_SOURCE)
 
 include_directories(
-	"${CMAKE_CURRENT_SOURCE_DIR}/../ooze/include"
-	"${CMAKE_CURRENT_SOURCE_DIR}/../common/include"
-	"${CMAKE_CURRENT_SOURCE_DIR}/components/analysis/include"
-	"${CMAKE_CURRENT_SOURCE_DIR}/components/jig/include"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../ooze/include"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../common/include"
+        "${CMAKE_CURRENT_SOURCE_DIR}/components/analysis/include"
+        "${CMAKE_CURRENT_SOURCE_DIR}/components/jig/include"
 )
 
 add_executable(the_fuzz "${CMAKE_CURRENT_SOURCE_DIR}/components/the_fuzz/the_fuzz.c")
@@ -43,8 +43,8 @@ install(TARGETS the_fuzz DESTINATION bin)
 
 # Avoid cmake error from attempting to build gtfo_common.so twice due to an add_subdirectory of this CMakeLists.txt file into another.
 if (NOT TARGET gtfo_common)
-  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../common" "${CMAKE_CURRENT_SOURCE_DIR}/../common/build")
-endif()
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../common" "${CMAKE_CURRENT_SOURCE_DIR}/../common/build")
+endif ()
 
 # BEGIN Analysis library build rules
 

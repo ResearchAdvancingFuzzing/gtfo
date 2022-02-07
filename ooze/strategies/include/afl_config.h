@@ -13,10 +13,10 @@
 #pragma once
 
 /*
-	This file holds customizeable options that are used by afl-inspired strategies.
+    This file holds customizeable options that are used by afl-inspired strategies.
 */
 
-#define INTERESTING_8                                          \
+#define INTERESTING_8                                      \
 	-128,    /* Overflow signed 8-bit when decremented  */ \
 	    -1,  /*                                         */ \
 	    0,   /*                                         */ \
@@ -27,7 +27,7 @@
 	    100, /* One-off with common buffer size         */ \
 	    127  /* Overflow signed 8-bit when incremented  */
 
-#define INTERESTING_16                                          \
+#define INTERESTING_16                                      \
 	-32768,   /* Overflow signed 16-bit when decremented */ \
 	    -129, /* Overflow signed 8-bit                   */ \
 	    128,  /* Overflow signed 8-bit                   */ \
@@ -39,7 +39,7 @@
 	    4096, /* One-off with common buffer size         */ \
 	    32767 /* Overflow signed 16-bit when incremented */
 
-#define INTERESTING_32                                                \
+#define INTERESTING_32                                            \
 	-2147483648LL,  /* Overflow signed 32-bit when decremented */ \
 	    -100663046, /* Large negative number (endian-agnostic) */ \
 	    -32769,     /* Overflow signed 16-bit                  */ \

@@ -82,7 +82,7 @@ afl_bit_flip_create(u8 *seed, size_t max_size, ...)
 {
 
 	// create new state and substates objects
-	strategy_state *        new_state = strategy_state_create(seed, max_size);
+	strategy_state         *new_state = strategy_state_create(seed, max_size);
 	afl_bit_flip_substates *substates = calloc(1, sizeof(afl_bit_flip_substates));
 
 	// fill in substates
@@ -106,7 +106,7 @@ afl_bit_flip_create(u8 *seed, size_t max_size, ...)
 	det_four_byte_flip_populate(substates->det_four_byte_flip_strategy);
 
 	// create substates
-	substates->det_bit_flip_substate   = substates->det_bit_flip_strategy->create_state(seed, max_size);
+	substates->det_bit_flip_substate       = substates->det_bit_flip_strategy->create_state(seed, max_size);
 	substates->det_two_bit_flip_substate   = substates->det_two_bit_flip_strategy->create_state(seed, max_size);
 	substates->det_four_bit_flip_substate  = substates->det_four_bit_flip_strategy->create_state(seed, max_size);
 	substates->det_byte_flip_substate      = substates->det_byte_flip_strategy->create_state(seed, max_size);
@@ -127,7 +127,7 @@ afl_bit_flip_serialize(strategy_state *state)
 	// serialize all of the strategy states
 	char *s_state                       = NULL;
 	char *s_substrategy_header          = NULL;
-	char *s_det_bit_flip_substate   = substates->det_bit_flip_strategy->serialize(substates->det_bit_flip_substate);
+	char *s_det_bit_flip_substate       = substates->det_bit_flip_strategy->serialize(substates->det_bit_flip_substate);
 	char *s_det_two_bit_flip_substate   = substates->det_two_bit_flip_strategy->serialize(substates->det_two_bit_flip_substate);
 	char *s_det_four_bit_flip_substate  = substates->det_four_bit_flip_strategy->serialize(substates->det_four_bit_flip_substate);
 	char *s_det_byte_flip_substate      = substates->det_byte_flip_strategy->serialize(substates->det_byte_flip_substate);
@@ -135,12 +135,12 @@ afl_bit_flip_serialize(strategy_state *state)
 	char *s_det_four_byte_flip_substate = substates->det_four_byte_flip_strategy->serialize(substates->det_four_byte_flip_substate);
 
 	// serialize base strategy structure
-	s_state = strategy_state_serialize(state, "afl_bit_flip");
+	s_state           = strategy_state_serialize(state, "afl_bit_flip");
 	size_t total_size = strlen(s_state);
 
 	// serialize current_strategy header
 	yaml_serializer *helper;
-	size_t mybuffersize;
+	size_t           mybuffersize;
 
 	helper = yaml_serializer_init("");
 	YAML_SERIALIZE_8HEX_KV(helper, current_substrategy, substates->current_substrategy)
@@ -187,12 +187,12 @@ afl_bit_flip_deserialize(char *serialized_state, size_t serialized_state_size)
 {
 	// pointers to all of the serialized fields and objects
 	char *s_substrategy_header;
-        char *s_det_bit_flip_substate;
-        char *s_det_two_bit_flip_substate;
-        char *s_det_four_bit_flip_substate;
-        char *s_det_byte_flip_substate;
-        char *s_det_two_byte_flip_substate;
-        char *s_det_four_byte_flip_substate;
+	char *s_det_bit_flip_substate;
+	char *s_det_two_bit_flip_substate;
+	char *s_det_four_bit_flip_substate;
+	char *s_det_byte_flip_substate;
+	char *s_det_two_byte_flip_substate;
+	char *s_det_four_byte_flip_substate;
 
 	// create new state object and substates object
 	strategy_state         *new_state;
@@ -218,7 +218,7 @@ afl_bit_flip_deserialize(char *serialized_state, size_t serialized_state_size)
 	// Get to the document start
 	YAML_DESERIALIZE_PARSE(helper)
 	while (helper->event.type != YAML_DOCUMENT_START_EVENT) {
-	  YAML_DESERIALIZE_EAT(helper)
+		YAML_DESERIALIZE_EAT(helper)
 	}
 
 	YAML_DESERIALIZE_EAT(helper)
@@ -231,7 +231,7 @@ afl_bit_flip_deserialize(char *serialized_state, size_t serialized_state_size)
 	yaml_deserializer_end(helper);
 
 	// create empty fuzzing_strategy objects
-	substates->det_bit_flip_strategy   = calloc(1, sizeof(fuzzing_strategy));
+	substates->det_bit_flip_strategy       = calloc(1, sizeof(fuzzing_strategy));
 	substates->det_two_bit_flip_strategy   = calloc(1, sizeof(fuzzing_strategy));
 	substates->det_four_bit_flip_strategy  = calloc(1, sizeof(fuzzing_strategy));
 	substates->det_byte_flip_strategy      = calloc(1, sizeof(fuzzing_strategy));
@@ -247,7 +247,7 @@ afl_bit_flip_deserialize(char *serialized_state, size_t serialized_state_size)
 	det_four_byte_flip_populate(substates->det_four_byte_flip_strategy);
 
 	// deserialize the substates
-	substates->det_bit_flip_substate   = substates->det_bit_flip_strategy->deserialize(s_det_bit_flip_substate, serialized_state_size - (size_t)(s_det_bit_flip_substate - serialized_state));
+	substates->det_bit_flip_substate       = substates->det_bit_flip_strategy->deserialize(s_det_bit_flip_substate, serialized_state_size - (size_t)(s_det_bit_flip_substate - serialized_state));
 	substates->det_two_bit_flip_substate   = substates->det_two_bit_flip_strategy->deserialize(s_det_two_bit_flip_substate, serialized_state_size - (size_t)(s_det_two_bit_flip_substate - serialized_state));
 	substates->det_four_bit_flip_substate  = substates->det_four_bit_flip_strategy->deserialize(s_det_four_bit_flip_substate, serialized_state_size - (size_t)(s_det_four_bit_flip_substate - serialized_state));
 	substates->det_byte_flip_substate      = substates->det_byte_flip_strategy->deserialize(s_det_byte_flip_substate, serialized_state_size - (size_t)(s_det_byte_flip_substate - serialized_state));
@@ -269,7 +269,7 @@ afl_bit_flip_print(strategy_state *state)
 
 	// serialize all of the strategy states
 	char *p_state                       = strategy_state_print(state, "afl_bit_flip");
-	char *p_det_bit_flip_substate   = substates->det_bit_flip_strategy->print_state(substates->det_bit_flip_substate);
+	char *p_det_bit_flip_substate       = substates->det_bit_flip_strategy->print_state(substates->det_bit_flip_substate);
 	char *p_det_two_bit_flip_substate   = substates->det_two_bit_flip_strategy->print_state(substates->det_two_bit_flip_substate);
 	char *p_det_four_bit_flip_substate  = substates->det_four_bit_flip_strategy->print_state(substates->det_four_bit_flip_substate);
 	char *p_det_byte_flip_substate      = substates->det_byte_flip_strategy->print_state(substates->det_byte_flip_substate);
@@ -339,7 +339,7 @@ afl_bit_flip_copy(strategy_state *state)
 	substates_copy->substrategy_complete = substates->substrategy_complete;
 
 	// create empty fuzzing_strategy objects
-	substates_copy->det_bit_flip_strategy   = calloc(1, sizeof(fuzzing_strategy));
+	substates_copy->det_bit_flip_strategy       = calloc(1, sizeof(fuzzing_strategy));
 	substates_copy->det_two_bit_flip_strategy   = calloc(1, sizeof(fuzzing_strategy));
 	substates_copy->det_four_bit_flip_strategy  = calloc(1, sizeof(fuzzing_strategy));
 	substates_copy->det_byte_flip_strategy      = calloc(1, sizeof(fuzzing_strategy));
@@ -355,7 +355,7 @@ afl_bit_flip_copy(strategy_state *state)
 	det_four_byte_flip_populate(substates_copy->det_four_byte_flip_strategy);
 
 	// copy the substates
-	substates_copy->det_bit_flip_substate   = substates->det_bit_flip_strategy->copy_state(substates->det_bit_flip_substate);
+	substates_copy->det_bit_flip_substate       = substates->det_bit_flip_strategy->copy_state(substates->det_bit_flip_substate);
 	substates_copy->det_two_bit_flip_substate   = substates->det_two_bit_flip_strategy->copy_state(substates->det_two_bit_flip_substate);
 	substates_copy->det_four_bit_flip_substate  = substates->det_four_bit_flip_strategy->copy_state(substates->det_four_bit_flip_substate);
 	substates_copy->det_byte_flip_substate      = substates->det_byte_flip_strategy->copy_state(substates->det_byte_flip_substate);
@@ -404,29 +404,27 @@ static inline size_t
 afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
 {
 	afl_bit_flip_substates *substates = (afl_bit_flip_substates *)state->internal_state;
-        size_t orig_size = size;
+	size_t                  orig_size = size;
 
 	// invoke the correct substrategy
 	switch (substates->current_substrategy) {
 
-        case BIT_FLIP:
+	case BIT_FLIP:
 		size = substates->det_bit_flip_strategy->mutate(buf, size, substates->det_bit_flip_substate);
 		// if substrategy is complete
 		if (!size) {
 			substates->substrategy_complete = 1;
-                        size = orig_size; // need to reset bc mutation is not complete
-                }
+			size                            = orig_size; // need to reset bc mutation is not complete
+		}
 		break;
-
-
 
 	case TWO_BIT_FLIP:
 		size = substates->det_two_bit_flip_strategy->mutate(buf, size, substates->det_two_bit_flip_substate);
 		// if substrategy is complete
-		if (!size){
+		if (!size) {
 			substates->substrategy_complete = 1;
-                        size = orig_size;
-                }
+			size                            = orig_size;
+		}
 		break;
 
 	case FOUR_BIT_FLIP:
@@ -434,8 +432,8 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
 		// if substrategy is complete
 		if (!size) {
 			substates->substrategy_complete = 1;
-                        size = orig_size;
-                }
+			size                            = orig_size;
+		}
 		break;
 
 	case BYTE_FLIP:
@@ -443,8 +441,8 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
 		// if substrategy is complete
 		if (!size) {
 			substates->substrategy_complete = 1;
-                        size = orig_size;
-                }
+			size                            = orig_size;
+		}
 		break;
 
 	case TWO_BYTE_FLIP:
@@ -452,8 +450,8 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
 		// if substrategy is complete
 		if (!size) {
 			substates->substrategy_complete = 1;
-                        size = orig_size;
-                }
+			size                            = orig_size;
+		}
 		break;
 
 	case FOUR_BYTE_FLIP:
@@ -461,13 +459,13 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
 		// if substrategy is complete
 		if (!size) {
 			substates->substrategy_complete = 1;
-                        //size = orig_size;
-                }
+			// size = orig_size;
+		}
 		break;
 	// no more substrategies left
 	default:
 		// size of 0 signifies mutation is finished.
-                // that is only when FOUR_BYTE_FLIP has completed
+		// that is only when FOUR_BYTE_FLIP has completed
 		size = 0;
 		break;
 	}
@@ -479,18 +477,18 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
 void
 afl_bit_flip_populate(fuzzing_strategy *strategy)
 {
-	strategy->version      = VERSION_ONE;
-	strategy->name         = "afl_bit_flip";
-	strategy->create_state = afl_bit_flip_create;
-	strategy->mutate       = afl_bit_flip;
-	strategy->serialize    = afl_bit_flip_serialize;
-	strategy->deserialize  = afl_bit_flip_deserialize;
-	strategy->print_state  = afl_bit_flip_print;
-	strategy->copy_state   = afl_bit_flip_copy;
-	strategy->free_state   = afl_bit_flip_free_state;
-	strategy->description  = "This strategy combines all of our bit and byte_flip strategies into one strategy. "
-	                        "Note that the single bit flip strategy is excluded. This is because AFL performs instrumentation runs "
-	                        "after each single bit flip to detect dictionary tokens.";
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "afl_bit_flip";
+	strategy->create_state     = afl_bit_flip_create;
+	strategy->mutate           = afl_bit_flip;
+	strategy->serialize        = afl_bit_flip_serialize;
+	strategy->deserialize      = afl_bit_flip_deserialize;
+	strategy->print_state      = afl_bit_flip_print;
+	strategy->copy_state       = afl_bit_flip_copy;
+	strategy->free_state       = afl_bit_flip_free_state;
+	strategy->description      = "This strategy combines all of our bit and byte_flip strategies into one strategy. "
+	                             "Note that the single bit flip strategy is excluded. This is because AFL performs instrumentation runs "
+	                             "after each single bit flip to detect dictionary tokens.";
 	strategy->update_state     = &afl_bit_flip_update;
 	strategy->is_deterministic = true;
 }

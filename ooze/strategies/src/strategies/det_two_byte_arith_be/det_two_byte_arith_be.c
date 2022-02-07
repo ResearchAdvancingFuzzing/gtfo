@@ -28,24 +28,24 @@ static inline size_t
 det_two_byte_arith_be(u8 *buf, size_t size, strategy_state *state)
 {
 	/*
-		for MAX_ARITH = 35,
-		iterations 0 through 69 will add a value to byte 0.
-		iteration 70 will add a value to byte 1.
+	    for MAX_ARITH = 35,
+	    iterations 0 through 69 will add a value to byte 0.
+	    iteration 70 will add a value to byte 1.
 	*/
-	u64 range_len = (MAX_ARITH * 2) ;
+	u64 range_len = (MAX_ARITH * 2);
 	u64 pos       = state->iteration / range_len;
 	if (pos + 2 > state->max_size) {
 		return 0;
 	}
-	//u16 val = (u16)((state->iteration % range_len) - MAX_ARITH);
-	u8 iter = (u8) (state->iteration % range_len);
+	// u16 val = (u16)((state->iteration % range_len) - MAX_ARITH);
+	u8 iter = (u8)(state->iteration % range_len);
 
-	u16 abs_val = (u16) (iter / 2) + 1;
+	u16 abs_val = (u16)(iter / 2) + 1;
 	u16 val;
 
 	if (iter % 2) {
 		val = -(abs_val);
-	}else {
+	} else {
 		val = abs_val;
 	}
 
@@ -60,21 +60,21 @@ det_two_byte_arith_be(u8 *buf, size_t size, strategy_state *state)
 void
 det_two_byte_arith_be_populate(fuzzing_strategy *strategy)
 {
-	strategy->version      = VERSION_ONE;
-	strategy->name         = "det_two_byte_arith_be";
-	strategy->create_state = strategy_state_create;
-	strategy->mutate       = det_two_byte_arith_be;
-	strategy->serialize    = det_two_byte_arith_be_serialize;
-	strategy->deserialize  = strategy_state_deserialize;
-	strategy->print_state  = det_two_byte_arith_be_print;
-	strategy->copy_state   = strategy_state_copy;
-	strategy->free_state   = strategy_state_free;
-	strategy->description  = "Deterministically adds a number to two bytes in the buffer. "
-	                        "The two bytes in question are treated as a single big-endian integer. "
-	                        "This strategy iterates through the range {-MAX_ARITH, MAX_ARITH}. "
-	                        "MAX_ARITH is defined in afl_config.h. "
-	                        "It adds a single value from the range, depending on the iteration number. "
-	                        "Once it is done iterating through the range, it moves to the next byte in the buffer and repeats.";
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "det_two_byte_arith_be";
+	strategy->create_state     = strategy_state_create;
+	strategy->mutate           = det_two_byte_arith_be;
+	strategy->serialize        = det_two_byte_arith_be_serialize;
+	strategy->deserialize      = strategy_state_deserialize;
+	strategy->print_state      = det_two_byte_arith_be_print;
+	strategy->copy_state       = strategy_state_copy;
+	strategy->free_state       = strategy_state_free;
+	strategy->description      = "Deterministically adds a number to two bytes in the buffer. "
+	                             "The two bytes in question are treated as a single big-endian integer. "
+	                             "This strategy iterates through the range {-MAX_ARITH, MAX_ARITH}. "
+	                             "MAX_ARITH is defined in afl_config.h. "
+	                             "It adds a single value from the range, depending on the iteration number. "
+	                             "Once it is done iterating through the range, it moves to the next byte in the buffer and repeats.";
 	strategy->update_state     = strategy_state_update;
 	strategy->is_deterministic = true;
 }

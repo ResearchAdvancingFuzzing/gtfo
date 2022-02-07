@@ -23,7 +23,7 @@
 #define VERSION_ONE_TESTS 4
 
 static fuzzing_strategy strategy;
-static FILE *           test_file;
+static FILE            *test_file;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wused-but-marked-unused"
@@ -41,11 +41,11 @@ iteration_check(int multiplier __attribute__((unused)), int fudge __attribute__(
 static void
 check_mutation(char *serialized_begin_state, size_t serialized_begin_state_size, u8 *input, size_t input_size, u8 *output, size_t output_size)
 {
-	int              retval              = 0;
-	size_t           mutated_size        = 0;
-	char            *diagnostics_buffer  = NULL;
-	strategy_state  *deserialized_state = (*strategy.deserialize)(serialized_begin_state, serialized_begin_state_size);
-	char            *reserialized_state = (*strategy.serialize)(deserialized_state);
+	int             retval             = 0;
+	size_t          mutated_size       = 0;
+	char           *diagnostics_buffer = NULL;
+	strategy_state *deserialized_state = (*strategy.deserialize)(serialized_begin_state, serialized_begin_state_size);
+	char           *reserialized_state = (*strategy.serialize)(deserialized_state);
 
 	// Test the strategy.serialize function, ensuring that the serialized state
 	// matches the one provided in the test file
@@ -93,7 +93,7 @@ check_mutation(char *serialized_begin_state, size_t serialized_begin_state_size,
 		if (input_size != output_size) {
 			debug = true;
 		}
-		compare_result = memcmp(mutated, output, mutated_size) != 0 || memcmp(mutated, input, input_size)  != 0;
+		compare_result = memcmp(mutated, output, mutated_size) != 0 || memcmp(mutated, input, input_size) != 0;
 		ok(compare_result == 0, "mutation check");
 		if (compare_result != 0) {
 			debug = true;
@@ -103,9 +103,9 @@ check_mutation(char *serialized_begin_state, size_t serialized_begin_state_size,
 	// if input was not correctly mutated, do debug printing.
 	if (debug) {
 
-		u8 *  mutated_ptr   = mutated;
-		u8 *  output_ptr    = output;
-		u8 *  input_ptr     = input;
+		u8   *mutated_ptr   = mutated;
+		u8   *output_ptr    = output;
+		u8   *input_ptr     = input;
 		char *printed_state = (*(print_state *)strategy.print_state)(deserialized_state);
 		diagnostics(printed_state);
 		free(printed_state);
@@ -135,7 +135,7 @@ check_mutation(char *serialized_begin_state, size_t serialized_begin_state_size,
 	bool         stateless = true;
 	unsigned int i;
 	for (i = 0; i < 8; i++) {
-	        memset(mutated, 0, deserialized_state->max_size);
+		memset(mutated, 0, deserialized_state->max_size);
 		memcpy(mutated, input, input_size);
 		mutated_size = (*strategy.mutate)(mutated, input_size, deserialized_state);
 		if (memcmp(mutated, output, mutated_size) != 0) {
@@ -220,17 +220,17 @@ test_version_one_strategy(char *testfile_name)
 	while (1) {
 
 		// Line 1: Filename of serialized strategy beginning state data structure(s)
-		char           *begin_state_file_rel         = get_line_from_test_file(test_file);
+		char *begin_state_file_rel = get_line_from_test_file(test_file);
 
 		// Check for end of configuration file
 		if (!begin_state_file_rel) {
-		  break;
+			break;
 		}
 
-		char           *begin_state_file_name        = get_io_file(testfile_name, begin_state_file_rel);
-		char           *serialized_begin_state       = NULL;
-		size_t          serialized_begin_state_size  = 0;
-		strategy_state *deserialized_begin_state     = NULL;
+		char           *begin_state_file_name       = get_io_file(testfile_name, begin_state_file_rel);
+		char           *serialized_begin_state      = NULL;
+		size_t          serialized_begin_state_size = 0;
+		strategy_state *deserialized_begin_state    = NULL;
 
 		if (!begin_state_file_name) {
 			bail_out("Test file has the wrong number of lines.");
@@ -243,12 +243,11 @@ test_version_one_strategy(char *testfile_name)
 		free(begin_state_file_rel);
 		free(begin_state_file_name);
 
-
 		// Line 2: Filename for input data to mutate
-		char  *input_file_rel   = get_line_from_test_file(test_file);
-		char  *input_file_name  = get_io_file(testfile_name, input_file_rel);
-		u8    *input_data       = NULL;
-		size_t input_data_size  = 0;
+		char  *input_file_rel  = get_line_from_test_file(test_file);
+		char  *input_file_name = get_io_file(testfile_name, input_file_rel);
+		u8    *input_data      = NULL;
+		size_t input_data_size = 0;
 
 		if (!input_file_name) {
 			bail_out("Test file has the wrong number of lines.");
@@ -256,16 +255,14 @@ test_version_one_strategy(char *testfile_name)
 
 		read_file(deserialized_begin_state->max_size, input_file_name, &input_data_size, &input_data);
 
-	        free(input_file_rel);
+		free(input_file_rel);
 		free(input_file_name);
 
-
 		// Line 3: Filename for what the mutated output should be
-		char  *output_file_rel    = get_line_from_test_file(test_file);
-		char  *output_file_name   = get_io_file(testfile_name, output_file_rel);
-		u8    *mutated_data       = NULL;
-		size_t mutated_data_size  = 0;
-
+		char  *output_file_rel   = get_line_from_test_file(test_file);
+		char  *output_file_name  = get_io_file(testfile_name, output_file_rel);
+		u8    *mutated_data      = NULL;
+		size_t mutated_data_size = 0;
 
 		if (output_file_name == NULL) {
 			bail_out("Test file has the wrong number of lines.");
@@ -283,7 +280,6 @@ test_version_one_strategy(char *testfile_name)
 
 		free(output_file_rel);
 		free(output_file_name);
-
 
 		// Evaluate the mutation
 		check_mutation(serialized_begin_state, serialized_begin_state_size, input_data, (size_t)input_data_size, mutated_data, (size_t)mutated_data_size);
@@ -306,7 +302,7 @@ main(int argc, char *argv[])
 	void *handle = NULL;
 
 	// Load the fuzzing strategy .so
-	handle       = dlopen(argv[1], RTLD_LAZY);
+	handle      = dlopen(argv[1], RTLD_LAZY);
 	char *error = dlerror();
 	// check that we can open the handle
 	if (error) {
@@ -316,7 +312,7 @@ main(int argc, char *argv[])
 	// Get function pointer to the function that populates the fuzzing_strategy struct
 	get_fuzzing_strategy_function *get_fuzzing_strat;
 	get_fuzzing_strat = (get_fuzzing_strategy_function *)dlsym(handle, "get_fuzzing_strategy");
-	error = dlerror();
+	error             = dlerror();
 	if (error) {
 		bail_out(error);
 	}
@@ -337,10 +333,10 @@ main(int argc, char *argv[])
 	// test the strategy
 	switch (strategy.version) {
 
-	    case VERSION_ONE:
+	case VERSION_ONE:
 		test_version_one_strategy(argv[2]);
 		break;
-	    default:
+	default:
 		bail_out("Unknown Strategy Version");
 	}
 
@@ -349,5 +345,5 @@ main(int argc, char *argv[])
 	return get_exit_code();
 }
 
-#pragma GCC diagnostic pop
+#pragma GCC diagnostic   pop
 #pragma clang diagnostic pop

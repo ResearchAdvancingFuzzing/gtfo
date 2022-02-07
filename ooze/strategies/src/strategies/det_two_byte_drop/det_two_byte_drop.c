@@ -41,18 +41,18 @@ det_two_byte_drop(u8 *buffer, size_t size, strategy_state *state)
 void
 det_two_byte_drop_populate(fuzzing_strategy *strategy)
 {
-	strategy->version      = VERSION_ONE;
-	strategy->name         = "det_two_byte_drop";
-	strategy->create_state = strategy_state_create;
-	strategy->mutate       = det_two_byte_drop;
-	strategy->serialize    = det_two_byte_drop_serialize;
-	strategy->deserialize  = strategy_state_deserialize;
-	strategy->print_state  = det_two_byte_drop_print;
-	strategy->copy_state   = strategy_state_copy;
-	strategy->free_state   = strategy_state_free;
-	strategy->description  = "Deterministically removes two bytes from a buffer. "
-	                        "On the first iteration, it removes the first two bytes and moves up the bytes following it. "
-	                        "On the nth iteration, it removes two bytes at the n pos and moves up the bytes following it.";
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "det_two_byte_drop";
+	strategy->create_state     = strategy_state_create;
+	strategy->mutate           = det_two_byte_drop;
+	strategy->serialize        = det_two_byte_drop_serialize;
+	strategy->deserialize      = strategy_state_deserialize;
+	strategy->print_state      = det_two_byte_drop_print;
+	strategy->copy_state       = strategy_state_copy;
+	strategy->free_state       = strategy_state_free;
+	strategy->description      = "Deterministically removes two bytes from a buffer. "
+	                             "On the first iteration, it removes the first two bytes and moves up the bytes following it. "
+	                             "On the nth iteration, it removes two bytes at the n pos and moves up the bytes following it.";
 	strategy->update_state     = strategy_state_update;
 	strategy->is_deterministic = true;
 }

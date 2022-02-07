@@ -68,16 +68,16 @@ test_version_one(char *test_filename)
 	free(diag);
 	diag = NULL;
 
-	u8 *   results      = NULL;
+	u8    *results      = NULL;
 	size_t results_size = 0;
 	j.initialize();
 	while (1) {
-		char * input_filename = NULL;
-		u8 *   input          = NULL;
+		char  *input_filename = NULL;
+		u8    *input          = NULL;
 		size_t input_size     = 0;
 
-		char * output_filename = NULL;
-		u8 *   output          = NULL;
+		char  *output_filename = NULL;
+		u8    *output          = NULL;
 		size_t output_size     = 0;
 
 		char *run_output = NULL;

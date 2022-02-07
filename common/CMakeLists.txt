@@ -26,35 +26,35 @@ set(CMAKE_C_FLAGS "-Werror -Wno-padded -Ofast -flto -fno-common -maes -msse4.2 -
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 add_library(${LIBRARY_NAME} SHARED
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/logger.c"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/sized_buffer.c"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/yaml_helper.c")
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/logger.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/sized_buffer.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/yaml_helper.c")
 
-install(DIRECTORY DESTINATION gtfo DIRECTORY_PERMISSIONS 
-    OWNER_WRITE OWNER_READ OWNER_EXECUTE
-    GROUP_READ GROUP_EXECUTE
-    WORLD_READ WORLD_EXECUTE)
+install(DIRECTORY DESTINATION gtfo DIRECTORY_PERMISSIONS
+        OWNER_WRITE OWNER_READ OWNER_EXECUTE
+        GROUP_READ GROUP_EXECUTE
+        WORLD_READ WORLD_EXECUTE)
 
 install(FILES
-  "include/common/annotations.h/"
+        "include/common/annotations.h/"
         "include/common.h/"
-  "include/common/definitions.h"
-  "include/common/logger.h"
-  "include/common/sized_buffer.h" DESTINATION gtfo/include/)
+        "include/common/definitions.h"
+        "include/common/logger.h"
+        "include/common/sized_buffer.h" DESTINATION gtfo/include/)
 
 check_symbol_exists(KVM_VMX_PT_SUPPORTED "linux/kvm.h" HAVE_KVM_VMX_PT)
 
 # If our intel-pt kernel patch has been applied to the kernel
 if (HAVE_KVM_VMX_PT)
 
-include_directories("/usr/local/include/xed")
-target_sources(${LIBRARY_NAME} PRIVATE "src/intel_pt/fastdecode.c" "src/intel_pt/ptxed.c" "src/intel_pt/pt_cpu.c" "src/intel_pt/pt_cpuid.c")
-target_link_libraries(${LIBRARY_NAME} yaml /usr/local/lib/libipt.so /usr/local/lib/libxed.so)
+    include_directories("/usr/local/include/xed")
+    target_sources(${LIBRARY_NAME} PRIVATE "src/intel_pt/fastdecode.c" "src/intel_pt/ptxed.c" "src/intel_pt/pt_cpu.c" "src/intel_pt/pt_cpuid.c")
+    target_link_libraries(${LIBRARY_NAME} yaml /usr/local/lib/libipt.so /usr/local/lib/libxed.so)
 
-install(FILES
-  "include/intel_pt/pt_cpu.h"
-  "include/intel_pt/pt_cpuid.h"
-  "include/intel_pt/pt_version.h" DESTINATION gtfo/include/)
+    install(FILES
+            "include/intel_pt/pt_cpu.h"
+            "include/intel_pt/pt_cpuid.h"
+            "include/intel_pt/pt_version.h" DESTINATION gtfo/include/)
 
 endif ()
 
@@ -65,10 +65,10 @@ install(TARGETS ${LIBRARY_NAME}
         PUBLIC_HEADER DESTINATION include)
 
 # This corrects permissions on gtfo/include messed up by "install(FILES...".
-install(DIRECTORY DESTINATION gtfo/include DIRECTORY_PERMISSIONS 
-    OWNER_WRITE OWNER_READ OWNER_EXECUTE
-    GROUP_READ GROUP_EXECUTE
-    WORLD_READ WORLD_EXECUTE)
+install(DIRECTORY DESTINATION gtfo/include DIRECTORY_PERMISSIONS
+        OWNER_WRITE OWNER_READ OWNER_EXECUTE
+        GROUP_READ GROUP_EXECUTE
+        WORLD_READ WORLD_EXECUTE)
 
 # Avoid cmake error from attempting to build gtfo_common.so twice due to an add_subdirectory of this CMakeLists.txt file into another.
 if (NOT TARGET gtfo_common)

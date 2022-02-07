@@ -12,9 +12,8 @@
 
 #include "afl.h"
 
-
 /*
-	This file holds afl-related functions.
+    This file holds afl-related functions.
 */
 
 // This is a helper function to choose a 'block size'
@@ -66,20 +65,28 @@ afl_choose_block_len(prng_state *prng_state, u64 limit)
 	return min_value + prng_state_UR(prng_state, max_value - min_value + 1);
 }
 
-inline u8 could_be_bitflip(u32 xor_val) {
+inline u8
+could_be_bitflip(u32 xor_val)
+{
 
 	u32 sh = 0;
-	if (!xor_val) return 1;
+	if (!xor_val)
+		return 1;
 
 	/* Shift left until first bit set. */
-	while (!(xor_val & 1)) { sh++; xor_val >>= 1; }
+	while (!(xor_val & 1)) {
+		sh++;
+		xor_val >>= 1;
+	}
 
 	/* 1-, 2-, and 4-bit patterns are OK anywhere. */
-	if (xor_val == 1 || xor_val == 3 || xor_val == 15) return 1;
+	if (xor_val == 1 || xor_val == 3 || xor_val == 15)
+		return 1;
 
 	/* 8-, 16-, and 32-bit patterns are OK only if shift factor is
 	   divisible by 8, since that's the stepover for these ops. */
-	if (sh & 7) return 0;
+	if (sh & 7)
+		return 0;
 	if (xor_val == 0xff || xor_val == 0xffff || xor_val == 0xffffffff)
 		return 1;
 
@@ -90,11 +97,14 @@ inline u8 could_be_bitflip(u32 xor_val) {
    arithmetic operations. Used for similar purposes. */
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-statement-expression"
-inline u8 could_be_arith(u32 old_val, u32 new_val, u8 blen) {
+inline u8
+could_be_arith(u32 old_val, u32 new_val, u8 blen)
+{
 
 	u32 i, ov = 0, nv = 0, diffs = 0;
 
-	if (old_val == new_val) return 1;
+	if (old_val == new_val)
+		return 1;
 
 	/* See if one-byte adjustments to any byte could produce this result. */
 
@@ -103,8 +113,11 @@ inline u8 could_be_arith(u32 old_val, u32 new_val, u8 blen) {
 		u8 a = (u8)(old_val >> (8 * i)),
 		   b = (u8)(new_val >> (8 * i));
 
-		if (a != b) { diffs++; ov = a; nv = b; }
-
+		if (a != b) {
+			diffs++;
+			ov = a;
+			nv = b;
+		}
 	}
 
 	/* If only one byte differs and the values are within range, return 1. */
@@ -112,11 +125,12 @@ inline u8 could_be_arith(u32 old_val, u32 new_val, u8 blen) {
 	if (diffs == 1) {
 
 		if ((u8)(ov - nv) <= MAX_ARITH ||
-		    (u8)(nv - ov) <= MAX_ARITH) return 1;
-
+		    (u8)(nv - ov) <= MAX_ARITH)
+			return 1;
 	}
 
-	if (blen == 1) return 0;
+	if (blen == 1)
+		return 0;
 
 	/* See if two-byte adjustments to any byte would produce this result. */
 
@@ -127,8 +141,11 @@ inline u8 could_be_arith(u32 old_val, u32 new_val, u8 blen) {
 		u16 a = (u16)(old_val >> (16 * i)),
 		    b = (u16)(new_val >> (16 * i));
 
-		if (a != b) { diffs++; ov = a; nv = b; }
-
+		if (a != b) {
+			diffs++;
+			ov = a;
+			nv = b;
+		}
 	}
 
 	/* If only one word differs and the values are within range, return 1. */
@@ -136,13 +153,15 @@ inline u8 could_be_arith(u32 old_val, u32 new_val, u8 blen) {
 	if (diffs == 1) {
 
 		if ((u16)(ov - nv) <= MAX_ARITH ||
-		    (u16)(nv - ov) <= MAX_ARITH) return 1;
+		    (u16)(nv - ov) <= MAX_ARITH)
+			return 1;
 
-		ov = SWAP16((u16)ov); nv = SWAP16((u16)nv);
+		ov = SWAP16((u16)ov);
+		nv = SWAP16((u16)nv);
 
 		if ((u16)(ov - nv) <= MAX_ARITH ||
-		    (u16)(nv - ov) <= MAX_ARITH) return 1;
-
+		    (u16)(nv - ov) <= MAX_ARITH)
+			return 1;
 	}
 
 	/* Finally, let's do the same thing for dwords. */
@@ -150,18 +169,18 @@ inline u8 could_be_arith(u32 old_val, u32 new_val, u8 blen) {
 	if (blen == 4) {
 
 		if ((u32)(old_val - new_val) <= MAX_ARITH ||
-		    (u32)(new_val - old_val) <= MAX_ARITH) return 1;
+		    (u32)(new_val - old_val) <= MAX_ARITH)
+			return 1;
 
 		new_val = SWAP32(new_val);
 		old_val = SWAP32(old_val);
 
 		if ((u32)(old_val - new_val) <= MAX_ARITH ||
-		    (u32)(new_val - old_val) <= MAX_ARITH) return 1;
-
+		    (u32)(new_val - old_val) <= MAX_ARITH)
+			return 1;
 	}
 
 	return 0;
-
 }
 
 /* Last but not least, a similar helper to see if insertion of an
@@ -171,14 +190,17 @@ inline u8 could_be_arith(u32 old_val, u32 new_val, u8 blen) {
    if BE variant passed in new_val is unique. */
 
 #pragma clang diagnostic ignored "-Wsign-conversion"
-inline u8 could_be_interest(u32 old_val, u32 new_val, u8 blen, u8 check_le) {
-	 s8  interesting_8[]  = { INTERESTING_8 };
-	 s16 interesting_16[] = { INTERESTING_8, INTERESTING_16 };
-	 s32 interesting_32[] = { INTERESTING_8, INTERESTING_16, INTERESTING_32 };
+inline u8
+could_be_interest(u32 old_val, u32 new_val, u8 blen, u8 check_le)
+{
+	s8  interesting_8[]  = {INTERESTING_8};
+	s16 interesting_16[] = {INTERESTING_8, INTERESTING_16};
+	s32 interesting_32[] = {INTERESTING_8, INTERESTING_16, INTERESTING_32};
 
 	u32 i, j;
 
-	if (old_val == new_val) return 1;
+	if (old_val == new_val)
+		return 1;
 
 	/* See if one-byte insertions from interesting_8 over old_val could
 	   produce new_val. */
@@ -190,16 +212,16 @@ inline u8 could_be_interest(u32 old_val, u32 new_val, u8 blen, u8 check_le) {
 			u32 tval = (old_val & ~(0xff << (i * 8))) |
 			           (((u8)(interesting_8[j])) << (i * 8));
 
-			if (new_val == tval) return 1;
-
+			if (new_val == tval)
+				return 1;
 		}
-
 	}
 
 	/* Bail out unless we're also asked to examine two-byte LE insertions
 	   as a preparation for BE attempts. */
 
-	if (blen == 2 && !check_le) return 0;
+	if (blen == 2 && !check_le)
+		return 0;
 
 	/* See if two-byte insertions over old_val could give us new_val. */
 
@@ -210,7 +232,8 @@ inline u8 could_be_interest(u32 old_val, u32 new_val, u8 blen, u8 check_le) {
 			u32 tval = (old_val & ~(0xffff << (i * 8))) |
 			           (((u16)interesting_16[j]) << (i * 8));
 
-			if (new_val == tval) return 1;
+			if (new_val == tval)
+				return 1;
 
 			/* Continue here only if blen > 2. */
 
@@ -219,12 +242,10 @@ inline u8 could_be_interest(u32 old_val, u32 new_val, u8 blen, u8 check_le) {
 				tval = (old_val & ~(0xffff << (i * 8))) |
 				       (SWAP16(interesting_16[j]) << (i * 8));
 
-				if (new_val == tval) return 1;
-
+				if (new_val == tval)
+					return 1;
 			}
-
 		}
-
 	}
 
 	if (blen == 4 && check_le) {
@@ -233,11 +254,10 @@ inline u8 could_be_interest(u32 old_val, u32 new_val, u8 blen, u8 check_le) {
 		   (LE only). */
 
 		for (j = 0; j < sizeof(interesting_32) / 4; j++)
-			if (new_val == (u32)interesting_32[j]) return 1;
-
+			if (new_val == (u32)interesting_32[j])
+				return 1;
 	}
 
 	return 0;
-
 }
 #pragma clang diagnostic pop

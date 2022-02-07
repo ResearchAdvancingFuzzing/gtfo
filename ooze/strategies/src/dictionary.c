@@ -22,14 +22,14 @@
 #pragma clang diagnostic ignored "-Wgnu-case-range"
 
 // Dictionary entry deserialize helper function:
-#define SERIALIZE_DICTIONARY_ENTRY(HELPER, ENTRY)                                  \
-  do {                                                                             \
-        YAML_SERIALIZE_START_MAPPING(HELPER);                                      \
-	YAML_SERIALIZE_64HEX_PSTRUCT(HELPER, ENTRY, len);                          \
-	YAML_SERIALIZE_64HEX_PSTRUCT(HELPER, ENTRY, hit_cnt);                      \
-	YAML_SERIALIZE_8HEX_ARRAY(HELPER, (ENTRY)->token, token, (ENTRY)->len);    \
-	YAML_SERIALIZE_END_MAPPING(HELPER);                                        \
-  } while (0);
+#define SERIALIZE_DICTIONARY_ENTRY(HELPER, ENTRY)                               \
+	do {                                                                        \
+		YAML_SERIALIZE_START_MAPPING(HELPER);                                   \
+		YAML_SERIALIZE_64HEX_PSTRUCT(HELPER, ENTRY, len);                       \
+		YAML_SERIALIZE_64HEX_PSTRUCT(HELPER, ENTRY, hit_cnt);                   \
+		YAML_SERIALIZE_8HEX_ARRAY(HELPER, (ENTRY)->token, token, (ENTRY)->len); \
+		YAML_SERIALIZE_END_MAPPING(HELPER);                                     \
+	} while (0);
 
 /*
 This file contains methods used for the dictionary and dictionary_entry
@@ -42,13 +42,13 @@ dictionary_entry_print(dictionary_entry *entry)
 {
 
 	size_t total_len = 0;
-	char * p_token   = NULL;
-	char * p_len     = NULL;
-	char * p_hit_cnt = NULL;
-	char * result    = NULL;
+	char  *p_token   = NULL;
+	char  *p_len     = NULL;
+	char  *p_hit_cnt = NULL;
+	char  *result    = NULL;
 	int    retval    = 0;
 	// print fields.
-	retval = asprintf(&p_token, "token: '%.*s'\n", (int) entry->len, entry->token);
+	retval = asprintf(&p_token, "token: '%.*s'\n", (int)entry->len, entry->token);
 	if (retval < 0) {
 		fprintf(stderr, "asprintf failed near line %d\n", __LINE__);
 	}
@@ -88,9 +88,9 @@ dictionary_entry_print(dictionary_entry *entry)
 inline dictionary_entry *
 dictionary_entry_create(u8 *token)
 {
-        // This strlen() assumes a null-terminated string is supplied. Could be problematic for non-string tokens.
+	// This strlen() assumes a null-terminated string is supplied. Could be problematic for non-string tokens.
 	size_t token_len  = strlen((char *)token);
-	u8 *   token_copy = calloc(1, token_len);
+	u8    *token_copy = calloc(1, token_len);
 	// make a copy of the token
 	memcpy(token_copy, token, token_len);
 
@@ -118,8 +118,8 @@ dictionary_entry_copy(dictionary_entry *entry)
 	dictionary_entry *new_entry = calloc(1, sizeof(dictionary_entry));
 	new_entry->token            = calloc(1, entry->len);
 	memcpy(new_entry->token, entry->token, entry->len);
-	new_entry->len              = entry->len;
-	new_entry->hit_cnt          = entry->hit_cnt;
+	new_entry->len     = entry->len;
+	new_entry->hit_cnt = entry->hit_cnt;
 	return new_entry;
 }
 
@@ -152,11 +152,11 @@ inline char *
 dictionary_print(dictionary *dict)
 {
 	int    retval          = 0;
-	char * p_entry_cnt     = NULL;
-	char * p_max_entry_cnt = NULL;
-	char * p_max_token_len = NULL;
+	char  *p_entry_cnt     = NULL;
+	char  *p_max_entry_cnt = NULL;
+	char  *p_max_token_len = NULL;
 	char **p_entries       = calloc(1, sizeof(char *) * (dict->entry_cnt));
-	char * p_dict          = NULL;
+	char  *p_dict          = NULL;
 	size_t total_size      = 0;
 
 	// format these fields
@@ -181,7 +181,7 @@ dictionary_print(dictionary *dict)
 	// get printable versions of each entry
 	size_t i = 0;
 	for (; i < dict->entry_cnt; i++) {
-	  p_entries[i] = dictionary_entry_print((*dict->entries)[i]);
+		p_entries[i] = dictionary_entry_print((*dict->entries)[i]);
 		total_size += strlen(p_entries[i]);
 	}
 
@@ -237,7 +237,7 @@ dictionary_free(dictionary *dict)
 		size_t i = 0;
 		// free each entry in the dictionary
 		for (; i < dict->entry_cnt; i++) {
-		  dictionary_entry_free((*dict->entries)[i]);
+			dictionary_entry_free((*dict->entries)[i]);
 		}
 		// free the entries table
 		free(dict->entries);
@@ -254,7 +254,7 @@ dictionary_add_entry(dictionary *dict, dictionary_entry *new_entry)
 	// and if the entry's token is sufficiently small.
 	if (dict->entry_cnt < dict->max_entry_cnt && new_entry->len <= dict->max_token_len) {
 		// add new entry
-	        (*dict->entries)[dict->entry_cnt] = new_entry;
+		(*dict->entries)[dict->entry_cnt] = new_entry;
 		// update linked list size
 		dict->entry_cnt++;
 		// maybe not the best place to do our sorting?
@@ -274,7 +274,7 @@ dictionary_copy(dictionary *dict)
 
 	for (; i < dict->entry_cnt; i++) {
 		// copy each entry
-	        dictionary_entry *copy_entry = dictionary_entry_copy((*dict->entries)[i]);
+		dictionary_entry *copy_entry = dictionary_entry_copy((*dict->entries)[i]);
 
 		// add entry to copy dict
 		if (!dictionary_add_entry(copy_dict, copy_entry)) {
@@ -296,7 +296,7 @@ dictionary_merge(dictionary *a, dictionary *b)
 	size_t i = 0;
 	// for each entry in dict b
 	for (; i < b->entry_cnt; i++) {
-	  dictionary_entry *copy_entry = dictionary_entry_copy((*b->entries)[i]);
+		dictionary_entry *copy_entry = dictionary_entry_copy((*b->entries)[i]);
 
 		// add entry from dict b into new dictionary
 		if (!dictionary_add_entry(new_dict, copy_entry)) {
@@ -461,12 +461,12 @@ dictionary_load_file(char *filename, size_t max_entries, size_t max_token_len)
 inline char *
 dictionary_serialize(dictionary *dict)
 {
-	char **s_entries       = calloc(1, sizeof(char *) * (dict->entry_cnt));
-	char * s_dict          = NULL;
+	char **s_entries = calloc(1, sizeof(char *) * (dict->entry_cnt));
+	char  *s_dict    = NULL;
 
 	yaml_serializer *helper = yaml_serializer_init("");
-	size_t mybuffersize;
-	u32 version = 0;
+	size_t           mybuffersize;
+	u32              version = 0;
 
 	// We want to name the structure for readability
 	YAML_SERIALIZE_NEST_MAP(helper, dictionary)
@@ -488,14 +488,15 @@ dictionary_serialize(dictionary *dict)
 
 // Yaml helper function to deserialize an individual dictionary entry
 static void
-dictionary_entry_deserialize_yaml(yaml_deserializer *helper, __attribute__((unused)) struct dictionary_entry **dict_entry, dictionary *dict) {
+dictionary_entry_deserialize_yaml(yaml_deserializer *helper, __attribute__((unused)) struct dictionary_entry **dict_entry, dictionary *dict)
+{
 
 	dictionary_entry *new_entry;
 
-        YAML_DESERIALIZE_EAT(helper)
+	YAML_DESERIALIZE_EAT(helper)
 
 	if (helper->event.type == YAML_SEQUENCE_END_EVENT) {
-	  return;
+		return;
 	}
 
 	new_entry = calloc(1, sizeof(dictionary_entry));
@@ -510,7 +511,7 @@ dictionary_entry_deserialize_yaml(yaml_deserializer *helper, __attribute__((unus
 
 	if (!dictionary_add_entry(dict, new_entry)) {
 
-	  dictionary_entry_free(new_entry);
+		dictionary_entry_free(new_entry);
 	}
 
 	YAML_DESERIALIZE_MAPPING_END(helper)
@@ -520,45 +521,45 @@ dictionary_entry_deserialize_yaml(yaml_deserializer *helper, __attribute__((unus
 dictionary *
 dictionary_deserialize(char *s_dict, size_t s_dict_size)
 {
-      dictionary *new_dict;
-      size_t max_entry_cnt = 0;
-      size_t max_token_len = 0;
-      u32 version = 0;
-      yaml_deserializer *helper = NULL;
+	dictionary        *new_dict;
+	size_t             max_entry_cnt = 0;
+	size_t             max_token_len = 0;
+	u32                version       = 0;
+	yaml_deserializer *helper        = NULL;
 
-      if (s_dict == NULL) {
-	return NULL;
-      }
+	if (s_dict == NULL) {
+		return NULL;
+	}
 
-      helper = yaml_deserializer_init(NULL, s_dict, s_dict_size);
+	helper = yaml_deserializer_init(NULL, s_dict, s_dict_size);
 
-      // Get to the document start
-      YAML_DESERIALIZE_PARSE(helper)
-      while (helper->event.type != YAML_DOCUMENT_START_EVENT) {
+	// Get to the document start
+	YAML_DESERIALIZE_PARSE(helper)
+	while (helper->event.type != YAML_DOCUMENT_START_EVENT) {
+		YAML_DESERIALIZE_EAT(helper)
+	}
+
+	// Deserialize the dictionary structure:
+	// This is coded like LL(1) parsing, not event-driven, because we only support one version of file_format_version and
+	// no structure members are optional in the yaml file.
+
 	YAML_DESERIALIZE_EAT(helper)
-      }
+	YAML_DESERIALIZE_MAPPING_START(helper, "dictionary")
 
-      // Deserialize the dictionary structure:
-      // This is coded like LL(1) parsing, not event-driven, because we only support one version of file_format_version and
-      // no structure members are optional in the yaml file.
+	// Deserialize the structure version. We have only one version, so we don't do anything with it.
+	YAML_DESERIALIZE_GET_KV_U32(helper, "version", &version)
 
-      YAML_DESERIALIZE_EAT(helper)
-      YAML_DESERIALIZE_MAPPING_START(helper, "dictionary")
+	YAML_DESERIALIZE_GET_KV_U64(helper, "max_entry_cnt", &max_entry_cnt)
+	YAML_DESERIALIZE_GET_KV_U64(helper, "max_token_len", &max_token_len)
 
-      // Deserialize the structure version. We have only one version, so we don't do anything with it.
-      YAML_DESERIALIZE_GET_KV_U32(helper, "version", &version)
+	new_dict = dictionary_create(max_entry_cnt, max_token_len);
 
-      YAML_DESERIALIZE_GET_KV_U64(helper, "max_entry_cnt", &max_entry_cnt)
-      YAML_DESERIALIZE_GET_KV_U64(helper, "max_token_len", &max_token_len)
+	YAML_DESERIALIZE_SEQUENCE(helper, "entries", dictionary_entry_deserialize_yaml, (*new_dict->entries), new_dict)
 
-      new_dict = dictionary_create(max_entry_cnt, max_token_len);
+	YAML_DESERIALIZE_MAPPING_END(helper)
+	yaml_deserializer_end(helper);
 
-      YAML_DESERIALIZE_SEQUENCE(helper, "entries", dictionary_entry_deserialize_yaml, (*new_dict->entries), new_dict)
-
-      YAML_DESERIALIZE_MAPPING_END(helper)
-      yaml_deserializer_end(helper);
-
-      return new_dict;
+	return new_dict;
 }
 
 #pragma clang diagnostic pop

@@ -25,7 +25,7 @@ typedef struct afl_interesting_substates {
 
 	u8   current_substrategy;
 	u8   substrategy_complete;
-	char pad[sizeof(void (*)(void)) - sizeof(u8) * 2];
+	char pad[sizeof(void(*)(void)) - sizeof(u8) * 2];
 	// strategy_state for each substrategy
 	strategy_state *det_byte_interesting_substate;
 	strategy_state *det_two_byte_interesting_le_substate;

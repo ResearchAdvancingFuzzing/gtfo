@@ -54,7 +54,7 @@ typedef struct fuzzing_strategy {
 
 	// Version number of this strategy.
 	int  version;
-	char pad0[sizeof(void (*)(void)) - sizeof(int)];
+	char pad0[sizeof(void(*)(void)) - sizeof(int)];
 	union {
 		// version one
 		struct {
@@ -80,7 +80,7 @@ typedef struct fuzzing_strategy {
 
 			// Whether or not the fuzzing strategy is deterministic
 			bool is_deterministic;
-			char pad1[sizeof(void (*)(void)) - sizeof(char)];
+			char pad1[sizeof(void(*)(void)) - sizeof(char)];
 
 			// A description of the fuzzing strategy
 			const char *description;
@@ -90,5 +90,5 @@ typedef struct fuzzing_strategy {
 
 typedef void (*get_fuzzing_strategy_function)(fuzzing_strategy *strategy);
 
-//For a given strategy library, this function pointer points to the function that populates the fuzzing_strategy object.
+// For a given strategy library, this function pointer points to the function that populates the fuzzing_strategy object.
 extern __attribute__((visibility("default"))) get_fuzzing_strategy_function get_fuzzing_strategy;

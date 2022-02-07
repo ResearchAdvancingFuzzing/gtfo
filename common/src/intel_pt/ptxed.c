@@ -391,7 +391,7 @@ static int
 preprocess_filename(char *filename, uint64_t *offset, uint64_t *size)
 {
 	uint64_t begin, end;
-	char *   range;
+	char    *range;
 	int      parts;
 
 	if (!filename || !offset || !size)
@@ -450,7 +450,7 @@ load_file(uint8_t **buffer, size_t *psize, const char *filename,
 {
 	uint8_t *content;
 	size_t   read;
-	FILE *   file;
+	FILE    *file;
 	long     fsize, begin, end;
 	int      errcode;
 
@@ -668,7 +668,7 @@ visualize_iclass(enum pt_insn_class iclass)
 }
 
 static void
-check_insn_iclass(const xed_inst_t *    inst,
+check_insn_iclass(const xed_inst_t     *inst,
                   const struct pt_insn *insn, uint64_t offset)
 {
 	xed_category_enum_t category;
@@ -798,7 +798,7 @@ check_insn_iclass(const xed_inst_t *    inst,
 }
 
 static void
-check_insn_decode(xed_decoded_inst_t *  inst,
+check_insn_decode(xed_decoded_inst_t   *inst,
                   const struct pt_insn *insn, uint64_t offset)
 {
 	xed_error_enum_t errcode;
@@ -997,7 +997,7 @@ print_exec_mode(enum pt_exec_mode mode)
 }
 
 static void
-print_event(const struct pt_event *     event,
+print_event(const struct pt_event      *event,
             const struct ptxed_options *options, uint64_t offset)
 {
 	if (!event || !options) {
@@ -1213,8 +1213,8 @@ diagnose(struct ptxed_decoder *decoder, uint64_t ip,
 #if defined(FEATURE_SIDEBAND)
 
 static int
-ptxed_sb_event(struct ptxed_decoder *      decoder,
-               const struct pt_event *     event,
+ptxed_sb_event(struct ptxed_decoder       *decoder,
+               const struct pt_event      *event,
                const struct ptxed_options *options)
 {
 	struct pt_image *image;
@@ -1288,9 +1288,9 @@ drain_events_insn(struct ptxed_decoder *decoder, uint64_t *time,
 }
 
 static void
-decode_insn(struct ptxed_decoder *      decoder,
+decode_insn(struct ptxed_decoder       *decoder,
             const struct ptxed_options *options,
-            struct ptxed_stats *        stats)
+            struct ptxed_stats         *stats)
 {
 	struct pt_insn_decoder *ptdec;
 	xed_state_t             xed;
@@ -1539,10 +1539,10 @@ diagnose_block(struct ptxed_decoder *decoder,
 }
 
 static void
-print_block(struct ptxed_decoder *      decoder,
-            const struct pt_block *     block,
+print_block(struct ptxed_decoder       *decoder,
+            const struct pt_block      *block,
             const struct ptxed_options *options,
-            const struct ptxed_stats *  stats,
+            const struct ptxed_stats   *stats,
             uint64_t offset, uint64_t time)
 {
 	xed_machine_mode_enum_t mode;
@@ -1628,7 +1628,7 @@ print_block(struct ptxed_decoder *      decoder,
 }
 
 static void
-check_block(const struct pt_block *        block,
+check_block(const struct pt_block         *block,
             struct pt_image_section_cache *iscache,
             uint64_t                       offset)
 {
@@ -1738,12 +1738,12 @@ drain_events_block(struct ptxed_decoder *decoder, uint64_t *time,
 }
 
 static void
-decode_block(struct ptxed_decoder *      decoder,
+decode_block(struct ptxed_decoder       *decoder,
              const struct ptxed_options *options,
-             struct ptxed_stats *        stats)
+             struct ptxed_stats         *stats)
 {
 	struct pt_image_section_cache *iscache;
-	struct pt_block_decoder *      ptdec;
+	struct pt_block_decoder       *ptdec;
 	uint64_t                       offset, sync, time;
 
 	if (!decoder || !options) {
@@ -1860,9 +1860,9 @@ decode_block(struct ptxed_decoder *      decoder,
 }
 
 static void
-decode(struct ptxed_decoder *      decoder,
+decode(struct ptxed_decoder       *decoder,
        const struct ptxed_options *options,
-       struct ptxed_stats *        stats)
+       struct ptxed_stats         *stats)
 {
 	if (!decoder) {
 		printf("[internal error]\n");
@@ -1881,7 +1881,7 @@ decode(struct ptxed_decoder *      decoder,
 }
 
 static int
-alloc_decoder(struct ptxed_decoder *  decoder,
+alloc_decoder(struct ptxed_decoder   *decoder,
               const struct pt_config *conf, struct pt_image *image,
               const struct ptxed_options *options, const char *prog)
 {
@@ -1956,7 +1956,7 @@ ptxed_print_error(int errcode, const char *filename,
                   uint64_t offset, void *priv)
 {
 	const struct ptxed_options *options;
-	const char *                errstr, *severity;
+	const char                 *errstr, *severity;
 
 	options = (struct ptxed_options *)priv;
 	if (!options)
@@ -1987,7 +1987,7 @@ static int
 ptxed_print_switch(const struct pt_sb_context *context, void *priv)
 {
 	struct pt_image *image;
-	const char *     name;
+	const char      *name;
 
 	if (!priv)
 		return -pte_internal;
@@ -2211,8 +2211,8 @@ pt_inst_decode(uint8_t *trace_buffer, size_t trace_size, read_memory_callback_t 
 	struct ptxed_options options;
 	struct ptxed_stats   stats;
 	struct pt_config     config;
-	struct pt_image *    image;
-	const char *         prog;
+	struct pt_image     *image;
+	const char          *prog;
 	int                  errcode, i;
 
 	if (!argc) {

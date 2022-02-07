@@ -16,7 +16,7 @@
 #include "common/types.h"
 
 /*
-	This file holds afl-related options and functions that should not be touched.
+    This file holds afl-related options and functions that should not be touched.
 */
 
 /* Fuzzing stages */
@@ -56,6 +56,6 @@ enum {
 };
 
 u64 afl_choose_block_len(prng_state *prng_state, u64 limit);
-u8 could_be_bitflip(u32 xor_val);
-u8 could_be_arith(u32 old_val, u32 new_val, u8 blen);
-u8 could_be_interest(u32 old_val, u32 new_val, u8 blen, u8 check_le);
+u8  could_be_bitflip(u32 xor_val);
+u8  could_be_arith(u32 old_val, u32 new_val, u8 blen);
+u8  could_be_interest(u32 old_val, u32 new_val, u8 blen, u8 check_le);

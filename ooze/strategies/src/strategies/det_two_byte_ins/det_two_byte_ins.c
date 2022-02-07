@@ -42,20 +42,20 @@ det_two_byte_ins(u8 *buf, size_t size, strategy_state *state)
 void
 det_two_byte_ins_populate(fuzzing_strategy *strategy)
 {
-	strategy->version      = VERSION_ONE;
-	strategy->name         = "det_two_byte_ins";
-	strategy->create_state = strategy_state_create;
-	strategy->mutate       = det_two_byte_ins;
-	strategy->serialize    = det_two_byte_ins_serialize;
-	strategy->deserialize  = strategy_state_deserialize;
-	strategy->print_state  = det_two_byte_ins_print;
-	strategy->copy_state   = strategy_state_copy;
-	strategy->free_state   = strategy_state_free;
-	strategy->description  = "Deterministically inserts two bytes. "
-	                        "On the first iteration it inserts byte 0x0000 at position 0x0. "
-	                        "On the next iteration, it inserts byte 0x0001 at position 0x0. "
-	                        "This continues until all bytes have been inserted. "
-	                        "It them moves to the next byte and repeats.";
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "det_two_byte_ins";
+	strategy->create_state     = strategy_state_create;
+	strategy->mutate           = det_two_byte_ins;
+	strategy->serialize        = det_two_byte_ins_serialize;
+	strategy->deserialize      = strategy_state_deserialize;
+	strategy->print_state      = det_two_byte_ins_print;
+	strategy->copy_state       = strategy_state_copy;
+	strategy->free_state       = strategy_state_free;
+	strategy->description      = "Deterministically inserts two bytes. "
+	                             "On the first iteration it inserts byte 0x0000 at position 0x0. "
+	                             "On the next iteration, it inserts byte 0x0001 at position 0x0. "
+	                             "This continues until all bytes have been inserted. "
+	                             "It them moves to the next byte and repeats.";
 	strategy->update_state     = strategy_state_update;
 	strategy->is_deterministic = true;
 }

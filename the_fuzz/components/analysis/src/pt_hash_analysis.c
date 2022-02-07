@@ -33,7 +33,7 @@ bitstream and then hash it. We need to test this.
 #include "common/logger.h"
 #include "common/types.h"
 
-static u8 *   hashes       = NULL;
+static u8    *hashes       = NULL;
 static size_t hashes_size  = 0;
 static size_t current_used = 0;
 
@@ -50,7 +50,7 @@ compare_hash(const void *a, const void *b)
 // BEGIN: taken and modified from https://github.com/andikleen/simple-pt/blob/master/fastdecode.c
 #define BIT(x) (1U << (x))
 #define LEFT(x) ((end - p) >= (x))
-//One-Left-Shift.  Used to test for bits in a bitmap
+// One-Left-Shift.  Used to test for bits in a bitmap
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wsign-conversion"
 static char              psb[16] = {0x02, 0x82, 0x02, 0x82, 0x02, 0x82, 0x02, 0x82, 0x02, 0x82, 0x02, 0x82, 0x02, 0x82, 0x02, 0x82};
@@ -75,7 +75,7 @@ finalize_tnt_hash(u32 *hash)
 	tnt_buffer_index = 0;
 }
 
-//Adds a given number of TNT bits to the TNT hash (or the buffer if it's not full)
+// Adds a given number of TNT bits to the TNT hash (or the buffer if it's not full)
 inline static void
 update_tnt_bits(u64 payload, u8 num_bits, u32 *hash)
 {
@@ -136,13 +136,13 @@ process_tnt64_packet(unsigned char *p, u32 *hash)
 	int bit_index      = 0;
 	int found_stop_bit = 0;
 
-	p = p + 2; //Skip the TNT64 header
+	p = p + 2; // Skip the TNT64 header
 	for (byte_index = 5; byte_index >= 0; byte_index--) {
-		if (found_stop_bit) { //We've already found the stop bit, just copy this byte
+		if (found_stop_bit) { // We've already found the stop bit, just copy this byte
 			payload = (payload << 8) | p[byte_index];
-		} else if (p[byte_index] == 0) { //Skip any bytes that are all 0
+		} else if (p[byte_index] == 0) { // Skip any bytes that are all 0
 		} else {
-			//Otherwise look for the stop bit
+			// Otherwise look for the stop bit
 			for (bit_index = 7; bit_index >= 0; bit_index--) {
 				if (p[byte_index] & BIT(bit_index)) {
 					num_bits       = (u8)((byte_index * 8) + bit_index);
@@ -161,7 +161,7 @@ process_tnt64_packet(unsigned char *p, u32 *hash)
 	}
 }
 
-//Process a new TNT8 packet and add its bits to the TNT hash
+// Process a new TNT8 packet and add its bits to the TNT hash
 inline static void
 process_tnt8_packet(const unsigned char *p, u32 *hash)
 {
@@ -197,7 +197,7 @@ decode_and_hash(u8 *pt_buffer, size_t size, u32 *tnt_hash, u32 *tip_hash, u32 *f
 	u64            duplicate_detect_ip_tip = 0;
 	u64            duplicate_detect_ip_fup = 0;
 	while (p < end) {
-		//Sync to the PSB
+		// Sync to the PSB
 		sync = memmem(p, (size_t)(end - p), psb, 16);
 		if (!sync) {
 			break;
@@ -207,7 +207,7 @@ decode_and_hash(u8 *pt_buffer, size_t size, u32 *tnt_hash, u32 *tip_hash, u32 *f
 		while (p < end) {
 			if (*p == 0x02 && LEFT(2)) {
 				if (p[1] == 0xa3 && LEFT(8)) {
-					process_tnt64_packet(p, tnt_hash); //TNT64 packet
+					process_tnt64_packet(p, tnt_hash); // TNT64 packet
 					found = true;
 					p += 8;
 					continue;
@@ -285,14 +285,14 @@ decode_and_hash(u8 *pt_buffer, size_t size, u32 *tnt_hash, u32 *tip_hash, u32 *f
 					continue;
 				}
 
-				process_tnt8_packet(p, tnt_hash); //TNT8 packet
+				process_tnt8_packet(p, tnt_hash); // TNT8 packet
 				found = true;
 				p++;
 				continue;
 			}
 
 			type = (*p & 0x1f);
-			if (type == 0xd || type == 0x1 || type == 0x11 || type == 0x1d) { //The various types of TIP packets
+			if (type == 0xd || type == 0x1 || type == 0x11 || type == 0x1d) { // The various types of TIP packets
 				ipl = *p >> 5;
 				p++;
 

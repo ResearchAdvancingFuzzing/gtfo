@@ -45,18 +45,18 @@ det_four_bit_flip(u8 *buf, size_t size, strategy_state *state)
 void
 det_four_bit_flip_populate(fuzzing_strategy *strategy)
 {
-	strategy->version      = VERSION_ONE;
-	strategy->name         = "det_four_bit_flip";
-	strategy->create_state = strategy_state_create;
-	strategy->mutate       = det_four_bit_flip;
-	strategy->serialize    = det_four_bit_flip_serialize;
-	strategy->deserialize  = strategy_state_deserialize;
-	strategy->print_state  = det_four_bit_flip_print;
-	strategy->copy_state   = strategy_state_copy;
-	strategy->free_state   = strategy_state_free;
-	strategy->description  = "On the first iteration it flips the 4 bits at bit position 0. "
-	                        "On the next iteration, it flips the 4 bits at bit position 1. "
-	                        "etc etc blah blah blah.";
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "det_four_bit_flip";
+	strategy->create_state     = strategy_state_create;
+	strategy->mutate           = det_four_bit_flip;
+	strategy->serialize        = det_four_bit_flip_serialize;
+	strategy->deserialize      = strategy_state_deserialize;
+	strategy->print_state      = det_four_bit_flip_print;
+	strategy->copy_state       = strategy_state_copy;
+	strategy->free_state       = strategy_state_free;
+	strategy->description      = "On the first iteration it flips the 4 bits at bit position 0. "
+	                             "On the next iteration, it flips the 4 bits at bit position 1. "
+	                             "etc etc blah blah blah.";
 	strategy->update_state     = strategy_state_update;
 	strategy->is_deterministic = true;
 }

@@ -19,10 +19,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 /*
-	This file contains the methods for the standard strategy_state object
-	and the pcg32_state object.
+    This file contains the methods for the standard strategy_state object
+    and the pcg32_state object.
 */
 
 // This function copies a strategy state:9
@@ -69,9 +68,9 @@ strategy_state_free(strategy_state *state)
 inline char *
 strategy_state_serialize(strategy_state *state, char *name)
 {
-        yaml_serializer *helper;
-	char *mybuffer;
-	size_t mybuffersize;
+	yaml_serializer *helper;
+	char            *mybuffer;
+	size_t           mybuffersize;
 
 	helper = yaml_serializer_init("");
 
@@ -91,7 +90,7 @@ strategy_state_serialize(strategy_state *state, char *name)
 	YAML_SERIALIZE_64HEX_KV(helper, version, state->version)
 	YAML_SERIALIZE_8HEX_ARRAY(helper, state->seed, seed, 32)
 	YAML_SERIALIZE_64HEX_KV(helper, iteration, state->iteration)
-	YAML_SERIALIZE_64HEX_KV(helper, max_size, (u64) state->max_size)
+	YAML_SERIALIZE_64HEX_KV(helper, max_size, (u64)state->max_size)
 
 	YAML_SERIALIZE_END_MAPPING(helper)
 	yaml_serializer_end(helper, &mybuffer, &mybuffersize);
@@ -103,15 +102,15 @@ strategy_state_serialize(strategy_state *state, char *name)
 inline strategy_state *
 strategy_state_deserialize(char *s_state_buffer, size_t s_state_buffer_size)
 {
-        yaml_deserializer *helper = NULL;
-	strategy_state *state = calloc(1, sizeof(strategy_state));
+	yaml_deserializer *helper = NULL;
+	strategy_state    *state  = calloc(1, sizeof(strategy_state));
 
 	helper = yaml_deserializer_init(NULL, s_state_buffer, s_state_buffer_size);
 
 	// Get to the document start
 	YAML_DESERIALIZE_PARSE(helper)
 	while (helper->event.type != YAML_DOCUMENT_START_EVENT) {
-	  YAML_DESERIALIZE_EAT(helper)
+		YAML_DESERIALIZE_EAT(helper)
 	}
 
 	// Read the strategy name
@@ -142,7 +141,7 @@ strategy_state_deserialize(char *s_state_buffer, size_t s_state_buffer_size)
 
 // this function creates a string containing human-readable status info about a state.
 inline char *
-strategy_state_print(strategy_state *state, char * strategy_name)
+strategy_state_print(strategy_state *state, char *strategy_name)
 {
 	size_t bufsize = 256 + strlen(strategy_name);
 	// probably big enough

@@ -76,7 +76,7 @@ afl_interesting_create(u8 *seed, size_t max_size, ...)
 {
 
 	// create new state and substates objects
-	strategy_state *           new_state = strategy_state_create(seed, max_size);
+	strategy_state            *new_state = strategy_state_create(seed, max_size);
 	afl_interesting_substates *substates = calloc(1, sizeof(afl_interesting_substates));
 
 	// fill in substates
@@ -125,7 +125,7 @@ afl_interesting_serialize(strategy_state *state)
 	char *s_det_four_byte_interesting_be_substate = substates->det_four_byte_interesting_be_strategy->serialize(substates->det_four_byte_interesting_be_substate);
 
 	yaml_serializer *helper;
-	size_t mybuffersize;
+	size_t           mybuffersize;
 
 	// serialized base strategy structure
 	s_state = strategy_state_serialize(state, "afl_interesting");
@@ -181,7 +181,7 @@ afl_interesting_deserialize(char *serialized_state, size_t serialized_state_size
 	char *s_det_four_byte_interesting_be_substate;
 
 	// create new state object and substates object
-	strategy_state *           new_state;
+	strategy_state            *new_state;
 	afl_interesting_substates *substates = calloc(1, sizeof(afl_interesting_substates));
 
 	// compute start of various state strings
@@ -203,7 +203,7 @@ afl_interesting_deserialize(char *serialized_state, size_t serialized_state_size
 	// Get to the document start
 	YAML_DESERIALIZE_PARSE(helper)
 	while (helper->event.type != YAML_DOCUMENT_START_EVENT) {
-	  YAML_DESERIALIZE_EAT(helper)
+		YAML_DESERIALIZE_EAT(helper)
 	}
 
 	YAML_DESERIALIZE_EAT(helper)
@@ -373,7 +373,8 @@ afl_interesting_free_state(strategy_state *state)
 }
 
 static inline u64
-afl_interesting_get_pos(strategy_state *state) {
+afl_interesting_get_pos(strategy_state *state)
+{
 	afl_interesting_substates *substates = (afl_interesting_substates *)state->internal_state;
 
 	u64 pos = 0;
@@ -400,11 +401,12 @@ afl_interesting_get_pos(strategy_state *state) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-statement-expression"
 static inline u64
-afl_interesting_get_value(strategy_state *state) {
+afl_interesting_get_value(strategy_state *state)
+{
 	afl_interesting_substates *substates = (afl_interesting_substates *)state->internal_state;
 
 	u64 value = 0;
-	u8 which = 0;
+	u8  which = 0;
 	switch (substates->current_substrategy) {
 	case BYTE_INTERESTING:
 		which = substates->det_byte_interesting_substate->iteration % INTERESTING_8_SIZE;
@@ -437,7 +439,7 @@ afl_interesting_check_pos(u64 pos, strategy_state *state)
 {
 	afl_interesting_substates *substates = (afl_interesting_substates *)state->internal_state;
 
-	switch(substates->current_substrategy){
+	switch (substates->current_substrategy) {
 	case BYTE_INTERESTING:
 		return pos >= state->max_size;
 	case TWO_BYTE_INTERESTING_LE:
@@ -456,42 +458,43 @@ afl_interesting_check_pos(u64 pos, strategy_state *state)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-statement-expression"
 static inline bool
-afl_interesting_check_could_be_list(u8 * buf, strategy_state *state) {
+afl_interesting_check_could_be_list(u8 *buf, strategy_state *state)
+{
 	afl_interesting_substates *substates = (afl_interesting_substates *)state->internal_state;
 
-	u64 pos = afl_interesting_get_pos(state);
-	u64 value = afl_interesting_get_value(state);
-	u8 orig_u8 = 0;
+	u64 pos      = afl_interesting_get_pos(state);
+	u64 value    = afl_interesting_get_value(state);
+	u8  orig_u8  = 0;
 	u16 orig_u16 = 0;
 	u32 orig_u32 = 0;
-	switch(substates->current_substrategy) {
+	switch (substates->current_substrategy) {
 
 	case BYTE_INTERESTING:
-	    orig_u8 = buf[pos];
+		orig_u8 = buf[pos];
 		return (
 		    !could_be_bitflip(orig_u8 ^ (u8)value) &&
 		    !could_be_arith(orig_u8, (u32)value, 1));
 	case TWO_BYTE_INTERESTING_LE:
-		orig_u16 = *(u16*)((u64)buf + pos);
+		orig_u16 = *(u16 *)((u64)buf + pos);
 		return (
 		    !could_be_bitflip(orig_u16 ^ (u16)value) &&
 		    !could_be_arith(orig_u16, (u32)value, 2) &&
 		    !could_be_interest(orig_u16, (u32)value, 2, 0));
 	case TWO_BYTE_INTERESTING_BE:
-		orig_u16 = *(u16*)((u64)buf + pos);
+		orig_u16 = *(u16 *)((u64)buf + pos);
 		return (
 		    (u16)value != SWAP16((u16)value) &&
 		    !could_be_bitflip(orig_u16 ^ SWAP16((u16)value)) &&
 		    !could_be_arith(orig_u16, SWAP16((u16)value), 2) &&
 		    !could_be_interest(orig_u16, SWAP16((u16)value), 2, 1));
 	case FOUR_BYTE_INTERESTING_LE:
-		orig_u32 = *(u32*)((u64)buf + pos);
+		orig_u32 = *(u32 *)((u64)buf + pos);
 		return (
 		    !could_be_bitflip(orig_u32 ^ (u32)value) &&
 		    !could_be_arith(orig_u32, (u32)value, 4) &&
 		    !could_be_interest(orig_u32, (u32)value, 4, 0));
 	case FOUR_BYTE_INTERESTING_BE:
-		orig_u32 = *(u32*)((u64)buf + pos);
+		orig_u32 = *(u32 *)((u64)buf + pos);
 		return (
 		    (u32)value != SWAP32((u32)value) &&
 		    !could_be_bitflip(orig_u32 ^ SWAP32((u32)value)) &&
@@ -500,7 +503,6 @@ afl_interesting_check_could_be_list(u8 * buf, strategy_state *state) {
 	default:
 		return false;
 	}
-
 }
 #pragma clang diagnostic pop
 
@@ -508,20 +510,20 @@ static inline size_t
 afl_interesting(u8 *buf, size_t size, strategy_state *state)
 {
 	afl_interesting_substates *substates = (afl_interesting_substates *)state->internal_state;
-	size_t orig_size = size;
-	u64 pos = afl_interesting_get_pos(state);
+	size_t                     orig_size = size;
+	u64                        pos       = afl_interesting_get_pos(state);
 
-	while(size) {
+	while (size) {
 
 		// if the position would lead to an out of bounds mutation,
 		// skip to the next mutation substrategy.
-		if(afl_interesting_check_pos(pos, state)) {
+		if (afl_interesting_check_pos(pos, state)) {
 			substates->substrategy_complete = 1;
 			afl_interesting_update(state);
 			pos = afl_interesting_get_pos(state);
 		}
 		// If the input we are about to generate was not produced by a previous mutation strategy.
-		else if(afl_interesting_check_could_be_list(buf, state)) {
+		else if (afl_interesting_check_could_be_list(buf, state)) {
 
 			// invoke the correct substrategy
 			switch (substates->current_substrategy) {

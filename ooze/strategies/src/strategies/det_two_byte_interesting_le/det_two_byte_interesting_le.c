@@ -34,7 +34,7 @@ det_two_byte_interesting_le(u8 *buf, size_t size, strategy_state *state)
 		return 0;
 	}
 
-	u8 which = (u8) (state->iteration % interesting_val_count);
+	u8 which = (u8)(state->iteration % interesting_val_count);
 	two_byte_interesting_le(buf, pos, which);
 	if (pos + 2 > size) {
 		size = pos + 2;
@@ -46,20 +46,20 @@ det_two_byte_interesting_le(u8 *buf, size_t size, strategy_state *state)
 void
 det_two_byte_interesting_le_populate(fuzzing_strategy *strategy)
 {
-	strategy->version      = VERSION_ONE;
-	strategy->name         = "det_two_byte_interesting_le";
-	strategy->create_state = strategy_state_create;
-	strategy->mutate       = det_two_byte_interesting_le;
-	strategy->serialize    = det_two_byte_interesting_le_serialize;
-	strategy->deserialize  = strategy_state_deserialize;
-	strategy->print_state  = det_two_byte_interesting_le_print;
-	strategy->copy_state   = strategy_state_copy;
-	strategy->free_state   = strategy_state_free;
-	strategy->description  = "Deterministically replace two bytes with an interesting value. "
-	                        "This strategy iterates through the INTERESTING_8 and INTERESTING_16 values. "
-	                        "INTERESTING_* is defined in afl_config.h. "
-	                        "It replaces two bytes with a single value, depending on the iteration number. "
-	                        "Once it is done iterating through the values, it moves to the next byte in the buffer and repeats.";
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "det_two_byte_interesting_le";
+	strategy->create_state     = strategy_state_create;
+	strategy->mutate           = det_two_byte_interesting_le;
+	strategy->serialize        = det_two_byte_interesting_le_serialize;
+	strategy->deserialize      = strategy_state_deserialize;
+	strategy->print_state      = det_two_byte_interesting_le_print;
+	strategy->copy_state       = strategy_state_copy;
+	strategy->free_state       = strategy_state_free;
+	strategy->description      = "Deterministically replace two bytes with an interesting value. "
+	                             "This strategy iterates through the INTERESTING_8 and INTERESTING_16 values. "
+	                             "INTERESTING_* is defined in afl_config.h. "
+	                             "It replaces two bytes with a single value, depending on the iteration number. "
+	                             "Once it is done iterating through the values, it moves to the next byte in the buffer and repeats.";
 	strategy->update_state     = strategy_state_update;
 	strategy->is_deterministic = true;
 }

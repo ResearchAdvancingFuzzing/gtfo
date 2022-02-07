@@ -34,7 +34,7 @@ det_four_byte_interesting_be(u8 *buf, size_t size, strategy_state *state)
 		return 0;
 	}
 
-	u8 which = (u8) (state->iteration % interesting_val_count);
+	u8 which = (u8)(state->iteration % interesting_val_count);
 
 	four_byte_interesting_be(buf, pos, which);
 
@@ -48,21 +48,21 @@ det_four_byte_interesting_be(u8 *buf, size_t size, strategy_state *state)
 void
 det_four_byte_interesting_be_populate(fuzzing_strategy *strategy)
 {
-	strategy->version      = VERSION_ONE;
-	strategy->name         = "det_four_byte_interesting_be";
-	strategy->create_state = strategy_state_create;
-	strategy->mutate       = det_four_byte_interesting_be;
-	strategy->serialize    = det_four_byte_interesting_be_serialize;
-	strategy->deserialize  = strategy_state_deserialize;
-	strategy->print_state  = det_four_byte_interesting_be_print;
-	strategy->copy_state   = strategy_state_copy;
-	strategy->free_state   = strategy_state_free;
-	strategy->description  = "Deterministically replace four bytes with an interesting value. "
-	                        "The endianness of the interesting value is switched to big-endian. "
-	                        "This strategy iterates through the INTERESTING_8, INTERESTING_16, and INTERESTING_32 values. "
-	                        "INTERESTING_* is defined in afl_config.h. "
-	                        "It replaces four bytes with a single value, depending on the iteration number. "
-	                        "Once it is done iterating through the values, it moves to the next byte in the buffer and repeats.";
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "det_four_byte_interesting_be";
+	strategy->create_state     = strategy_state_create;
+	strategy->mutate           = det_four_byte_interesting_be;
+	strategy->serialize        = det_four_byte_interesting_be_serialize;
+	strategy->deserialize      = strategy_state_deserialize;
+	strategy->print_state      = det_four_byte_interesting_be_print;
+	strategy->copy_state       = strategy_state_copy;
+	strategy->free_state       = strategy_state_free;
+	strategy->description      = "Deterministically replace four bytes with an interesting value. "
+	                             "The endianness of the interesting value is switched to big-endian. "
+	                             "This strategy iterates through the INTERESTING_8, INTERESTING_16, and INTERESTING_32 values. "
+	                             "INTERESTING_* is defined in afl_config.h. "
+	                             "It replaces four bytes with a single value, depending on the iteration number. "
+	                             "Once it is done iterating through the values, it moves to the next byte in the buffer and repeats.";
 	strategy->update_state     = strategy_state_update;
 	strategy->is_deterministic = true;
 }

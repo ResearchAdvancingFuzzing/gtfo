@@ -18,8 +18,8 @@
 #include "afl_config.h"
 
 // Globals used by the 'interesting' mutations and strategies.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
+#pragma GCC diagnostic   push
+#pragma GCC diagnostic   ignored "-Wunknown-pragmas"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-statement-expression"
 #pragma clang diagnostic ignored "-Wcast-align"
@@ -32,7 +32,7 @@ s32 interesting_32[] = {INTERESTING_8, INTERESTING_16, INTERESTING_32};
 #define INTERESTING_16_ELEMENTS 19
 #define INTERESTING_32_ELEMENTS 27
 /*
-	This function flips the bit at offset 'bit_pos' in buffer 'buf'.
+    This function flips the bit at offset 'bit_pos' in buffer 'buf'.
 */
 inline void
 bit_flip(u8 *buf, u64 bit_pos)
@@ -41,7 +41,7 @@ bit_flip(u8 *buf, u64 bit_pos)
 }
 
 /*
-	This function flips two bits at offset 'bit_pos' in buffer 'buf'.
+    This function flips two bits at offset 'bit_pos' in buffer 'buf'.
 */
 inline void
 two_bit_flip(u8 *buf, u64 bit_pos)
@@ -51,7 +51,7 @@ two_bit_flip(u8 *buf, u64 bit_pos)
 }
 
 /*
-	This function flips four bits at offset 'bit_pos' in buffer 'buf'.
+    This function flips four bits at offset 'bit_pos' in buffer 'buf'.
 */
 inline void
 four_bit_flip(u8 *buf, u64 bit_pos)
@@ -61,7 +61,7 @@ four_bit_flip(u8 *buf, u64 bit_pos)
 }
 
 /*
-	This function flips 'n' bits in buffer 'buf', starting at offset 'bit_pos'.
+    This function flips 'n' bits in buffer 'buf', starting at offset 'bit_pos'.
 */
 inline void
 n_bit_flip(u8 *buf, u64 bit_pos, u64 n)
@@ -73,7 +73,7 @@ n_bit_flip(u8 *buf, u64 bit_pos, u64 n)
 }
 
 /*
-	This function flips every bit of the byte at offset 'pos' in buffer 'buf'.
+    This function flips every bit of the byte at offset 'pos' in buffer 'buf'.
 */
 inline void
 byte_flip(u8 *buf, size_t pos)
@@ -82,7 +82,7 @@ byte_flip(u8 *buf, size_t pos)
 }
 
 /*
-	This function flips the two bytes at offset 'pos' in buffer 'buf'.
+    This function flips the two bytes at offset 'pos' in buffer 'buf'.
 */
 inline void
 two_byte_flip(u8 *buf, size_t pos)
@@ -92,7 +92,7 @@ two_byte_flip(u8 *buf, size_t pos)
 }
 
 /*
-	This function flips the four bytes at offset 'pos' in buffer 'buf'.
+    This function flips the four bytes at offset 'pos' in buffer 'buf'.
 */
 inline void
 four_byte_flip(u8 *buf, size_t pos)
@@ -104,7 +104,7 @@ four_byte_flip(u8 *buf, size_t pos)
 }
 
 /*
-	This function flips the eight bytes at offset 'pos' in buffer 'buf'.
+    This function flips the eight bytes at offset 'pos' in buffer 'buf'.
 */
 inline void
 eight_byte_flip(u8 *buf, size_t pos)
@@ -120,7 +120,7 @@ eight_byte_flip(u8 *buf, size_t pos)
 }
 
 /*
-	This function flips n bytes, starting at at offset 'pos' in buffer 'buf'.
+    This function flips n bytes, starting at at offset 'pos' in buffer 'buf'.
 */
 inline void
 n_byte_flip(u8 *buf, size_t pos, u64 n)
@@ -134,7 +134,7 @@ n_byte_flip(u8 *buf, size_t pos, u64 n)
 }
 
 /*
-	This function increments the byte at offset 'pos' in buffer 'buf'.
+    This function increments the byte at offset 'pos' in buffer 'buf'.
 */
 inline void
 byte_inc(u8 *buf, u64 pos)
@@ -143,9 +143,9 @@ byte_inc(u8 *buf, u64 pos)
 }
 
 /*
-	This function increments the two bytes at offset 'pos' in the buffer 'buf'.
+    This function increments the two bytes at offset 'pos' in the buffer 'buf'.
 
-	Little-endian.
+    Little-endian.
 */
 
 inline void
@@ -156,9 +156,9 @@ two_byte_inc_le(u8 *buf, u64 pos)
 	*foo     = SWAP16(*foo + 1);
 }
 /*
- 	This function increments the four bytes at offset 'pos' in the buffer 'buf'.
+    This function increments the four bytes at offset 'pos' in the buffer 'buf'.
 
- 	Little-endian.
+    Little-endian.
 */
 inline void
 four_byte_inc_le(u8 *buf, u64 pos)
@@ -169,9 +169,9 @@ four_byte_inc_le(u8 *buf, u64 pos)
 }
 
 /*
-	This function increments the eight bytes at offset 'pos' in the buffer 'buf'.
+    This function increments the eight bytes at offset 'pos' in the buffer 'buf'.
 
-	Little-endian.
+    Little-endian.
 */
 inline void
 eight_byte_inc_le(u8 *buf, u64 pos)
@@ -182,21 +182,21 @@ eight_byte_inc_le(u8 *buf, u64 pos)
 }
 
 /*
-	This function increments the two bytes at offset 'pos' in the buffer 'buf'.
+    This function increments the two bytes at offset 'pos' in the buffer 'buf'.
 
-	Big-endian.
+    Big-endian.
 */
 inline void
 two_byte_inc_be(u8 *buf, u64 pos)
 {
 	u16 *foo = (u16 *)&buf[pos];
-	*foo     = (u16) (*foo + 1);
+	*foo     = (u16)(*foo + 1);
 }
 
 /*
- 	This function increments the four bytes at offset 'pos' in the buffer 'buf'.
+    This function increments the four bytes at offset 'pos' in the buffer 'buf'.
 
- 	Big-endian.
+    Big-endian.
 */
 inline void
 four_byte_inc_be(u8 *buf, u64 pos)
@@ -206,9 +206,9 @@ four_byte_inc_be(u8 *buf, u64 pos)
 }
 
 /*
-	This function increments the eight bytes at offset 'pos' in the buffer 'buf'.
+    This function increments the eight bytes at offset 'pos' in the buffer 'buf'.
 
-	Big-endian.
+    Big-endian.
 */
 inline void
 eight_byte_inc_be(u8 *buf, u64 pos)
@@ -218,7 +218,7 @@ eight_byte_inc_be(u8 *buf, u64 pos)
 }
 
 /*
- 	This function decrements the byte at offset 'pos' in the buffer 'buf'.
+    This function decrements the byte at offset 'pos' in the buffer 'buf'.
 */
 inline void
 byte_dec(u8 *buf, u64 pos)
@@ -227,9 +227,9 @@ byte_dec(u8 *buf, u64 pos)
 }
 
 /*
- 	This function decrements the two bytes at offset 'pos' in the buffer 'buf'.
+    This function decrements the two bytes at offset 'pos' in the buffer 'buf'.
 
- 	Little-endian.
+    Little-endian.
 */
 inline void
 two_byte_dec_le(u8 *buf, u64 pos)
@@ -240,9 +240,9 @@ two_byte_dec_le(u8 *buf, u64 pos)
 }
 
 /*
- 	This function decrements the four bytes at offset 'pos' in the buffer 'buf'.
+    This function decrements the four bytes at offset 'pos' in the buffer 'buf'.
 
- 	Little-endian.
+    Little-endian.
 */
 inline void
 four_byte_dec_le(u8 *buf, u64 pos)
@@ -253,9 +253,9 @@ four_byte_dec_le(u8 *buf, u64 pos)
 }
 
 /*
- 	This function decrements the eight bytes at offset 'pos' in the buffer 'buf'.
+    This function decrements the eight bytes at offset 'pos' in the buffer 'buf'.
 
- 	Little-endian.
+    Little-endian.
 */
 inline void
 eight_byte_dec_le(u8 *buf, u64 pos)
@@ -266,9 +266,9 @@ eight_byte_dec_le(u8 *buf, u64 pos)
 }
 
 /*
- 	This function decrements the two bytes at offset 'pos' in the buffer 'buf'.
+    This function decrements the two bytes at offset 'pos' in the buffer 'buf'.
 
- 	Big-endian.
+    Big-endian.
 */
 inline void
 two_byte_dec_be(u8 *buf, u64 pos)
@@ -278,9 +278,9 @@ two_byte_dec_be(u8 *buf, u64 pos)
 }
 
 /*
- 	This function decrements the four bytes at offset 'pos' in the buffer 'buf'.
+    This function decrements the four bytes at offset 'pos' in the buffer 'buf'.
 
- 	Big-endian.
+    Big-endian.
 */
 inline void
 four_byte_dec_be(u8 *buf, u64 pos)
@@ -290,9 +290,9 @@ four_byte_dec_be(u8 *buf, u64 pos)
 }
 
 /*
- 	This function decrements the eight bytes at offset 'pos' in the buffer 'buf'.
+    This function decrements the eight bytes at offset 'pos' in the buffer 'buf'.
 
- 	Big-endian.
+    Big-endian.
 */
 inline void
 eight_byte_dec_be(u8 *buf, u64 pos)
@@ -302,7 +302,7 @@ eight_byte_dec_be(u8 *buf, u64 pos)
 }
 
 /*
- 	This function adds value 'val' to the byte at offset 'pos' in buffer 'buf'.
+    This function adds value 'val' to the byte at offset 'pos' in buffer 'buf'.
 */
 inline void
 byte_add(u8 *buf, u64 pos, u8 val)
@@ -311,9 +311,9 @@ byte_add(u8 *buf, u64 pos, u8 val)
 }
 
 /*
- 	This function adds value 'val' to the two bytes at offset 'pos' in buffer 'buf'.
+    This function adds value 'val' to the two bytes at offset 'pos' in buffer 'buf'.
 
- 	Little-endian.
+    Little-endian.
 */
 inline void
 two_byte_add_be(u8 *buf, u64 pos, u16 val)
@@ -324,9 +324,9 @@ two_byte_add_be(u8 *buf, u64 pos, u16 val)
 }
 
 /*
- 	This function adds value 'val' to the four bytes at offset 'pos' in buffer 'buf'.
+    This function adds value 'val' to the four bytes at offset 'pos' in buffer 'buf'.
 
- 	Little-endian.
+    Little-endian.
 */
 inline void
 four_byte_add_be(u8 *buf, u64 pos, u32 val)
@@ -337,9 +337,9 @@ four_byte_add_be(u8 *buf, u64 pos, u32 val)
 }
 
 /*
- 	This function adds value 'val' to the eight bytes at offset 'pos' in buffer 'buf'.
+    This function adds value 'val' to the eight bytes at offset 'pos' in buffer 'buf'.
 
- 	Little-endian.
+    Little-endian.
 */
 inline void
 eight_byte_add_le(u8 *buf, u64 pos, u64 val)
@@ -350,9 +350,9 @@ eight_byte_add_le(u8 *buf, u64 pos, u64 val)
 }
 
 /*
- 	This function adds value 'val' to the two bytes at offset 'pos' in buffer 'buf'.
+    This function adds value 'val' to the two bytes at offset 'pos' in buffer 'buf'.
 
- 	Big-endian.
+    Big-endian.
 */
 inline void
 two_byte_add_le(u8 *buf, u64 pos, u16 val)
@@ -362,9 +362,9 @@ two_byte_add_le(u8 *buf, u64 pos, u16 val)
 }
 
 /*
- 	This function adds value 'val' to the four bytes at offset 'pos' in buffer 'buf'.
+    This function adds value 'val' to the four bytes at offset 'pos' in buffer 'buf'.
 
- 	Big-endian.
+    Big-endian.
 */
 inline void
 four_byte_add_le(u8 *buf, u64 pos, u32 val)
@@ -374,9 +374,9 @@ four_byte_add_le(u8 *buf, u64 pos, u32 val)
 }
 
 /*
- 	This function adds value 'val' to the eight bytes at offset 'pos' in buffer 'buf'.
+    This function adds value 'val' to the eight bytes at offset 'pos' in buffer 'buf'.
 
- 	Big-endian.
+    Big-endian.
 */
 inline void
 eight_byte_add_be(u8 *buf, u64 pos, u64 val)
@@ -386,7 +386,7 @@ eight_byte_add_be(u8 *buf, u64 pos, u64 val)
 }
 
 /*
-	This function removes a byte at offset 'pos' from a buffer 'buf' of length 'len'.
+    This function removes a byte at offset 'pos' from a buffer 'buf' of length 'len'.
 */
 inline void
 byte_drop(u8 *buf, size_t len, u64 pos)
@@ -395,7 +395,7 @@ byte_drop(u8 *buf, size_t len, u64 pos)
 }
 
 /*
-	This function removes two bytes at offset 'pos' from a buffer 'buf' of length 'len'.
+    This function removes two bytes at offset 'pos' from a buffer 'buf' of length 'len'.
 */
 inline void
 two_byte_drop(u8 *buf, size_t len, u64 pos)
@@ -404,7 +404,7 @@ two_byte_drop(u8 *buf, size_t len, u64 pos)
 }
 
 /*
-	This function removes four bytes at offset 'pos' from a buffer 'buf' of length 'len'.
+    This function removes four bytes at offset 'pos' from a buffer 'buf' of length 'len'.
 */
 inline void
 four_byte_drop(u8 *buf, size_t len, u64 pos)
@@ -413,7 +413,7 @@ four_byte_drop(u8 *buf, size_t len, u64 pos)
 }
 
 /*
-	This function removes eight bytes at offset 'pos' from a buffer 'buf' of length 'len'.
+    This function removes eight bytes at offset 'pos' from a buffer 'buf' of length 'len'.
 */
 inline void
 eight_byte_drop(u8 *buf, size_t len, u64 pos)
@@ -422,7 +422,7 @@ eight_byte_drop(u8 *buf, size_t len, u64 pos)
 }
 
 /*
-	This function removes 'n' bytes at offset 'pos' from a buffer 'buf' of length 'len'.
+    This function removes 'n' bytes at offset 'pos' from a buffer 'buf' of length 'len'.
 */
 inline void
 n_byte_drop(u8 *buf, size_t len, u64 pos, u64 n)
@@ -434,7 +434,7 @@ n_byte_drop(u8 *buf, size_t len, u64 pos, u64 n)
 }
 
 /*
-	This function swaps the byte at 'byte1_pos' with the byte at 'byte2_pos' in buffer 'buf'.
+    This function swaps the byte at 'byte1_pos' with the byte at 'byte2_pos' in buffer 'buf'.
 */
 inline void
 byte_swap(u8 *buf, __attribute__((unused)) size_t size, u64 byte1_pos, u64 byte2_pos)
@@ -445,7 +445,7 @@ byte_swap(u8 *buf, __attribute__((unused)) size_t size, u64 byte1_pos, u64 byte2
 }
 
 /*
-	This function swaps the two bytes at 'byte1_pos' with the byte at 'byte2_pos' in buffer 'buf'.
+    This function swaps the two bytes at 'byte1_pos' with the byte at 'byte2_pos' in buffer 'buf'.
 */
 inline void
 two_byte_swap(u8 *buf, __attribute__((unused)) size_t size, u64 byte1_pos, u64 byte2_pos)
@@ -459,7 +459,7 @@ two_byte_swap(u8 *buf, __attribute__((unused)) size_t size, u64 byte1_pos, u64 b
 }
 
 /*
-	This function swaps the four bytes at 'byte1_pos' with the byte at 'byte2_pos' in buffer 'buf'.
+    This function swaps the four bytes at 'byte1_pos' with the byte at 'byte2_pos' in buffer 'buf'.
 */
 inline void
 four_byte_swap(u8 *buf, __attribute__((unused)) size_t size, u64 byte1_pos, u64 byte2_pos)
@@ -473,7 +473,7 @@ four_byte_swap(u8 *buf, __attribute__((unused)) size_t size, u64 byte1_pos, u64 
 }
 
 /*
-	This function swaps the eight bytes at 'byte1_pos' with the byte at 'byte2_pos' in buffer 'buf'.
+    This function swaps the eight bytes at 'byte1_pos' with the byte at 'byte2_pos' in buffer 'buf'.
 */
 inline void
 eight_byte_swap(u8 *buf, __attribute__((unused)) size_t size, u64 byte1_pos, u64 byte2_pos)
@@ -487,7 +487,7 @@ eight_byte_swap(u8 *buf, __attribute__((unused)) size_t size, u64 byte1_pos, u64
 }
 
 /*
-	This function swaps 'n' bytes at 'byte1_pos' with n bytes at 'byte2_pos' in buffer 'buf'.
+    This function swaps 'n' bytes at 'byte1_pos' with n bytes at 'byte2_pos' in buffer 'buf'.
 */
 inline void
 n_byte_swap(u8 *buf, size_t size, u64 byte1_pos, u64 byte2_pos, u64 n)
@@ -499,9 +499,9 @@ n_byte_swap(u8 *buf, size_t size, u64 byte1_pos, u64 byte2_pos, u64 n)
 }
 
 /*
-	This function repeats the byte at position 'pos' in buffer 'buf' 'num_repeat' times.
+    This function repeats the byte at position 'pos' in buffer 'buf' 'num_repeat' times.
 
-	ie. ABCD -> ABBBBBBCD.
+    ie. ABCD -> ABBBBBBCD.
 */
 inline void
 byte_inplace_repeat(u8 *buf, size_t size, u64 pos, u64 num_repeat)
@@ -513,7 +513,7 @@ byte_inplace_repeat(u8 *buf, size_t size, u64 pos, u64 num_repeat)
 }
 
 /*
- 	This function replaces the byte at offset 'pos' in buffer 'buf' with the byte 'replacement'.
+    This function replaces the byte at offset 'pos' in buffer 'buf' with the byte 'replacement'.
 */
 inline void
 byte_replace(u8 *buf, __attribute__((unused)) size_t size, u64 pos, u8 replacement)
@@ -522,7 +522,7 @@ byte_replace(u8 *buf, __attribute__((unused)) size_t size, u64 pos, u8 replaceme
 }
 
 /*
- 	This function replaces the two bytes at offset 'pos' in buffer 'buf' with the bytes 'replacement'.
+    This function replaces the two bytes at offset 'pos' in buffer 'buf' with the bytes 'replacement'.
 */
 inline void
 two_byte_replace(u8 *buf, __attribute__((unused)) size_t size, size_t pos, u16 replacement)
@@ -532,7 +532,7 @@ two_byte_replace(u8 *buf, __attribute__((unused)) size_t size, size_t pos, u16 r
 }
 
 /*
- 	This function replaces the four bytes at offset 'pos' in buffer 'buf' with the bytes 'replacement'.
+    This function replaces the four bytes at offset 'pos' in buffer 'buf' with the bytes 'replacement'.
 */
 inline void
 four_byte_replace(u8 *buf, __attribute__((unused)) size_t size, size_t pos, u32 replacement)
@@ -544,7 +544,7 @@ four_byte_replace(u8 *buf, __attribute__((unused)) size_t size, size_t pos, u32 
 }
 
 /*
- 	This function replaces the eight bytes at offset 'pos' in buffer 'buf' with the bytes 'replacement'.
+    This function replaces the eight bytes at offset 'pos' in buffer 'buf' with the bytes 'replacement'.
 */
 inline void
 eight_byte_replace(u8 *buf, __attribute__((unused)) size_t size, size_t pos, u64 replacement)
@@ -560,7 +560,7 @@ eight_byte_replace(u8 *buf, __attribute__((unused)) size_t size, size_t pos, u64
 }
 
 /*
- 	This function replaces 'n' bytes at offset 'pos' in buffer 'buf' with bytes from the buffer 'new_bytes'.
+    This function replaces 'n' bytes at offset 'pos' in buffer 'buf' with bytes from the buffer 'new_bytes'.
 */
 inline void
 n_byte_replace(u8 *buf, __attribute__((unused)) size_t size, size_t pos, u8 *new_bytes, size_t n)
@@ -569,14 +569,14 @@ n_byte_replace(u8 *buf, __attribute__((unused)) size_t size, size_t pos, u8 *new
 }
 
 /*
-	This function repeats 'n' bytes at position 'pos' in buffer 'buf'.
+    This function repeats 'n' bytes at position 'pos' in buffer 'buf'.
 
-	ie. ABCD -> ABCBCD.
+    ie. ABCD -> ABCBCD.
 
-		pos: 1
-		n: 2
-			memmove step: 	ABCD -> A__BCD
-			memcpy step:	A__BCD -> ABCBCD
+        pos: 1
+        n: 2
+            memmove step: 	ABCD -> A__BCD
+            memcpy step:	A__BCD -> ABCBCD
 */
 inline void
 n_byte_inplace_repeat(u8 *buf, size_t size, size_t pos, size_t n)
@@ -586,7 +586,7 @@ n_byte_inplace_repeat(u8 *buf, size_t size, size_t pos, size_t n)
 }
 
 /*
- 	This function inserts a single byte into the buffer 'buf' at offset 'pos'.
+    This function inserts a single byte into the buffer 'buf' at offset 'pos'.
 */
 inline void
 byte_ins(u8 *buf, size_t size, u64 pos, u8 byte)
@@ -596,7 +596,7 @@ byte_ins(u8 *buf, size_t size, u64 pos, u8 byte)
 }
 
 /*
- 	This function inserts two bytes into the buffer at offset 'pos'.
+    This function inserts two bytes into the buffer at offset 'pos'.
 */
 inline void
 two_byte_ins(u8 *buf, size_t size, u64 pos, u16 two_bytes)
@@ -605,7 +605,7 @@ two_byte_ins(u8 *buf, size_t size, u64 pos, u16 two_bytes)
 	two_byte_replace(buf, size, pos, two_bytes);
 }
 /*
- 	This function inserts four bytes into the buffer at offset 'pos'.
+    This function inserts four bytes into the buffer at offset 'pos'.
 */
 inline void
 four_byte_ins(u8 *buf, size_t size, u64 pos, u32 four_bytes)
@@ -615,7 +615,7 @@ four_byte_ins(u8 *buf, size_t size, u64 pos, u32 four_bytes)
 }
 
 /*
- 	This function inserts eight bytes into the buffer at offset 'pos'.
+    This function inserts eight bytes into the buffer at offset 'pos'.
 */
 inline void
 eight_byte_ins(u8 *buf, size_t size, u64 pos, u64 eight_bytes)
@@ -625,7 +625,7 @@ eight_byte_ins(u8 *buf, size_t size, u64 pos, u64 eight_bytes)
 }
 
 /*
- 	This function inserts 'n' bytes from string 'bytes' into the buffer at offset 'pos'.
+    This function inserts 'n' bytes from string 'bytes' into the buffer at offset 'pos'.
 */
 inline void
 n_byte_ins(u8 *buf, size_t size, u64 pos, u8 *bytes, size_t n)
@@ -635,8 +635,8 @@ n_byte_ins(u8 *buf, size_t size, u64 pos, u8 *bytes, size_t n)
 }
 
 /*
- 	This function replaces a byte at offset 'pos' in buffer 'buf'
- 	with one of the 8-bit interesting values.
+    This function replaces a byte at offset 'pos' in buffer 'buf'
+    with one of the 8-bit interesting values.
 */
 inline void
 byte_interesting(u8 *buf, u64 pos, u8 which)
@@ -645,10 +645,10 @@ byte_interesting(u8 *buf, u64 pos, u8 which)
 }
 
 /*
- 	This function replaces a byte at offset 'pos' in buffer 'buf'
- 	with one of the 8-bit or 16-bit interesting values.
+    This function replaces a byte at offset 'pos' in buffer 'buf'
+    with one of the 8-bit or 16-bit interesting values.
 
- 	Little-endian.
+    Little-endian.
 */
 inline void
 two_byte_interesting_be(u8 *buf, u64 pos, u8 which)
@@ -659,10 +659,10 @@ two_byte_interesting_be(u8 *buf, u64 pos, u8 which)
 }
 
 /*
- 	This function replaces a byte at offset 'pos' in buffer 'buf'
- 	with one of the 8-bit, 16-bit, or 32-bit interesting values.
+    This function replaces a byte at offset 'pos' in buffer 'buf'
+    with one of the 8-bit, 16-bit, or 32-bit interesting values.
 
- 	Little-endian.
+    Little-endian.
 */
 inline void
 four_byte_interesting_be(u8 *buf, u64 pos, u8 which)
@@ -673,10 +673,10 @@ four_byte_interesting_be(u8 *buf, u64 pos, u8 which)
 }
 
 /*
- 	This function replaces a byte at offset 'pos' in buffer 'buf'
- 	with one of the 8-bit, 16-bit, or 32-bit interesting values.
+    This function replaces a byte at offset 'pos' in buffer 'buf'
+    with one of the 8-bit, 16-bit, or 32-bit interesting values.
 
- 	Big-endian.
+    Big-endian.
 */
 inline void
 two_byte_interesting_le(u8 *buf, u64 pos, u8 which)
@@ -686,10 +686,10 @@ two_byte_interesting_le(u8 *buf, u64 pos, u8 which)
 }
 
 /*
- 	This function replaces a byte at offset 'pos' in buffer 'buf'
- 	with one of the 8-bit, 16-bit, or 32-bit interesting values.
+    This function replaces a byte at offset 'pos' in buffer 'buf'
+    with one of the 8-bit, 16-bit, or 32-bit interesting values.
 
- 	Big-endian.
+    Big-endian.
 */
 inline void
 four_byte_interesting_le(u8 *buf, u64 pos, u8 which)
@@ -699,7 +699,7 @@ four_byte_interesting_le(u8 *buf, u64 pos, u8 which)
 }
 
 /*
-	This function copies n bytes from buf + src_offset and insert them at buf+dest_offset.
+    This function copies n bytes from buf + src_offset and insert them at buf+dest_offset.
 */
 inline void
 n_byte_copy_and_ins(u8 *buf, size_t size, size_t src_offset, size_t dest_offset, size_t n)
@@ -713,7 +713,7 @@ n_byte_copy_and_ins(u8 *buf, size_t size, size_t src_offset, size_t dest_offset,
 }
 
 /*
-	This function removes n bytes at buf + pos and concatenates what's left.
+    This function removes n bytes at buf + pos and concatenates what's left.
 */
 inline void
 n_byte_delete(u8 *buf, size_t size, size_t pos, size_t n)
@@ -721,4 +721,4 @@ n_byte_delete(u8 *buf, size_t size, size_t pos, size_t n)
 	memmove(buf + pos, buf + pos + n, size - (pos + n));
 }
 #pragma clang diagnostic pop
-#pragma GCC diagnostic pop
+#pragma GCC diagnostic   pop

@@ -27,56 +27,55 @@ get_fuzzing_strategy_function get_fuzzing_strategy = det_byte_arith_populate;
 static inline size_t
 det_byte_arith(u8 *buf, size_t size, strategy_state *state)
 {
-	u64 range_len = MAX_ARITH * 2; // how many iterations per byte
+	u64 range_len = MAX_ARITH * 2;                // how many iterations per byte
 	u64 pos       = state->iteration / range_len; // which byte we are mutating
 
 	if (pos >= state->max_size) {
 		return 0;
 	}
 	// iter in range [0 -> 70]
-	u8 iter = (u8) (state->iteration % range_len);
+	u8 iter = (u8)(state->iteration % range_len);
 
 	// abs_val in range [ 1 -> 35]
-	u8 abs_val = (u8) ((iter / 2) + 1);
+	u8 abs_val = (u8)((iter / 2) + 1);
 	u8 val;
 
 	// val = [ 1, -1, 2, -2, ... , 35, -35 ]
 	if (iter % 2) {
 		val = -(abs_val);
-	}
-	else {
+	} else {
 		val = abs_val;
 	}
 
-    // Byte add
-    byte_add(buf, pos, val);
+	// Byte add
+	byte_add(buf, pos, val);
 
-    // if edited outside of buf, extend buf's size.
-    if (pos >= size) {
-        size = pos + 1;
-    }
+	// if edited outside of buf, extend buf's size.
+	if (pos >= size) {
+		size = pos + 1;
+	}
 
-    return size;
+	return size;
 }
 
 /* populates fuzzing_strategy structure */
-    void
+void
 det_byte_arith_populate(fuzzing_strategy *strategy)
 {
-    strategy->version      = VERSION_ONE;
-    strategy->name         = "det_byte_arith";
-    strategy->create_state = strategy_state_create;
-    strategy->mutate       = det_byte_arith;
-    strategy->serialize    = det_byte_arith_serialize;
-    strategy->deserialize  = strategy_state_deserialize;
-    strategy->print_state  = det_byte_arith_print;
-    strategy->copy_state   = strategy_state_copy;
-    strategy->free_state   = strategy_state_free;
-    strategy->description  = "Deterministically adds a number to a byte. "
-        "This strategy iterates through the range {-MAX_ARITH, MAX_ARITH}. "
-        "MAX_ARITH is defined in afl_config.h. "
-        "It adds a single value from the range, depending on the iteration number. "
-        "Once it is done iterating through the range, it moves to the next byte in the buffer and repeats.";
-    strategy->update_state     = strategy_state_update;
-    strategy->is_deterministic = true;
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "det_byte_arith";
+	strategy->create_state     = strategy_state_create;
+	strategy->mutate           = det_byte_arith;
+	strategy->serialize        = det_byte_arith_serialize;
+	strategy->deserialize      = strategy_state_deserialize;
+	strategy->print_state      = det_byte_arith_print;
+	strategy->copy_state       = strategy_state_copy;
+	strategy->free_state       = strategy_state_free;
+	strategy->description      = "Deterministically adds a number to a byte. "
+	                             "This strategy iterates through the range {-MAX_ARITH, MAX_ARITH}. "
+	                             "MAX_ARITH is defined in afl_config.h. "
+	                             "It adds a single value from the range, depending on the iteration number. "
+	                             "Once it is done iterating through the range, it moves to the next byte in the buffer and repeats.";
+	strategy->update_state     = strategy_state_update;
+	strategy->is_deterministic = true;
 }

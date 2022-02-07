@@ -64,7 +64,7 @@ test_version_one(char *test_filename)
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wvla"
-	u8 *   inputs[input_count];
+	u8    *inputs[input_count];
 	size_t inputs_size[input_count];
 #pragma clang diagnostic pop
 
@@ -153,7 +153,7 @@ main(int argc, char *argv[])
 	if (error) {
 		bail_out(error);
 	}
-	//get function pointer to the function that populates the analysis struct
+	// get function pointer to the function that populates the analysis struct
 	analysis_api_getter *get_analysis;
 	get_analysis = (analysis_api_getter *)dlsym(handle, "get_analysis_api");
 	error        = dlerror();

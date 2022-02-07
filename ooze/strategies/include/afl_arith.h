@@ -24,7 +24,7 @@ typedef struct afl_arith_substates {
 
 	u8   current_substrategy;
 	u8   substrategy_complete;
-	char pad[sizeof(void (*)(void)) - sizeof(u8) * 2];
+	char pad[sizeof(void(*)(void)) - sizeof(u8) * 2];
 	// strategy_state for each substrategy
 	strategy_state *det_byte_arith_substate;
 	strategy_state *det_two_byte_arith_le_substate;

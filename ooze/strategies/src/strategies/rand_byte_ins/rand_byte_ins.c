@@ -59,11 +59,11 @@ static inline strategy_state *
 rand_byte_ins_deserialize(char *s_state, size_t s_state_size)
 {
 	// ptr to serialized prng state:
-        // set ourselves to point just past the trailing "..." of the "strategy_state" yaml serialization
+	// set ourselves to point just past the trailing "..." of the "strategy_state" yaml serialization
 	char *s_prng_st = strstr(s_state, "...") + 4;
 
 	// deserialize the serialized states.
-	prng_state *    prng_st = prng_state_deserialize(s_prng_st, s_state_size - (size_t)(s_prng_st - s_state));
+	prng_state     *prng_st = prng_state_deserialize(s_prng_st, s_state_size - (size_t)(s_prng_st - s_state));
 	strategy_state *state   = strategy_state_deserialize(s_state, s_state_size);
 
 	state->internal_state = prng_st;
@@ -79,7 +79,7 @@ rand_byte_ins_print(strategy_state *state)
 	char *p_state   = strategy_state_print(state, "rand_byte_ins");
 	char *p_prng_st = prng_state_print((prng_state *)state->internal_state);
 
-	//combine them into one buffer!
+	// combine them into one buffer!
 	char *p_both = calloc(1, strlen(p_state) + strlen(p_prng_st) + 1);
 
 	strcat(p_both, p_state);
@@ -116,7 +116,7 @@ rand_byte_ins_copy(strategy_state *state)
 {
 
 	strategy_state *new_state    = strategy_state_copy(state);
-	prng_state *    prng_st_copy = prng_state_copy((prng_state *)state->internal_state);
+	prng_state     *prng_st_copy = prng_state_copy((prng_state *)state->internal_state);
 
 	new_state->internal_state = prng_st_copy;
 
@@ -133,7 +133,7 @@ rand_byte_ins(u8 *buf, size_t size, strategy_state *state)
 		return 0;
 	}
 
-	u8 byte_to_ins = (u8) (prng_state_random((prng_state *)state->internal_state) % 255);
+	u8 byte_to_ins = (u8)(prng_state_random((prng_state *)state->internal_state) % 255);
 	byte_ins(buf, size, pos, byte_to_ins);
 
 	return size + 1;

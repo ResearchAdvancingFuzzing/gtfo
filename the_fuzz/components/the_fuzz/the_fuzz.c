@@ -74,7 +74,7 @@ crc_buffer(u8 *buffer, size_t size)
 static void *
 load_module(char *module_name)
 {
-	void * handle    = NULL;
+	void  *handle    = NULL;
 	size_t full_size = strlen(module_name) + strlen(PLATFORM_EXTENSTION) + 1;
 
 	char *full_module_name = malloc(full_size);
@@ -131,7 +131,7 @@ initialize_analysis(char *analysis_library_name, char *analysis_load_file)
 
 	analysis_lib                 = load_module(analysis_library_name);
 	analysis_api_getter *get_api = dlsym(analysis_lib, "get_analysis_api");
-	char *               error   = dlerror();
+	char                *error   = dlerror();
 	if (error) {
 		log_fatal(error);
 	}
@@ -146,7 +146,7 @@ initialize_ooze(char *ooze_library_name)
 {
 	strategy_lib                                            = load_module(ooze_library_name);
 	get_fuzzing_strategy_function *get_fuzzing_strategy_ptr = dlsym(strategy_lib, "get_fuzzing_strategy");
-	char *                         error                    = dlerror();
+	char                          *error                    = dlerror();
 	if (error) {
 		log_fatal(error);
 	}
@@ -161,7 +161,7 @@ initialize_jig(char *jig_library_name)
 {
 	jig_lib                 = load_module(jig_library_name);
 	jig_api_getter *get_api = dlsym(jig_lib, "get_jig_api");
-	char *          error   = dlerror();
+	char           *error   = dlerror();
 	if (error) {
 		log_fatal(error);
 	}
@@ -207,7 +207,7 @@ load_input_file(char *input_file_name, u8 **base_input, size_t *base_size, size_
 		log_fatal("File size is greater than max size for %s.", input_file_name);
 	}
 
-	u8 *    file_buffer = calloc(1, max_size + 8);
+	u8     *file_buffer = calloc(1, max_size + 8);
 	ssize_t read_size   = read(fd, file_buffer, (size_t)file_size);
 	if (read_size != file_size) {
 		log_fatal("Read %zd bytes instead of %zd.", read_size, file_size);
@@ -260,8 +260,8 @@ static void
 report_interesting(u8 *input, size_t size, char *reason, u8 *results, size_t results_size, uint32_t crc)
 {
 
-	char *      interesting_dir = NULL;
-	char *      filename        = NULL;
+	char       *interesting_dir = NULL;
+	char       *filename        = NULL;
 	struct stat st;
 
 	asprintf(&interesting_dir, INTERESTING_DIR "%s/", reason);
@@ -315,27 +315,27 @@ report_interesting(u8 *input, size_t size, char *reason, u8 *results, size_t res
 static void
 run_and_report(u8 *input, size_t size)
 {
-	static u8 *   results      = NULL;
+	static u8    *results      = NULL;
 	static size_t results_size = 0;
-	char *        reason       = NULL;
+	char         *reason       = NULL;
 	uint32_t      crc          = crc_buffer(input, size);
 
-	//log_debug("input crc: %llx", crc);
-	// fuzz the binary, getting trace results, trace results size, and exit reason
+	// log_debug("input crc: %llx", crc);
+	//  fuzz the binary, getting trace results, trace results size, and exit reason
 	reason = jig.run(input, size, &results, &results_size);
 
-	//log_debug("results_size = %llu", results_size);
+	// log_debug("results_size = %llu", results_size);
 
-	//report interesting inputs
+	// report interesting inputs
 	if (reason != NULL && crc) {
-		//log_debug("reporting interesting.");
+		// log_debug("reporting interesting.");
 		report_interesting(input, size, reason, results, results_size, crc);
 	}
 
 	if (results_size > 0 && crc) {
-		//if not interesting, report coverage at least.
+		// if not interesting, report coverage at least.
 		if (!analysis.add(results, results_size)) {
-			//log_debug("reporting coverage .");
+			// log_debug("reporting coverage .");
 			report_coverage(input, size, results, results_size, crc);
 		}
 	}
@@ -346,8 +346,8 @@ static void
 fuzz(char *input_file_name, size_t max_size, u8 *seed, u64 iteration_count)
 {
 	clock_t         before          = clock();
-	u8 *            mutation_buffer = NULL;
-	u8 *            clean_buffer    = calloc(1, max_size + 8);
+	u8             *mutation_buffer = NULL;
+	u8             *clean_buffer    = calloc(1, max_size + 8);
 	strategy_state *state           = strategy.create_state(seed, max_size, 0, 0, 0);
 	size_t          size            = 0;
 	size_t          clean_size      = 0;
@@ -362,17 +362,17 @@ fuzz(char *input_file_name, size_t max_size, u8 *seed, u64 iteration_count)
 	// perform a fuzz run on the original input.
 	run_and_report(mutation_buffer, size);
 
-	//log_debug("max size: %llu", max_size);
-	//log_debug("iteration_count: %llu", iteration_count);
-	// commence the fuzzin y'all
+	// log_debug("max size: %llu", max_size);
+	// log_debug("iteration_count: %llu", iteration_count);
+	//  commence the fuzzin y'all
 	u64 i = 0;
 
 	for (; i < iteration_count; i++) {
 
 		// mutate the input with ooze
 		size = strategy.mutate(mutation_buffer, size, state);
-		//log_debug("iteration: %llu, size: %llu.", i, size);
-		// if the mutating is done
+		// log_debug("iteration: %llu, size: %llu.", i, size);
+		//  if the mutating is done
 		if (size == 0) {
 			break;
 		}
@@ -399,15 +399,15 @@ int
 main(int argc, char *argv[])
 {
 	int    opt;
-	char * analysis_library_name = NULL;
-	char * analysis_load_file    = NULL;
-	char * analysis_save_file    = NULL;
-	char * ooze_library_name     = NULL;
-	char * jig_library_name      = NULL;
-	char * input_file_name       = NULL;
+	char  *analysis_library_name = NULL;
+	char  *analysis_load_file    = NULL;
+	char  *analysis_save_file    = NULL;
+	char  *ooze_library_name     = NULL;
+	char  *jig_library_name      = NULL;
+	char  *input_file_name       = NULL;
 	u64    iteration_count       = 0;
 	size_t max_input_size        = 0;
-	u8 *   ooze_seed             = NULL;
+	u8    *ooze_seed             = NULL;
 	init_logging();
 	while ((opt = getopt(argc, argv, "S:O:i:n:s:C:c:x:J:")) != -1) {
 		switch (opt) {
@@ -474,7 +474,7 @@ main(int argc, char *argv[])
 			break;
 		}
 	}
-	//Check the arguments
+	// Check the arguments
 	if (analysis_library_name == NULL ||
 	    ooze_library_name == NULL ||
 	    jig_library_name == NULL ||

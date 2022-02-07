@@ -21,15 +21,14 @@ yaml_serializer *
 yaml_serializer_init(char *outfile_name)
 {
 	yaml_serializer *helper = calloc(1, sizeof(yaml_serializer));
-	size_t len;
+	size_t           len;
 
 	if (outfile_name && (len = strlen(outfile_name)) != 0) {
-	  helper->outfile_name = calloc(1, len + 1);
-	  memcpy(helper->outfile_name, outfile_name, len);
-	  helper->outfile = fopen(helper->outfile_name, "wb");
-	}
-	else {
-	  helper->outfile = open_memstream(&(helper->memstream_buffer), &(helper->memstream_buffer_size));
+		helper->outfile_name = calloc(1, len + 1);
+		memcpy(helper->outfile_name, outfile_name, len);
+		helper->outfile = fopen(helper->outfile_name, "wb");
+	} else {
+		helper->outfile = open_memstream(&(helper->memstream_buffer), &(helper->memstream_buffer_size));
 	}
 
 	YAML_SERIALIZE_INIT(helper)
@@ -40,21 +39,19 @@ yaml_serializer_init(char *outfile_name)
 // Destroys a yaml_serializer_object & return serialized buffer if null file
 // Note: caller must free returned buffer.
 void
-yaml_serializer_end(yaml_serializer *helper, char ** buffer, size_t * buffer_size)
+yaml_serializer_end(yaml_serializer *helper, char **buffer, size_t *buffer_size)
 {
 	YAML_SERIALIZE_END_MAPPING(helper)
 	YAML_SERIALIZE_END(helper)
-	fclose(helper->outfile);       // This will flush & update the buffer pointer,size.
+	fclose(helper->outfile); // This will flush & update the buffer pointer,size.
 	free(helper->outfile_name);
 
-	if (buffer)
-	  {
-	    *buffer = helper->memstream_buffer;
-	  }
-	if (buffer_size)
-	  {
-	    *buffer_size = helper->memstream_buffer_size;
-	  }
+	if (buffer) {
+		*buffer = helper->memstream_buffer;
+	}
+	if (buffer_size) {
+		*buffer_size = helper->memstream_buffer_size;
+	}
 
 	free(helper);
 }
@@ -65,24 +62,24 @@ yaml_deserializer *
 yaml_deserializer_init(char *infile, char *buffer, size_t buffer_size)
 {
 	yaml_deserializer *helper = calloc(1, sizeof(yaml_deserializer));
-        yaml_parser_initialize(&helper->parser);
+	yaml_parser_initialize(&helper->parser);
 
 	if (infile) {
 
-	  size_t len          = strlen(infile);
-	  helper->infile_name = calloc(1, len + 1);
-	  memcpy(helper->infile_name, infile, len);
+		size_t len          = strlen(infile);
+		helper->infile_name = calloc(1, len + 1);
+		memcpy(helper->infile_name, infile, len);
 
-	  helper->infile = fopen(helper->infile_name, "rb");
+		helper->infile = fopen(helper->infile_name, "rb");
 
-	  yaml_parser_set_input_file(&helper->parser, helper->infile);
+		yaml_parser_set_input_file(&helper->parser, helper->infile);
 
 	} else {
 
-	  helper->buffer = buffer;
-	  helper->buffer_size = buffer_size;
+		helper->buffer      = buffer;
+		helper->buffer_size = buffer_size;
 
-	  yaml_parser_set_input_string(&helper->parser, (u8 *) helper->buffer, helper->buffer_size);
+		yaml_parser_set_input_string(&helper->parser, (u8 *)helper->buffer, helper->buffer_size);
 	}
 
 	return helper;
@@ -94,8 +91,8 @@ yaml_deserializer_end(yaml_deserializer *helper)
 {
 	yaml_parser_delete(&helper->parser);
 	if (!helper->buffer) {
-	  fclose(helper->infile);
-	  free(helper->infile_name);
+		fclose(helper->infile);
+		free(helper->infile_name);
 	}
 	free(helper);
 }

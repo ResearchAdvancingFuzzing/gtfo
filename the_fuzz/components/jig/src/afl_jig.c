@@ -33,9 +33,9 @@
 // These are in common, unclear why this is needed but the compiler is complaining
 #define unlikely(x) __builtin_expect(!!(x), 0)
 
-//Global variables
+// Global variables
 static s32    shm_id          = 0;     // ID of the SHM region
-static u8 *   trace_bits      = NULL;  // SHM with instrumentation bitmap
+static u8    *trace_bits      = NULL;  // SHM with instrumentation bitmap
 static size_t map_size        = 0;     // size of the bitmap
 static u64    timeout         = 0;     // timeout before we consider the program hung
 static int    child_pid       = -1;    // pid of the child process
@@ -44,7 +44,7 @@ static int    forksrv_pid     = -1;    // pid of the fork server
 static int    dev_null_fd     = 0;     // file descriptor for /dev/null
 static size_t memory_limit    = 0;     // how much memory the target can use
 static int    out_fd          = 0;     // the file descriptor which we write our fuzzed input to
-static char * out_file        = NULL;  // the name of the file we write our fuzzed input to
+static char  *out_file        = NULL;  // the name of the file we write our fuzzed input to
 static s32    fsrv_ctl_fd     = 0;     // Fork server control pipe (write)
 static s32    fsrv_st_fd      = 0;     // Fork server status pipe (read)
 
@@ -191,7 +191,7 @@ init_forkserver(char *target, char *target_argv[])
 
 		/* MSAN is tricky, because it doesn't support abort_on_error=1 at this point. So, we do this in a very hacky way. */
 		setenv("MSAN_OPTIONS", "exit_code=" STRINGIFY(MSAN_ERROR) ":symbolize=0:abort_on_error=1:allocator_may_return_null=1:msan_track_origins=0", 0);
-		//execv(target, NULL);
+		// execv(target, NULL);
 		int exec_err = execv(target, target_argv);
 		if (exec_err != 0) {
 			log_fatal(strerror(errno));
@@ -253,14 +253,14 @@ init_forkserver(char *target, char *target_argv[])
 static void
 handle_timeout()
 {
-	if (child_pid > 0) {
-		child_timed_out = true;
-		kill(child_pid, SIGKILL);
+        if (child_pid > 0) {
+                child_timed_out = true;
+                kill(child_pid, SIGKILL);
 
-	} else if (child_pid == -1 && forksrv_pid > 0) {
-		child_timed_out = true;
-		kill(forksrv_pid, SIGKILL);
-	}
+        } else if (child_pid == -1 && forksrv_pid > 0) {
+                child_timed_out = true;
+                kill(forksrv_pid, SIGKILL);
+        }
 }
 */
 /* Write modified data to file for testing. If out_file is set, the old file is unlinked and a new one is created. Otherwise, out_fd is rewound and truncated. */
@@ -391,7 +391,7 @@ init()
 	if (env_target == NULL) {
 		log_fatal("Missing JIG_TARGET environment variable.");
 	}
-	char *      target = env_target;
+	char       *target = env_target;
 	struct stat file_stat;
 	if (!(stat(target, &file_stat) == 0 && file_stat.st_mode & S_IXUSR)) {
 		log_fatal("Target not executable.");
@@ -404,7 +404,7 @@ init()
 		log_fatal("Missing JIG_TARGET_ARGV environment variable.");
 	}
 	// Only supporting 20 arguments
-	char * target_argv[20] = {0};
+	char  *target_argv[20] = {0};
 	char **target_argv_ptr;
 
 	target_argv[0] = target;
@@ -430,18 +430,18 @@ init()
 		log_fatal("Creating the fuzzfile failed");
 	}
 
-	//Create a new shared memory region
+	// Create a new shared memory region
 	shm_id = shmget(IPC_PRIVATE, map_size, IPC_CREAT | IPC_EXCL | 0600);
 	if (shm_id < 0) {
 		log_fatal("shmget() failed");
 	}
 
-	//Setup environment variable
+	// Setup environment variable
 	char shm_str[40];
 	snprintf(shm_str, sizeof(shm_str) - 1, "%d", shm_id);
 	setenv(SHM_ENV_VAR, shm_str, 1);
 
-	//Save a pointer to the region in trace_bits
+	// Save a pointer to the region in trace_bits
 	trace_bits = shmat(shm_id, NULL, 0);
 	if (!trace_bits) {
 		log_fatal("shmat() failed");

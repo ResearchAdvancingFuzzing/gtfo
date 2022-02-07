@@ -19,7 +19,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 // *Really* minimal PCG32 code / (c) 2014 M.E. O'Neill / pcg-random.org
 // Licensed under Apache License 2.0 (NO WARRANTY, etc. see website)
 // Modified by Andy and Aaron
@@ -76,7 +75,7 @@ prng_state_random(prng_state *prng_st)
 {
 	// Calculate output function (XSH RR), uses old state for max ILP
 	uint32_t xorshifted = (u32)(((prng_st->state >> 18u) ^ prng_st->state) >> 27u);
-	uint32_t rot        = (u32) (prng_st->state >> 59u);
+	uint32_t rot        = (u32)(prng_st->state >> 59u);
 	return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
 }
 
@@ -84,31 +83,31 @@ prng_state_random(prng_state *prng_st)
 inline char *
 prng_state_serialize(prng_state *prng_st)
 {
-    yaml_serializer *helper;
-    char *mybuffer;
-    size_t mybuffersize;
+	yaml_serializer *helper;
+	char            *mybuffer;
+	size_t           mybuffersize;
 
-    helper = yaml_serializer_init("");
+	helper = yaml_serializer_init("");
 
-    // We want to name the structure for readability.
-    YAML_SERIALIZE_NEST_MAP(helper, prng_state)
-    YAML_SERIALIZE_START_MAPPING(helper)
-    YAML_SERIALIZE_32HEX_KV(helper, version, 0)
+	// We want to name the structure for readability.
+	YAML_SERIALIZE_NEST_MAP(helper, prng_state)
+	YAML_SERIALIZE_START_MAPPING(helper)
+	YAML_SERIALIZE_32HEX_KV(helper, version, 0)
 
-    YAML_SERIALIZE_64HEX_KV(helper, state, prng_st->state)
-    YAML_SERIALIZE_64HEX_KV(helper, inc, (u64) prng_st->inc)
+	YAML_SERIALIZE_64HEX_KV(helper, state, prng_st->state)
+	YAML_SERIALIZE_64HEX_KV(helper, inc, (u64)prng_st->inc)
 
-    YAML_SERIALIZE_END_MAPPING(helper)
-    yaml_serializer_end(helper, &mybuffer, &mybuffersize);
+	YAML_SERIALIZE_END_MAPPING(helper)
+	yaml_serializer_end(helper, &mybuffer, &mybuffersize);
 
-    return mybuffer;
+	return mybuffer;
 }
 
 // this function deserializes a pcg32 state
 inline prng_state *
 prng_state_deserialize(char *s_state, size_t s_state_size)
 {
-	prng_state *prng_st = calloc(1, sizeof(prng_state));
+	prng_state        *prng_st = calloc(1, sizeof(prng_state));
 	yaml_deserializer *helper;
 
 	helper = yaml_deserializer_init(NULL, s_state, s_state_size);
@@ -116,7 +115,7 @@ prng_state_deserialize(char *s_state, size_t s_state_size)
 	// Get to the document start
 	YAML_DESERIALIZE_PARSE(helper)
 	while (helper->event.type != YAML_DOCUMENT_START_EVENT) {
-	  YAML_DESERIALIZE_EAT(helper)
+		YAML_DESERIALIZE_EAT(helper)
 	}
 
 	// Deserialize the prng_state structure:
@@ -132,7 +131,7 @@ prng_state_deserialize(char *s_state, size_t s_state_size)
 	YAML_DESERIALIZE_GET_KV_U32(helper, "version", &version)
 
 	YAML_DESERIALIZE_GET_KV_U64(helper, "state", &prng_st->state)
-	YAML_DESERIALIZE_GET_KV_U64(helper, "inc",  &prng_st->inc)
+	YAML_DESERIALIZE_GET_KV_U64(helper, "inc", &prng_st->inc)
 	YAML_DESERIALIZE_MAPPING_END(helper)
 
 	yaml_deserializer_end(helper);

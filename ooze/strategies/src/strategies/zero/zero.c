@@ -24,7 +24,7 @@ get_fuzzing_strategy_function get_fuzzing_strategy = zero_populate;
 #endif
 
 /*
-	Deterministically zeroizes the buffer.
+    Deterministically zeroizes the buffer.
 */
 static inline size_t
 zero(u8 *buf, size_t size, strategy_state *state)

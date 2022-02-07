@@ -26,7 +26,7 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
 // This file was extracted from github.com/andikleen/simple-pt on 1-July-2019
 // It was further modified to compile cleanly with -Werror and without declaring a main() function..

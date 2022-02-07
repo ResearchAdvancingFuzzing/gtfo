@@ -19,39 +19,39 @@ set(CMAKE_C_FLAGS_DEBUG "-Werror -Wno-padded -O0 -ggdb3 -maes -msse4.2 -march=na
 set(CMAKE_C_FLAGS "-Werror -Wno-padded -Ofast -flto -fno-common -maes -msse4.2 -march=native -std=c11")
 
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -Weverything -Wno-unknown-warning-option")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Weverything -Wno-unknown-warning-option")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -Weverything -Wno-unknown-warning-option")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Weverything -Wno-unknown-warning-option")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -Weverything -Wno-unknown-warning-option")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Weverything -Wno-unknown-warning-option")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -Weverything -Wno-unknown-warning-option")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Weverything -Wno-unknown-warning-option")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -Wextra -Wno-unknown-pragmas")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wno-unknown-pragmas")
-else()
-  message(FATAL_ERROR "UNSUPPORTED COMPILER ${CMAKE_C_COMPILER_ID}, exiting.")
-  return()
-endif()
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -Wextra -Wno-unknown-pragmas")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wno-unknown-pragmas")
+else ()
+    message(FATAL_ERROR "UNSUPPORTED COMPILER ${CMAKE_C_COMPILER_ID}, exiting.")
+    return()
+endif ()
 
-if(UNIX AND NOT APPLE)
-	set(LINUX TRUE)
-endif()
+if (UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+endif ()
 
-if(APPLE)
-	set(LIB_SUFFIX ".dylib")
-elseif(CYGWIN)
-	set(LIB_SUFFIX ".dll")
-elseif(LINUX)
-	set(LIB_SUFFIX ".so")
-	add_definitions(-D_GNU_SOURCE)
-endif()
+if (APPLE)
+    set(LIB_SUFFIX ".dylib")
+elseif (CYGWIN)
+    set(LIB_SUFFIX ".dll")
+elseif (LINUX)
+    set(LIB_SUFFIX ".so")
+    add_definitions(-D_GNU_SOURCE)
+endif ()
 
 # Avoid odr-violation by compiling in other strategies instead of linking them as
 # the librariesE "afl_dictionary_insert" "afl_dictionary_overwrite"
 add_library(${STRATEGY_NAME} SHARED ${MUTATE_SRC} ${STRATEGY_SRC} ${AFL_SRC} ${PRNG_SRC} ${DICTIONARY_SRC} "${STRATEGY_NAME}.c"
-  ${CMAKE_CURRENT_SOURCE_DIR}/../afl_dictionary_insert/afl_dictionary_insert.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/../afl_dictionary_overwrite/afl_dictionary_overwrite.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../common/src/yaml_helper.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../common/src/yaml_decoder.c)
+        ${CMAKE_CURRENT_SOURCE_DIR}/../afl_dictionary_insert/afl_dictionary_insert.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/../afl_dictionary_overwrite/afl_dictionary_overwrite.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../common/src/yaml_helper.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../common/src/yaml_decoder.c)
 
 target_link_libraries(${STRATEGY_NAME} PUBLIC yaml)
 
@@ -60,7 +60,7 @@ set_target_properties(${STRATEGY_NAME} PROPERTIES COMPILE_FLAGS "-DMODULE=${STRA
 install(TARGETS ${STRATEGY_NAME} DESTINATION gtfo/ooze)
 
 if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-  add_custom_command(TARGET ${STRATEGY_NAME} POST_BUILD COMMAND strip -x ${STRATEGY_NAME}${LIB_SUFFIX})
+    add_custom_command(TARGET ${STRATEGY_NAME} POST_BUILD COMMAND strip -x ${STRATEGY_NAME}${LIB_SUFFIX})
 endif ()
 
 # Avoid cmake error from attempting to build gtfo_common.so twice due to an add_subdirectory of this CMakeLists.txt file into another.

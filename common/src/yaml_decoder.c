@@ -29,20 +29,20 @@ int
 main(int argc, char **argv)
 {
 
-	FILE *        fh;
+	FILE	     *fh;
 	yaml_parser_t parser;
 	yaml_event_t  event;
 	int           done     = 0;
 	int           level    = 0;
-	char *        indent[] = {" 1",
-                          "   2",
-                          "     3",
-                          "       4",
-                          "         5",
-                          "           6",
-                          "             7",
-                          "               8",
-                          "                 9"};
+	char	     *indent[] = {" 1",
+                      "   2",
+                      "     3",
+                      "       4",
+                      "         5",
+                      "           6",
+                      "             7",
+                      "               8",
+                      "                 9"};
 
 	if (argc < 2) {
 		printf("Must provide filename.\n");

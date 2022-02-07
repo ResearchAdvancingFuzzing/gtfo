@@ -46,17 +46,17 @@ det_byte_inc(u8 *buf, size_t size, strategy_state *state)
 void
 det_byte_inc_populate(fuzzing_strategy *strategy)
 {
-	strategy->version      = VERSION_ONE;
-	strategy->name         = "det_byte_inc";
-	strategy->create_state = strategy_state_create;
-	strategy->mutate       = det_byte_inc;
-	strategy->serialize    = det_byte_inc_serialize;
-	strategy->deserialize  = strategy_state_deserialize;
-	strategy->print_state  = det_byte_inc_print;
-	strategy->copy_state   = strategy_state_copy;
-	strategy->free_state   = strategy_state_free;
-	strategy->description  = "Deterministically increments a byte by one. "
-	                        "On the first iteration it increments the first byte, then it increments the next byte, and so on.";
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "det_byte_inc";
+	strategy->create_state     = strategy_state_create;
+	strategy->mutate           = det_byte_inc;
+	strategy->serialize        = det_byte_inc_serialize;
+	strategy->deserialize      = strategy_state_deserialize;
+	strategy->print_state      = det_byte_inc_print;
+	strategy->copy_state       = strategy_state_copy;
+	strategy->free_state       = strategy_state_free;
+	strategy->description      = "Deterministically increments a byte by one. "
+	                             "On the first iteration it increments the first byte, then it increments the next byte, and so on.";
 	strategy->update_state     = strategy_state_update;
 	strategy->is_deterministic = true;
 }

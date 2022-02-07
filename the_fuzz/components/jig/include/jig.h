@@ -28,10 +28,10 @@ typedef struct jig_api {
 	int version;
 	union {
 		struct {
-			const char *          name;
-			const char *          description;
-			jig_init_function *   initialize;
-			jig_run_function *    run;
+			const char           *name;
+			const char           *description;
+			jig_init_function    *initialize;
+			jig_run_function     *run;
 			jig_destroy_function *destroy;
 		};
 	};

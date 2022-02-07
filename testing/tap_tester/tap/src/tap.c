@@ -41,7 +41,7 @@ print_tap_header(void)
 	printf("TAP version 13\n");
 }
 
-//records the number of tests to be performed
+// records the number of tests to be performed
 void
 plan(unsigned long tests)
 {

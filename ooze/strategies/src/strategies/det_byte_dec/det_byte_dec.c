@@ -47,17 +47,17 @@ det_byte_dec(u8 *buf, size_t size, strategy_state *state)
 void
 det_byte_dec_populate(fuzzing_strategy *strategy)
 {
-	strategy->version      = VERSION_ONE;
-	strategy->name         = "det_byte_dec";
-	strategy->create_state = strategy_state_create;
-	strategy->mutate       = det_byte_dec;
-	strategy->serialize    = det_byte_dec_serialize;
-	strategy->deserialize  = strategy_state_deserialize;
-	strategy->print_state  = det_byte_dec_print;
-	strategy->copy_state   = strategy_state_copy;
-	strategy->free_state   = strategy_state_free;
-	strategy->description  = "Deterministically decrements a byte by one. "
-	                        "On the first iteration it decrements the first byte, then it decrements the next byte, and so on.";
+	strategy->version          = VERSION_ONE;
+	strategy->name             = "det_byte_dec";
+	strategy->create_state     = strategy_state_create;
+	strategy->mutate           = det_byte_dec;
+	strategy->serialize        = det_byte_dec_serialize;
+	strategy->deserialize      = strategy_state_deserialize;
+	strategy->print_state      = det_byte_dec_print;
+	strategy->copy_state       = strategy_state_copy;
+	strategy->free_state       = strategy_state_free;
+	strategy->description      = "Deterministically decrements a byte by one. "
+	                             "On the first iteration it decrements the first byte, then it decrements the next byte, and so on.";
 	strategy->update_state     = strategy_state_update;
 	strategy->is_deterministic = true;
 }

@@ -40,28 +40,28 @@ typedef enum {
 #define MAX(_a, _b) ((_a) > (_b) ? (_a) : (_b))
 #endif /* !MIN */
 
-#define SWAP16(_x) ({                     \
+#define SWAP16(_x) ({                 \
 	u16 _ret = (_x);                  \
 	(u16)((_ret << 8) | (_ret >> 8)); \
 })
 
-#define SWAP32(_x) ({                       \
+#define SWAP32(_x) ({                   \
 	u32 _ret = (_x);                    \
 	(u32)((_ret << 24) | (_ret >> 24) | \
-	      ((_ret << 8) & 0x00FF0000) |  \
-	      ((_ret >> 8) & 0x0000FF00));  \
+		  ((_ret << 8) & 0x00FF0000) |  \
+		  ((_ret >> 8) & 0x0000FF00));  \
 })
 
-#define SWAP64(_x)                            \
+#define SWAP64(_x)                        \
 	(((u64)SWAP32((u32)((_x)&0xffffffff)) \
 	  << 32) |                            \
 	 (u64)SWAP32((u32)((_x) >> 32)))
 
 #ifndef FLIP_BIT
-#define FLIP_BIT(_ar, _b)                               \
-	do {                                            \
-		u8 *_arf = (u8 *)(_ar);                 \
-		u32 _bf  = (u32)(_b);                   \
-		_arf[(_bf) >> (u8)3] ^= ((u8)128 >> ((_bf)&(u8)7)); \
+#define FLIP_BIT(_ar, _b)                                     \
+	do {                                                      \
+		u8 *_arf = (u8 *)(_ar);                               \
+		u32 _bf  = (u32)(_b);                                 \
+		_arf[(_bf) >> (u8)3] ^= ((u8)128 >> ((_bf) & (u8)7)); \
 	} while (0)
 #endif

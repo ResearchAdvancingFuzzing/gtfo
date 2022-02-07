@@ -20,12 +20,12 @@
 #include "common/types.h"
 
 /*
-	Methods for manipulating dictionary and dictionary_entry objects.
+    Methods for manipulating dictionary and dictionary_entry objects.
 
-	Dictionaries are used to hold fixed bytestrings that
-	are commonly used by the program being fuzzed.
+    Dictionaries are used to hold fixed bytestrings that
+    are commonly used by the program being fuzzed.
 
-	The entries are sorted by token length, smallest first.
+    The entries are sorted by token length, smallest first.
 */
 
 // defined in afl_config.h
@@ -39,7 +39,7 @@ typedef struct dictionary_entry {
 	size_t len;
 	// idk, taken from afl, might use later
 	size_t hit_cnt;
-	u8 *   token;
+	u8    *token;
 } dictionary_entry;
 
 typedef struct dictionary {
@@ -53,8 +53,8 @@ typedef struct dictionary {
 	// maximum string length of tokens in this dictionary
 	size_t max_token_len;
 
-        // pointer to array of pointers, with each pointing to a dictionary entry
-        struct dictionary_entry *(*entries)[]; 
+	// pointer to array of pointers, with each pointing to a dictionary entry
+	struct dictionary_entry *(*entries)[];
 } dictionary;
 
 char *dictionary_entry_print(dictionary_entry *entry);
@@ -63,11 +63,11 @@ dictionary_entry *dictionary_entry_create(u8 *token);
 void              dictionary_entry_free(dictionary_entry *entry);
 dictionary_entry *dictionary_entry_copy(dictionary_entry *entry);
 
-char *            dictionary_entry_serialize(dictionary_entry *entry);
+char             *dictionary_entry_serialize(dictionary_entry *entry);
 dictionary_entry *dictionary_entry_deserialize(char *s_entry);
 
 int         compare_entries(const void *p, const void *q);
-char *      dictionary_print(dictionary *dict);
+char       *dictionary_print(dictionary *dict);
 dictionary *dictionary_create(size_t max_entry_cnt, size_t max_token_len);
 void        dictionary_free(dictionary *dict);
 uint8_t     dictionary_add_entry(dictionary *dict, dictionary_entry *new_entry);
@@ -76,5 +76,5 @@ dictionary *dictionary_copy(dictionary *dict);
 dictionary *dictionary_merge(dictionary *a, dictionary *b);
 dictionary *dictionary_load_file(char *filename, size_t max_entries, size_t max_token_len);
 
-char *      dictionary_serialize(dictionary *dict);
+char       *dictionary_serialize(dictionary *dict);
 dictionary *dictionary_deserialize(char *s_dict, size_t s_dict_size);

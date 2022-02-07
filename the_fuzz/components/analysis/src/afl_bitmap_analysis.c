@@ -58,7 +58,7 @@ afl_hash32(const void *key, u32 len, u32 seed)
 static int
 load_from_file(char *filename)
 {
-	if(strlen(filename)) {
+	if (strlen(filename)) {
 
 		int file_fd = open(filename, O_RDONLY);
 		if (file_fd == -1) {
@@ -124,13 +124,13 @@ destroy()
 }
 
 /*	Comment from AFL source:
-		Check if the current execution path brings anything new to the table.
-		Update virgin bits to reflect the finds. Returns 1 if the only change is
-		the hit-count for a particular tuple; 2 if there are new tuples seen.
-		Updates the map, so subsequent calls will always return 0.
+                Check if the current execution path brings anything new to the table.
+                Update virgin bits to reflect the finds. Returns 1 if the only change is
+                the hit-count for a particular tuple; 2 if there are new tuples seen.
+                Updates the map, so subsequent calls will always return 0.
 
-		This function is called after every exec() on a fairly large buffer, so
-		it needs to be fast. We do this in 32-bit and 64-bit flavors. */
+                This function is called after every exec() on a fairly large buffer, so
+                it needs to be fast. We do this in 32-bit and 64-bit flavors. */
 static inline u8
 has_new_bits(u8 *trace_bits, u8 *virgin_map)
 {
@@ -179,7 +179,7 @@ add(u8 *element, size_t element_size)
 	}
 	u8  ret = 0;
 	u32 new_checksum;
-	//Compute a hash of the bits, and use that to detect a change.  It's faster
+	// Compute a hash of the bits, and use that to detect a change.  It's faster
 	new_checksum = afl_hash32(element, (u32)element_size, 0xAABBCCDD);
 	if (last_checksum != new_checksum) {
 		ret = has_new_bits(element, virgin_bits);

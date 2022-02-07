@@ -49,15 +49,15 @@ get_io_file(char *test_filename, char *filename)
 }
 
 /*
-	This function reads a line from the test file.
-	It returns a pointer to the first character of a line that is not a space.
-	Commented lines (lines that begin with a '#') are skipped.
+    This function reads a line from the test file.
+    It returns a pointer to the first character of a line that is not a space.
+    Commented lines (lines that begin with a '#') are skipped.
 */
 char *
 get_line_from_test_file(FILE *file)
 {
-	char *  line   = NULL;
-	char *  result = NULL;
+	char   *line   = NULL;
+	char   *result = NULL;
 	ssize_t length;
 	size_t  n = 0;
 	ssize_t i = 0;
@@ -101,7 +101,7 @@ get_test_version(char *version_line)
 }
 
 /*
-	Checks that all environment vars that are required by the test are present.
+    Checks that all environment vars that are required by the test are present.
 */
 #define STATE_FIND_BEGIN 0
 #define STATE_FIND_END 1
@@ -162,12 +162,11 @@ set_envs(char *env_line)
 				continue;
 			}
 			bail_out("ENV parse: invalid state");
-		}
-		else if(state == STATE_FIND_BEGIN) {
-				state    = STATE_FIND_END;
-				curr_end = curr_begin;
-				curr_end++;
-				continue;
+		} else if (state == STATE_FIND_BEGIN) {
+			state    = STATE_FIND_END;
+			curr_end = curr_begin;
+			curr_end++;
+			continue;
 		}
 
 		if (isspace((int)*curr_end)) {
@@ -215,12 +214,12 @@ set_envs(char *env_line)
 	}
 }
 /*
-	This function counts the number of tests that we need to run.
+    This function counts the number of tests that we need to run.
 */
 u64
 count_tests(FILE *test_file, u8 lines_per_test)
 {
-	char * line       = NULL;
+	char  *line       = NULL;
 	size_t line_count = 0;
 
 	// Count the number of lines
@@ -305,9 +304,9 @@ read_file(size_t max_size, char *filename, size_t *size, u8 **buffer)
 
 	// We allocate one extra byte than the size we report to insure it is null-terminated.
 	// This will cover someone performing a strlen() on the buffer.
-	*buffer          = calloc(1, buffer_size+1);
-	size_t read_size = fread(*buffer, 1, (size_t)(file_size), file);
-	*(*buffer+buffer_size) = 0;
+	*buffer                  = calloc(1, buffer_size + 1);
+	size_t read_size         = fread(*buffer, 1, (size_t)(file_size), file);
+	*(*buffer + buffer_size) = 0;
 	if (read_size != (size_t)file_size) {
 		char *desc      = NULL;
 		int   desc_size = asprintf(&desc, "read fail(%ld): %s", read_size, strerror(errno));

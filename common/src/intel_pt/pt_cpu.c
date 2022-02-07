@@ -92,7 +92,7 @@ int
 pt_cpu_parse(struct pt_cpu *cpu, const char *s)
 {
 	const char sep = '/';
-	char *     endptr;
+	char      *endptr;
 	long       family, model, stepping;
 
 	if (!cpu || !s)

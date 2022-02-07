@@ -27,13 +27,13 @@ typedef struct analysis_api {
 	int version;
 	union {
 		struct {
-			const char *               name;
-			const char *               description;
-			analysis_init_function *   initialize;
-			analysis_add_function *    add; // This returns true if the results have been seen before
-			analysis_save_function *   save;
+			const char                *name;
+			const char                *description;
+			analysis_init_function    *initialize;
+			analysis_add_function     *add; // This returns true if the results have been seen before
+			analysis_save_function    *save;
 			analysis_destroy_function *destroy;
-			analysis_merge_function *  merge;
+			analysis_merge_function   *merge;
 		};
 	};
 } analysis_api;
