@@ -27,7 +27,7 @@ get_fuzzing_strategy_function get_fuzzing_strategy = afl_interesting_populate;
 
 #define INTERESTING_8_ELEMENTS INTERESTING_8_SIZE
 #define INTERESTING_16_ELEMENTS INTERESTING_8_SIZE + INTERESTING_16_SIZE
-#define INTERESTING_32_ELEMENTS INTERESTING_16_ELEMENTS + INTERESTING_32_SIZE
+//#define INTERESTING_32_ELEMENTS INTERESTING_16_ELEMENTS + INTERESTING_32_SIZE
 // this function updates the running states and substates
 static inline void
 afl_interesting_update(strategy_state *state)
@@ -383,51 +383,73 @@ afl_interesting_get_pos(strategy_state *state)
 		pos = substates->det_byte_interesting_substate->iteration / INTERESTING_8_ELEMENTS;
 		break;
 	case TWO_BYTE_INTERESTING_LE:
-		pos = substates->det_two_byte_interesting_le_substate->iteration / INTERESTING_16_ELEMENTS;
+		pos = substates->det_two_byte_interesting_le_substate->iteration / ((u64)  INTERESTING_16_ELEMENTS);
 		break;
 	case TWO_BYTE_INTERESTING_BE:
-		pos = substates->det_two_byte_interesting_be_substate->iteration / INTERESTING_16_ELEMENTS;
+		pos = substates->det_two_byte_interesting_be_substate->iteration / ((u64)  INTERESTING_16_ELEMENTS);
 		break;
 	case FOUR_BYTE_INTERESTING_LE:
-		pos = substates->det_four_byte_interesting_le_substate->iteration / INTERESTING_32_ELEMENTS;
+		pos = substates->det_four_byte_interesting_le_substate->iteration / 27; //((u64)  INTERESTING_32_ELEMENTS);
 		break;
 	case FOUR_BYTE_INTERESTING_BE:
-		pos = substates->det_four_byte_interesting_be_substate->iteration / INTERESTING_32_ELEMENTS;
+		pos = substates->det_four_byte_interesting_be_substate->iteration /  27; //((u64)  INTERESTING_32_ELEMENTS);
 		break;
 	}
 	return pos;
 }
 
+static inline u8 
+afl_interesting_get_j(strategy_state *state) 
+{ 
+	afl_interesting_substates *substates = (afl_interesting_substates *)state->internal_state;
+	u8  which = 0;
+
+	switch (substates->current_substrategy) {
+	case BYTE_INTERESTING:
+		which = substates->det_byte_interesting_substate->iteration % INTERESTING_8_SIZE;
+		break;
+	case TWO_BYTE_INTERESTING_LE:
+		which = substates->det_two_byte_interesting_le_substate->iteration % (INTERESTING_8_SIZE + INTERESTING_16_SIZE);
+		break;
+	case TWO_BYTE_INTERESTING_BE:
+		which = substates->det_two_byte_interesting_be_substate->iteration % (INTERESTING_8_SIZE + INTERESTING_16_SIZE);
+		break;
+	case FOUR_BYTE_INTERESTING_LE:
+		which = substates->det_four_byte_interesting_le_substate->iteration % 27; //((u64) INTERESTING_32_ELEMENTS); //(INTERESTING_8_SIZE + INTERESTING_16_SIZE + INTERESTING_32_SIZE);
+		break;
+	case FOUR_BYTE_INTERESTING_BE:
+		which = substates->det_four_byte_interesting_be_substate->iteration % 27; //((u64) INTERESTING_32_ELEMENTS); //(INTERESTING_8_SIZE + INTERESTING_16_SIZE + INTERESTING_32_SIZE);
+
+		break;
+	}
+	return which; 
+}
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-statement-expression"
-static inline u64
+static inline s32
 afl_interesting_get_value(strategy_state *state)
 {
 	afl_interesting_substates *substates = (afl_interesting_substates *)state->internal_state;
 
-	u64 value = 0;
-	u8  which = 0;
+	s32 value = 0;
+	u8  j = afl_interesting_get_j(state);
+
 	switch (substates->current_substrategy) {
 	case BYTE_INTERESTING:
-		which = substates->det_byte_interesting_substate->iteration % INTERESTING_8_SIZE;
-		value = (u8)interesting_8[which % INTERESTING_8_ELEMENTS];
+		value = (s8)interesting_8[j]; 
 		break;
 	case TWO_BYTE_INTERESTING_LE:
-		which = substates->det_two_byte_interesting_le_substate->iteration % (INTERESTING_8_SIZE + INTERESTING_16_SIZE);
-		value = (u16)interesting_16[which % INTERESTING_16_ELEMENTS];
+		value = (s16)interesting_16[j]; 
 		break;
 	case TWO_BYTE_INTERESTING_BE:
-		which = substates->det_two_byte_interesting_be_substate->iteration % (INTERESTING_8_SIZE + INTERESTING_16_SIZE);
-		value = (u16)SWAP16((u16)interesting_16[which % INTERESTING_16_ELEMENTS]);
+		value = (s16)((u16)interesting_16[j]); 
 		break;
 	case FOUR_BYTE_INTERESTING_LE:
-		which = substates->det_four_byte_interesting_le_substate->iteration % (INTERESTING_8_SIZE + INTERESTING_16_SIZE + INTERESTING_32_SIZE);
-		value = (u32)interesting_32[which % INTERESTING_32_ELEMENTS];
+		value = (s32)interesting_32[j]; 
 		break;
 	case FOUR_BYTE_INTERESTING_BE:
-		which = substates->det_four_byte_interesting_be_substate->iteration % (INTERESTING_8_SIZE + INTERESTING_16_SIZE + INTERESTING_32_SIZE);
-		value = (u32)SWAP32((u32)interesting_32[which % INTERESTING_32_ELEMENTS]);
-
+		value = (s32)interesting_32[j];
 		break;
 	}
 	return value;
@@ -435,21 +457,21 @@ afl_interesting_get_value(strategy_state *state)
 #pragma clang diagnostic pop
 
 static inline bool
-afl_interesting_check_pos(u64 pos, strategy_state *state)
+afl_interesting_check_pos(u64 pos, u8 j, strategy_state *state)
 {
 	afl_interesting_substates *substates = (afl_interesting_substates *)state->internal_state;
 
 	switch (substates->current_substrategy) {
 	case BYTE_INTERESTING:
-		return pos >= state->max_size;
+		return pos >= state->max_size || j >= ((u64) INTERESTING_8_ELEMENTS);
 	case TWO_BYTE_INTERESTING_LE:
-		return pos + 2 > state->max_size;
+		return pos + 2 > state->max_size || j >= (((u64) INTERESTING_16_ELEMENTS));
 	case TWO_BYTE_INTERESTING_BE:
-		return pos + 2 > state->max_size;
+		return pos + 2 > state->max_size || j >= (((u64) INTERESTING_16_ELEMENTS));
 	case FOUR_BYTE_INTERESTING_LE:
-		return pos + 4 > state->max_size;
+		return pos + 4 > state->max_size || j >= 27; //(((u64) INTERESTING_32_ELEMENTS));
 	case FOUR_BYTE_INTERESTING_BE:
-		return pos + 4 > state->max_size;
+		return pos + 4 > state->max_size || j >= 27; //(((u64) INTERESTING_32_ELEMENTS));
 	default:
 		return 0;
 	}
@@ -458,12 +480,12 @@ afl_interesting_check_pos(u64 pos, strategy_state *state)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-statement-expression"
 static inline bool
-afl_interesting_check_could_be_list(const u8 *buf, strategy_state *state)
+afl_interesting_check_could_be_list(u8 *buf, strategy_state *state)
 {
 	afl_interesting_substates *substates = (afl_interesting_substates *)state->internal_state;
 
 	u64 pos      = afl_interesting_get_pos(state);
-	u64 value    = afl_interesting_get_value(state);
+	s32 value    = afl_interesting_get_value(state);
 	u8  orig_u8  = 0;
 	u16 orig_u16 = 0;
 	u32 orig_u32 = 0;
@@ -478,8 +500,8 @@ afl_interesting_check_could_be_list(const u8 *buf, strategy_state *state)
 		orig_u16 = *(u16 *)((u64)buf + pos);
 		return (
 		    !could_be_bitflip(orig_u16 ^ (u16)value) &&
-		    !could_be_arith(orig_u16, (u32)value, 2) &&
-		    !could_be_interest(orig_u16, (u32)value, 2, 0));
+		    !could_be_arith(orig_u16, (u16)value, 2) &&
+		    !could_be_interest(orig_u16, (u16)value, 2, 0));
 	case TWO_BYTE_INTERESTING_BE:
 		orig_u16 = *(u16 *)((u64)buf + pos);
 		return (
@@ -506,21 +528,34 @@ afl_interesting_check_could_be_list(const u8 *buf, strategy_state *state)
 }
 #pragma clang diagnostic pop
 
+
 static inline size_t
 afl_interesting(u8 *buf, size_t size, strategy_state *state)
 {
 	afl_interesting_substates *substates = (afl_interesting_substates *)state->internal_state;
 	size_t                     orig_size = size;
-	u64                        pos       = afl_interesting_get_pos(state);
+	u64                        pos;
+        u8                         j; 
 
 	while (size) {
 
+		pos = afl_interesting_get_pos(state);  // this is i
+            	j = afl_interesting_get_j(state); // this is j
+            	printf("strategy: %d, i: %lu, j: %u, \n", substates->current_substrategy, pos, j); 
+
 		// if the position would lead to an out of bounds mutation,
 		// skip to the next mutation substrategy.
-		if (afl_interesting_check_pos(pos, state)) {
+		if (afl_interesting_check_pos(pos, j, state)) {
 			substates->substrategy_complete = 1;
+
+                    	// If it's the last strategy we need to return size of 0
+                    	if (substates->current_substrategy == FOUR_BYTE_INTERESTING_BE) { 
+                        	size = 0;
+                        	return size;
+                    	}
+
+                    	// If not, we can update and move on to next 
 			afl_interesting_update(state);
-			pos = afl_interesting_get_pos(state);
 		}
 		// If the input we are about to generate was not produced by a previous mutation strategy.
 		else if (afl_interesting_check_could_be_list(buf, state)) {
@@ -583,11 +618,11 @@ afl_interesting(u8 *buf, size_t size, strategy_state *state)
 		// Duplicate mutation, skip it and go to the next one.
 		else {
 			afl_interesting_update(state);
-			pos = afl_interesting_get_pos(state);
 		}
 	}
 	return size;
 }
+
 // this function populates a fuzzing_strategy object with afl_interesting's function pointers.
 void
 afl_interesting_populate(fuzzing_strategy *strategy)
