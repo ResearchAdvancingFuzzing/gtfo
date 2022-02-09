@@ -544,6 +544,10 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 		// skip to the next mutation.
 		if (afl_arith_check_pos(pos, state)) {
 			substates->substrategy_complete = 1;
+
+                        if (substates->current_substrategy == FOUR_BYTE_ARITH_BE) 
+                            return 0; 
+
 			afl_arith_update(state);
 			continue;
 		}
