@@ -54,7 +54,7 @@
 
 #define INTERESTING_8_SIZE 9
 #define INTERESTING_16_SIZE 10
-#define INTERESTING_32_SIZE 7
+#define INTERESTING_32_SIZE 8
 
 // maximum value used for *_arith* strategies.
 #define MAX_ARITH 35
