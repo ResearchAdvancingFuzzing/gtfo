@@ -131,6 +131,7 @@ afl_dictionary_overwrite(u8 *buf, size_t size, strategy_state *state)
 	dictionary_entry *entry = (*dict->entries)[which];
 
 	if (pos + entry->len > state->max_size || dict->entry_cnt == 0) {
+            printf("HEATHER: pos: %u, entry len: %lu, max_size: %lu\n", pos, entry->len, state->max_size); 
 		return 0;
 	}
 	// copy the token

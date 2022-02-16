@@ -38,6 +38,9 @@ static void *strategy_lib = NULL;
 static void *jig_lib      = NULL;
 static void *analysis_lib = NULL;
 
+static FILE* logging_file = NULL;
+static char* strategy_name = NULL;
+
 #define MAX_PATH 1024
 
 #ifdef __linux__
@@ -341,6 +344,44 @@ run_and_report(u8 *input, size_t size)
 	}
 }
 
+/*
+#include <openssl/md5.h>
+#pragma clang diagnostic push i
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wunreachable-code"
+static void __attribute__((noreturn)) 
+write_to_file(strategy_state* state, u8* input) { 
+    // if (!strategy_name) return NULL;
+    char * ext; 
+    char * sub = strrchr(strategy_name, '/'); 
+    if (sub) sub = sub + 1; 
+    ext = strrchr (sub, '.');
+    if (ext) *ext = '\0';
+
+        printf("choosing\n");
+    if (strncmp(sub, "afl_arith", strlen("afl_arith")) == 0) { 
+        printf("match\n");
+        afl_arith_substates * substates = (afl_arith_substates *) state->internal_state;
+    } else if (strncmp(sub, "afl_bit_flip", strlen("afl_bit_flip")) == 0) {
+        afl_bit_flip_substates * substates = (afl_bit_flip_substates *) state->internal_state;
+    } else if (strncmp(sub, "afl_interesting", strlen("afl_interesting")) == 0) { 
+        afl_interesting_substates * substates = (afl_interesting_substates *) state->internal_state;
+    } else if (strncmp(sub, "afl_dictionary", strlen("afl_dictionary")) == 0) { 
+        afl_dictionary_substates * substates = (afl_dictionary_substates *) state->internal_state;
+    }
+
+
+    printf("length: %lu, sub: %s\n", strlen(sub), sub); 
+    printf("length: %lu, sub: %s\n", strlen("afl_arith"), "afl_arith"); 
+    printf("strategy name: %s, input: %s\n", strategy_name, input); 
+    if (state->internal_state) {  
+        printf("internal_state");
+    } 
+    exit(1);
+}
+*/
+    
+
 // fuzz a program.
 static void
 fuzz(char *input_file_name, size_t max_size, u8 *seed, u64 iteration_count)
@@ -379,6 +420,7 @@ fuzz(char *input_file_name, size_t max_size, u8 *seed, u64 iteration_count)
 		// update state.
 		strategy.update_state(state);
 
+                //write_to_file(state, mutation_buffer); 
 		run_and_report(mutation_buffer, size);
 
 		// reset mutation buffer and size.
@@ -422,6 +464,7 @@ main(int argc, char *argv[])
 				usage(argv[0]);
 			}
 			ooze_library_name = strdup(optarg);
+                        strategy_name = strdup(optarg);
 			break;
 		case 'J':
 			if (optarg == NULL) {
@@ -506,11 +549,19 @@ main(int argc, char *argv[])
 		mkdir(COVERAGE_DIR, 0777);
 	}
 
+        logging_file = fopen("gtfo_logging", "a"); 
+        if (!logging_file) {
+           log_fatal("couldn't open logging file for appending");  
+        }
+
 	fuzz(input_file_name, max_input_size, ooze_seed, iteration_count);
 
 	if (analysis_save_file) {
 		analysis.save(analysis_save_file);
 	}
+
+        fclose(logging_file); 
+        free(strategy_name);
 
 	free(input_file_name);
 	free(ooze_seed);

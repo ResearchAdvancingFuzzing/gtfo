@@ -49,7 +49,7 @@ if (HAVE_KVM_VMX_PT)
 
     include_directories("/usr/local/include/xed")
     target_sources(${LIBRARY_NAME} PRIVATE "src/intel_pt/fastdecode.c" "src/intel_pt/ptxed.c" "src/intel_pt/pt_cpu.c" "src/intel_pt/pt_cpuid.c")
-    target_link_libraries(${LIBRARY_NAME} yaml /usr/local/lib/libipt.so /usr/local/lib/libxed.so)
+    target_link_libraries(${LIBRARY_NAME} yaml ssl crypto -lssl -lcrypto /usr/local/lib/libipt.so /usr/local/lib/libxed.so)
 
     install(FILES
             "include/intel_pt/pt_cpu.h"

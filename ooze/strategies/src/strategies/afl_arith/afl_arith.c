@@ -19,10 +19,23 @@
 #include "det_two_byte_arith_be.h"
 #include "det_two_byte_arith_le.h"
 #include "strategy.h"
+#include "openssl/md5.h"
 
 #ifdef AFL_ARITH_IS_MASTER
 get_fuzzing_strategy_function get_fuzzing_strategy = afl_arith_populate;
 #endif
+
+static FILE* log_file; 
+static unsigned char md5_result[MD5_DIGEST_LENGTH]; 
+static bool do_logging = false;
+
+static void write_md5_sum(unsigned char* md, FILE* fp) { 
+    int i;
+    for (i = 0; i < MD5_DIGEST_LENGTH;  i++) { 
+        fprintf(fp, "%02x", md[i]); 
+    }
+    fprintf(fp, "\n"); 
+}
 
 // this function updates the running states and substates
 static inline void
@@ -101,6 +114,14 @@ afl_arith_create(u8 *seed, size_t max_size, ...)
 	substates->det_four_byte_arith_be_substate = substates->det_four_byte_arith_be_strategy->create_state(seed, max_size);
 
 	new_state->internal_state = substates;
+
+        char* env_log_file = getenv("LOG_FILE"); 
+        if (env_log_file != NULL) { 
+            do_logging = true;
+            log_file = fopen(env_log_file, "a"); 
+            if (!log_file) 
+                log_fatal("Fopen failed"); 
+        }
 
 	return new_state;
 }
@@ -342,6 +363,10 @@ afl_arith_copy(strategy_state *state)
 static inline void
 afl_arith_free_state(strategy_state *state)
 {
+    if (do_logging) { 
+        fclose(log_file); 
+    }
+
 	if (state) {
 		afl_arith_substates *substates = (afl_arith_substates *)state->internal_state;
 
@@ -532,6 +557,8 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 	// get initial position
 	u64  pos         = 0;
 	bool pos_changed = true;
+        char*                stage_name = NULL; 
+        char*                endian = NULL;
 
 	while (size) {
 		u64 new_pos = afl_arith_get_pos(state);
@@ -567,6 +594,7 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 		switch (substates->current_substrategy) {
 
 		case BYTE_ARITH:
+                        stage_name = "arith 8/8 ";
 			// perform mutation
 			size = substates->det_byte_arith_strategy->mutate(buf, size, substates->det_byte_arith_substate);
 			// if substrategy is complete
@@ -577,6 +605,8 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 			break;
 
 		case TWO_BYTE_ARITH_LE:
+                        stage_name = "arith 16/8 "; 
+                        endian = "LE "; 
 			size = substates->det_two_byte_arith_le_strategy->mutate(buf, size, substates->det_two_byte_arith_le_substate);
 			// if substrategy is complete
 			if (!size) {
@@ -586,6 +616,8 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 			break;
 
 		case TWO_BYTE_ARITH_BE:
+                        stage_name = "arith 16/8 "; 
+                        endian = "BE "; 
 			size = substates->det_two_byte_arith_be_strategy->mutate(buf, size, substates->det_two_byte_arith_be_substate);
 			// if substrategy is complete
 			if (!size) {
@@ -595,6 +627,8 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 			break;
 
 		case FOUR_BYTE_ARITH_LE:
+                        stage_name = "arith 32/8 "; 
+                        endian = "LE "; 
 			size = substates->det_four_byte_arith_le_strategy->mutate(buf, size, substates->det_four_byte_arith_le_substate);
 			// if substrategy is complete
 			if (!size) {
@@ -604,6 +638,8 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 			break;
 
 		case FOUR_BYTE_ARITH_BE:
+                        stage_name = "arith 32/8 "; 
+                        endian = "BE "; 
 			size = substates->det_four_byte_arith_be_strategy->mutate(buf, size, substates->det_four_byte_arith_be_substate);
 			// if substrategy is complete
 			if (!size)
@@ -626,6 +662,14 @@ afl_arith(u8 *buf, size_t size, strategy_state *state)
 			continue;
 		}
 		// if the mutated input is not one that could have been created by the bit flip phase, we're done.
+                if (do_logging && stage_name) {
+                    if (endian) { 
+                        fwrite(endian, sizeof(char), strlen(endian), log_file);
+                    }
+                        fwrite(stage_name, sizeof(char), strlen(stage_name), log_file); 
+                        MD5((unsigned char*) buf, size, md5_result); 
+                        write_md5_sum(md5_result, log_file); 
+                }
 		return size;
 	}
 	// we shouldn't reach this.

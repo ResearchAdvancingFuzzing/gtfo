@@ -24,7 +24,7 @@ afl_choose_block_len(prng_state *prng_state, u64 limit)
 	u64 min_value, max_value;
 
 	// choose a block size
-	switch (prng_state_UR(prng_state, 3)) {
+	switch (prng_state_UR(prng_state, 1)) {
 
 	// 33 % chance of small block
 	case 0:
@@ -41,7 +41,7 @@ afl_choose_block_len(prng_state *prng_state, u64 limit)
 	// 33% chance of a large block or xl block.
 	default:
 
-		if (prng_state_UR(prng_state, 2)) {
+		if (prng_state_UR(prng_state, 10)) {
 
 			min_value = HAVOC_BLK_MEDIUM;
 			max_value = HAVOC_BLK_LARGE;

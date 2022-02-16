@@ -25,10 +25,24 @@
 #include "det_two_bit_flip.h"
 #include "det_two_byte_flip.h"
 #include "strategy.h"
+#include "openssl/md5.h"
 
 #ifdef AFL_BIT_FLIP_IS_MASTER
 get_fuzzing_strategy_function get_fuzzing_strategy = afl_bit_flip_populate;
 #endif
+
+static FILE* log_file;
+static unsigned char md5_result[MD5_DIGEST_LENGTH];
+static bool do_logging = false;
+
+static void write_md5_sum(unsigned char* md, FILE* fp) { 
+    int i;
+    for (i = 0; i < MD5_DIGEST_LENGTH; i++) {
+        fprintf(fp, "%02x", md[i]);
+    }
+    fprintf(fp, "\n");
+} 
+
 
 // this function updates the running states and substates
 static inline void
@@ -114,6 +128,14 @@ afl_bit_flip_create(u8 *seed, size_t max_size, ...)
 	substates->det_four_byte_flip_substate = substates->det_four_byte_flip_strategy->create_state(seed, max_size);
 
 	new_state->internal_state = substates;
+
+        char* env_log_file = getenv("LOG_FILE"); 
+        if (env_log_file != NULL) {
+            do_logging = true; 
+            log_file = fopen(env_log_file, "a"); 
+            if (!log_file) 
+                log_fatal("Fopen failed"); 
+        }
 
 	return new_state;
 }
@@ -372,6 +394,9 @@ afl_bit_flip_copy(strategy_state *state)
 static inline void
 afl_bit_flip_free_state(strategy_state *state)
 {
+    if (do_logging) { 
+        fclose(log_file);
+    }
 	if (state) {
 		afl_bit_flip_substates *substates = (afl_bit_flip_substates *)state->internal_state;
 
@@ -405,70 +430,98 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
 {
 	afl_bit_flip_substates *substates = (afl_bit_flip_substates *)state->internal_state;
 	size_t                  orig_size = size;
+        char* stage_name        = NULL;
+        bool finished = false;
 
-	// invoke the correct substrategy
-	switch (substates->current_substrategy) {
+        do { 
+            if (!size && !finished) { 
+                afl_bit_flip_update(state); 
+            }
+            // invoke the correct substrategy
+            switch (substates->current_substrategy) {
 
-	case BIT_FLIP:
-		size = substates->det_bit_flip_strategy->mutate(buf, size, substates->det_bit_flip_substate);
-		// if substrategy is complete
-		if (!size) {
-			substates->substrategy_complete = 1;
-			size                            = orig_size; // need to reset bc mutation is not complete
-		}
-		break;
+            case BIT_FLIP:
+                stage_name = "bitflip 1/1 "; 
+                    size = substates->det_bit_flip_strategy->mutate(buf, size, substates->det_bit_flip_substate);
+                    // if substrategy is complete
+                    if (!size) {
+                            substates->substrategy_complete = 1;
+                            //size                            = orig_size; // need to reset bc mutation is not complete
+                    }
+                    break;
 
-	case TWO_BIT_FLIP:
-		size = substates->det_two_bit_flip_strategy->mutate(buf, size, substates->det_two_bit_flip_substate);
-		// if substrategy is complete
-		if (!size) {
-			substates->substrategy_complete = 1;
-			size                            = orig_size;
-		}
-		break;
+            case TWO_BIT_FLIP:
+                stage_name = "bitflip 2/1 "; 
+                    size = substates->det_two_bit_flip_strategy->mutate(buf, size, substates->det_two_bit_flip_substate);
+                    // if substrategy is complete
+                    if (!size) {
+                            substates->substrategy_complete = 1;
+                            //size                            = orig_size;
+                    }
+                    break;
 
-	case FOUR_BIT_FLIP:
-		size = substates->det_four_bit_flip_strategy->mutate(buf, size, substates->det_four_bit_flip_substate);
-		// if substrategy is complete
-		if (!size) {
-			substates->substrategy_complete = 1;
-			size                            = orig_size;
-		}
-		break;
+            case FOUR_BIT_FLIP:
+                stage_name = "bitflip 4/1 "; 
+                    size = substates->det_four_bit_flip_strategy->mutate(buf, size, substates->det_four_bit_flip_substate);
+                    // if substrategy is complete
+                    if (!size) {
+                            substates->substrategy_complete = 1;
+                            //size                            = orig_size;
+                    }
+                    break;
 
-	case BYTE_FLIP:
-		size = substates->det_byte_flip_strategy->mutate(buf, size, substates->det_byte_flip_substate);
-		// if substrategy is complete
-		if (!size) {
-			substates->substrategy_complete = 1;
-			size                            = orig_size;
-		}
-		break;
+            case BYTE_FLIP:
+                stage_name = "bitflip 8/8 "; 
+                    size = substates->det_byte_flip_strategy->mutate(buf, size, substates->det_byte_flip_substate);
+                    // if substrategy is complete
+                    if (!size) {
+                            substates->substrategy_complete = 1;
+                            //size                            = orig_size;
+                    }
+                    break;
 
-	case TWO_BYTE_FLIP:
-		size = substates->det_two_byte_flip_strategy->mutate(buf, size, substates->det_two_byte_flip_substate);
-		// if substrategy is complete
-		if (!size) {
-			substates->substrategy_complete = 1;
-			size                            = orig_size;
-		}
-		break;
+            case TWO_BYTE_FLIP:
+                stage_name = "bitflip 16/8 "; 
+                    size = substates->det_two_byte_flip_strategy->mutate(buf, size, substates->det_two_byte_flip_substate);
+                    // if substrategy is complete
+                    if (!size) {
+                            substates->substrategy_complete = 1;
+                            //size                            = orig_size;
+                    }
+                    break;
 
-	case FOUR_BYTE_FLIP:
-		size = substates->det_four_byte_flip_strategy->mutate(buf, size, substates->det_four_byte_flip_substate);
-		// if substrategy is complete
-		if (!size) {
-			substates->substrategy_complete = 1;
-			// size = orig_size;
-		}
-		break;
-	// no more substrategies left
-	default:
-		// size of 0 signifies mutation is finished.
-		// that is only when FOUR_BYTE_FLIP has completed
-		size = 0;
-		break;
-	}
+            case FOUR_BYTE_FLIP:
+                stage_name = "bitflip 32/8 "; 
+                    size = substates->det_four_byte_flip_strategy->mutate(buf, size, substates->det_four_byte_flip_substate);
+                    // if substrategy is complete
+                    if (!size) {
+                            substates->substrategy_complete = 1;
+                            finished = true;
+                            // size = orig_size;
+                    }
+                    break;
+            // no more substrategies left
+            default:
+                    // size of 0 signifies mutation is finished.
+                    // that is only when FOUR_BYTE_FLIP has completed
+                    size = 0;
+                    break;
+            }
+            //printf("size: %lu, finished: %d\n", size, finished); 
+        } while (size == 0 && !finished); 
+
+        if (finished) 
+            size = 0;
+        else 
+            size = orig_size;
+        // log input here
+        if (do_logging && stage_name) { 
+            //printf("buf: %s\n", buf); 
+            fwrite(stage_name, sizeof(char), strlen(stage_name), log_file); 
+            MD5((unsigned char*) buf, size, md5_result);
+            write_md5_sum(md5_result, log_file); 
+        }
+
 
 	return size;
 }

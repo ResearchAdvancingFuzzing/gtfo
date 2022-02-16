@@ -20,6 +20,7 @@
 #include "det_two_byte_interesting_be.h"
 #include "det_two_byte_interesting_le.h"
 #include "strategy.h"
+#include "openssl/md5.h"
 
 #ifdef AFL_INTERESTING_IS_MASTER
 get_fuzzing_strategy_function get_fuzzing_strategy = afl_interesting_populate;
@@ -27,7 +28,22 @@ get_fuzzing_strategy_function get_fuzzing_strategy = afl_interesting_populate;
 
 #define INTERESTING_8_ELEMENTS INTERESTING_8_SIZE
 #define INTERESTING_16_ELEMENTS INTERESTING_8_SIZE + INTERESTING_16_SIZE
-//#define INTERESTING_32_ELEMENTS INTERESTING_16_ELEMENTS + INTERESTING_32_SIZE
+#define INTERESTING_32_ELEMENTS INTERESTING_16_ELEMENTS + INTERESTING_32_SIZE
+
+static FILE* log_file; 
+static unsigned char md5_result[MD5_DIGEST_LENGTH]; 
+static bool do_logging = false;
+
+static void write_md5_sum(unsigned char* md, FILE* fp) { 
+    int i;
+    for (i = 0; i < MD5_DIGEST_LENGTH;  i++) { 
+        fprintf(fp, "%02x", md[i]); 
+    }
+    fprintf(fp, "\n"); 
+}
+
+
+
 // this function updates the running states and substates
 static inline void
 afl_interesting_update(strategy_state *state)
@@ -105,6 +121,14 @@ afl_interesting_create(u8 *seed, size_t max_size, ...)
 	substates->det_four_byte_interesting_be_substate = substates->det_four_byte_interesting_be_strategy->create_state(seed, max_size);
 
 	new_state->internal_state = substates;
+
+        char* env_log_file = getenv("LOG_FILE"); 
+        if (env_log_file != NULL) { 
+            do_logging = true;
+            log_file = fopen(env_log_file, "a"); 
+            if (!log_file) 
+                log_fatal("Fopen failed"); 
+        }
 
 	return new_state;
 }
@@ -347,6 +371,10 @@ afl_interesting_copy(strategy_state *state)
 static inline void
 afl_interesting_free_state(strategy_state *state)
 {
+    if (do_logging) {
+        fclose(log_file); 
+    }
+
 	if (state) {
 		afl_interesting_substates *substates = (afl_interesting_substates *)state->internal_state;
 
@@ -389,6 +417,7 @@ afl_interesting_get_pos(strategy_state *state)
 		pos = substates->det_two_byte_interesting_be_substate->iteration / ((u64)  INTERESTING_16_ELEMENTS);
 		break;
 	case FOUR_BYTE_INTERESTING_LE:
+                //printf("sub iter: %lu, state iter: %lu\n", state->iteration, substates->det_four_byte_interesting_le_substate->iteration
 		pos = substates->det_four_byte_interesting_le_substate->iteration / 27; //((u64)  INTERESTING_32_ELEMENTS);
 		break;
 	case FOUR_BYTE_INTERESTING_BE:
@@ -469,9 +498,9 @@ afl_interesting_check_pos(u64 pos, u8 j, strategy_state *state)
 	case TWO_BYTE_INTERESTING_BE:
 		return pos + 2 > state->max_size || j >= (((u64) INTERESTING_16_ELEMENTS));
 	case FOUR_BYTE_INTERESTING_LE:
-		return pos + 4 > state->max_size || j >= 27; //(((u64) INTERESTING_32_ELEMENTS));
+		return pos + 4 > state->max_size || j >= (((u64) INTERESTING_32_ELEMENTS));
 	case FOUR_BYTE_INTERESTING_BE:
-		return pos + 4 > state->max_size || j >= 27; //(((u64) INTERESTING_32_ELEMENTS));
+		return pos + 4 > state->max_size || j >= (((u64) INTERESTING_32_ELEMENTS));
 	default:
 		return 0;
 	}
@@ -536,12 +565,14 @@ afl_interesting(u8 *buf, size_t size, strategy_state *state)
 	size_t                     orig_size = size;
 	u64                        pos;
         u8                         j; 
+        char*                      stage_name = NULL;
+        char*                      endian = NULL;
 
 	while (size) {
 
 		pos = afl_interesting_get_pos(state);  // this is i
             	j = afl_interesting_get_j(state); // this is j
-            	printf("strategy: %d, i: %lu, j: %u, \n", substates->current_substrategy, pos, j); 
+            	//printf("strategy: %d, i: %lu, j: %u, \n", substates->current_substrategy, pos, j); 
 
 		// if the position would lead to an out of bounds mutation,
 		// skip to the next mutation substrategy.
@@ -564,6 +595,7 @@ afl_interesting(u8 *buf, size_t size, strategy_state *state)
 			switch (substates->current_substrategy) {
 
 			case BYTE_INTERESTING:
+                            stage_name = "interest 8/8 "; 
 				size = substates->det_byte_interesting_strategy->mutate(buf, size, substates->det_byte_interesting_substate);
 				// if substrategy is complete
 				if (!size) {
@@ -573,6 +605,8 @@ afl_interesting(u8 *buf, size_t size, strategy_state *state)
 				break;
 
 			case TWO_BYTE_INTERESTING_LE:
+                            stage_name = "interest 16/8 "; 
+                            endian = "LE "; 
 				size = substates->det_two_byte_interesting_le_strategy->mutate(buf, size, substates->det_two_byte_interesting_le_substate);
 				// if substrategy is complete
 				if (!size) {
@@ -582,6 +616,8 @@ afl_interesting(u8 *buf, size_t size, strategy_state *state)
 				break;
 
 			case TWO_BYTE_INTERESTING_BE:
+                            stage_name = "interest 16/8 "; 
+                            endian = "BE "; 
 				size = substates->det_two_byte_interesting_be_strategy->mutate(buf, size, substates->det_two_byte_interesting_be_substate);
 				// if substrategy is complete
 				if (!size) {
@@ -591,15 +627,20 @@ afl_interesting(u8 *buf, size_t size, strategy_state *state)
 				break;
 
 			case FOUR_BYTE_INTERESTING_LE:
+                            stage_name = "interest 32/8 "; 
+                            endian = "LE "; 
 				size = substates->det_four_byte_interesting_le_strategy->mutate(buf, size, substates->det_four_byte_interesting_le_substate);
 				// if substrategy is complete
 				if (!size) {
+                                    printf("done le\n");
 					substates->substrategy_complete = 1;
 					size                            = orig_size;
 				}
 				break;
 
 			case FOUR_BYTE_INTERESTING_BE:
+                            stage_name = "interest 32/8 "; 
+                            endian = "BE "; 
 				size = substates->det_four_byte_interesting_be_strategy->mutate(buf, size, substates->det_four_byte_interesting_be_substate);
 				// if substrategy is complete
 				if (!size)
@@ -620,6 +661,15 @@ afl_interesting(u8 *buf, size_t size, strategy_state *state)
 			afl_interesting_update(state);
 		}
 	}
+        if (do_logging && stage_name) {
+            if (endian) { 
+                fwrite(endian, sizeof(char), strlen(endian), log_file);
+            }
+            fwrite(stage_name, sizeof(char), strlen(stage_name), log_file); 
+            MD5((unsigned char*) buf, size, md5_result);
+            write_md5_sum(md5_result, log_file); 
+        }
+
 	return size;
 }
 

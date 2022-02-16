@@ -344,6 +344,7 @@ dictionary_load_file(char *filename, size_t max_entries, size_t max_token_len)
 	dictionary *new_dict = dictionary_create(max_entries, max_token_len);
 
 	FILE *file = fopen(filename, "r");
+        printf("filename: %s\n", filename); 
 
 	if (!file) {
 		printf("file is null\n");

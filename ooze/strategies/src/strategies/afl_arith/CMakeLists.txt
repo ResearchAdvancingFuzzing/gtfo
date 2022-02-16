@@ -57,7 +57,8 @@ add_library(${STRATEGY_NAME} SHARED ${MUTATE_SRC} ${STRATEGY_SRC} ${AFL_SRC} ${P
         ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../common/src/yaml_helper.c
         ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../common/src/yaml_decoder.c)
 
-target_link_libraries(${STRATEGY_NAME} PUBLIC yaml)
+find_package(OpenSSL REQUIRED)
+target_link_libraries(${STRATEGY_NAME} PUBLIC yaml OpenSSL::Crypto)
 
 set_target_properties(${STRATEGY_NAME} PROPERTIES PREFIX "")
 set_target_properties(${STRATEGY_NAME} PROPERTIES COMPILE_FLAGS "-DMODULE=${STRATEGY_NAME}")

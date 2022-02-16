@@ -67,6 +67,7 @@ inline void
 prng_state_update(prng_state *prng_st)
 {
 	prng_st->state = prng_st->state * 6364136223846793005ULL + (prng_st->inc | 1);
+        printf("2a. prng state: %lu\n", prng_st->state);
 }
 
 // this function gets a integer from a pcg32 state
@@ -75,7 +76,9 @@ prng_state_random(prng_state *prng_st)
 {
 	// Calculate output function (XSH RR), uses old state for max ILP
 	uint32_t xorshifted = (u32)(((prng_st->state >> 18u) ^ prng_st->state) >> 27u);
+        printf("3. xorshifted: %u\n", xorshifted); 
 	uint32_t rot        = (u32)(prng_st->state >> 59u);
+        printf("4. rot: %u\n", rot); 
 	return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
 }
 
@@ -145,7 +148,11 @@ inline u64
 prng_state_UR(prng_state *prng_state, u64 limit)
 {
 	assert(limit != 0);
-	u64 retval = prng_state_random(prng_state) % limit;
+        printf("0. limit: %lu\n", limit);
+        printf("1. oldstate: prng: state: %lu, limit: %lu\n", prng_state->state, prng_state->inc); 
+        uint32_t ran = prng_state_random(prng_state);
+	u64 retval = ran % limit;
+        printf("5.  retval= %d mod %lu = %lu, prng: state: %lu, limit: %lu\n", ran, limit, retval, prng_state->state, prng_state->inc); 
 	prng_state_update(prng_state);
 
 	return retval;

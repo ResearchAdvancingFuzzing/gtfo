@@ -53,8 +53,8 @@ static s32    fsrv_st_fd      = 0;     // Fork server status pipe (read)
 #define FORKSRV_FD 198             // The forkserver file descriptor used for control messages
 #define EXEC_FAIL_SIG 0xfee1dead   // constant used for the forkserver to signal something is wrong
 #define SHM_ENV_VAR "__AFL_SHM_ID" // environment variable used to pass the shared memory between the fuzzer and the fork server
-#define STRINGIFY_INTERNAL(x) #x
-#define STRINGIFY(x) STRINGIFY_INTERNAL(x)
+//#define STRINGIFY_INTERNAL(x) #x
+#//define STRINGIFY(x) STRINGIFY_INTERNAL(x)
 #define FORK_WAIT_MULT 10 // how long we're willing to wait for the forkserver to start
 #define MEM_BARRIER() __asm__ volatile("" :: \
 	                                   : "memory") // memory barrier to prevent race conditions
@@ -187,10 +187,10 @@ init_forkserver(char *target, char *target_argv[])
 		}
 
 		/* Set sane defaults for ASAN if nothing else specified. */
-		setenv("ASAN_OPTIONS", "abort_on_error=1:detect_leaks=0:symbolize=0allocator_may_return_null=1", 0);
+		//setenv("ASAN_OPTIONS", "abort_on_error=1:detect_leaks=0:symbolize=0allocator_may_return_null=1", 0);
 
 		/* MSAN is tricky, because it doesn't support abort_on_error=1 at this point. So, we do this in a very hacky way. */
-		setenv("MSAN_OPTIONS", "exit_code=" STRINGIFY(MSAN_ERROR) ":symbolize=0:abort_on_error=1:allocator_may_return_null=1:msan_track_origins=0", 0);
+		//setenv("MSAN_OPTIONS", "exit_code=" STRINGIFY(MSAN_ERROR) ":symbolize=0:abort_on_error=1:allocator_may_return_null=1:msan_track_origins=0", 0);
 		// execv(target, NULL);
 		int exec_err = execv(target, target_argv);
 		if (exec_err != 0) {

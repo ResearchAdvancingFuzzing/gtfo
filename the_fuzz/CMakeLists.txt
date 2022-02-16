@@ -38,7 +38,8 @@ include_directories(
 add_executable(the_fuzz "${CMAKE_CURRENT_SOURCE_DIR}/components/the_fuzz/the_fuzz.c")
 set_target_properties(the_fuzz PROPERTIES COMPILE_FLAGS "-DMODULE=the_fuzz")
 
-target_link_libraries(the_fuzz PUBLIC gtfo_common yaml dl)
+find_package(OpenSSL REQUIRED)
+target_link_libraries(the_fuzz PUBLIC gtfo_common yaml dl OpenSSL::Crypto) # ssl crypto -lssl -lcrypto)
 install(TARGETS the_fuzz DESTINATION bin)
 
 # Avoid cmake error from attempting to build gtfo_common.so twice due to an add_subdirectory of this CMakeLists.txt file into another.

@@ -22,10 +22,26 @@
 #include "afl_dictionary_overwrite.h"
 #include "common/yaml_helper.h"
 #include "strategy.h"
+#include "openssl/md5.h"
 
 #ifdef AFL_DICTIONARY_IS_MASTER
 get_fuzzing_strategy_function get_fuzzing_strategy = afl_dictionary_populate;
 #endif
+
+static FILE* log_file; 
+static unsigned char md5_result[MD5_DIGEST_LENGTH]; 
+static bool do_logging = false;
+
+static void write_md5_sum(unsigned char* md, FILE* fp) { 
+    int i;
+    for (i = 0; i < MD5_DIGEST_LENGTH;  i++) { 
+        fprintf(fp, "%02x", md[i]); 
+        printf( "%02x", md[i]); 
+    }
+    fprintf(fp, "\n"); 
+    printf( "\n"); 
+}
+
 
 // This function updates an afl_dictionary strategy_state object.
 // it skips substrategy states that may not exist.
@@ -348,6 +364,9 @@ afl_dictionary_copy(strategy_state *state)
 static inline void
 afl_dictionary_free(strategy_state *state)
 {
+    if (do_logging) {
+        fclose(log_file);
+    }
 	afl_dictionary_substates *substates = (afl_dictionary_substates *)state->internal_state;
 
 	if (substates->user_overwrite_substate) {
@@ -376,6 +395,7 @@ afl_dictionary_create(u8 *seed, size_t max_size, ...)
 	afl_dictionary_substates *new_substates = calloc(1, sizeof(afl_dictionary_substates));
 	// get path to files describing dictionaries to use.
 	char *user_dict_file = getenv("USER_DICTIONARY_FILE");
+        printf("user_dict_file: %s\n", user_dict_file); 
 	char *auto_dict_file = getenv("AUTO_DICTIONARY_FILE");
 
 	// strategy objects, exposes API of substrategies.
@@ -406,6 +426,15 @@ afl_dictionary_create(u8 *seed, size_t max_size, ...)
 		new_substates->current_substrategy = 0xff;
 	}
 	new_state->internal_state = new_substates;
+
+        char* env_log_file = getenv("LOG_FILE"); 
+        if (env_log_file != NULL) { 
+            do_logging = true;
+            log_file = fopen(env_log_file, "a"); 
+            if (!log_file) 
+                log_fatal("Fopen failed"); 
+        }
+
 	return new_state;
 }
 
@@ -415,10 +444,12 @@ afl_dictionary(u8 *buf, size_t size, strategy_state *state)
 {
 	afl_dictionary_substates *substates    = (afl_dictionary_substates *)state->internal_state;
 	size_t                    results_size = 0;
+        char*                     stage_name = NULL; 
 
 	switch (substates->current_substrategy) {
 	case USER_DICTIONARY_OVERWRITE: {
 		if (substates->user_overwrite_substate) {
+                        stage_name = "user extras (over) "; 
 			results_size = substates->overwrite_strategy->mutate(buf, size, substates->user_overwrite_substate);
 		}
 		// if substate doesn't exist or is done
@@ -433,6 +464,7 @@ afl_dictionary(u8 *buf, size_t size, strategy_state *state)
 	}
 	case USER_DICTIONARY_INSERT: {
 		if (substates->user_insert_substate) {
+                        stage_name = "user extras (insert) "; 
 			results_size = substates->insert_strategy->mutate(buf, size, substates->user_insert_substate);
 		}
 		// if substate doesn't exist or is done
@@ -447,6 +479,7 @@ afl_dictionary(u8 *buf, size_t size, strategy_state *state)
 	}
 	case AUTO_DICTIONARY_OVERWRITE: {
 		if (substates->auto_overwrite_substate) {
+                        stage_name = "auto extras (over) "; 
 			results_size = substates->auto_overwrite_strategy->mutate(buf, size, substates->auto_overwrite_substate);
 		}
 		// if substate doesn't exist or is done
@@ -457,8 +490,18 @@ afl_dictionary(u8 *buf, size_t size, strategy_state *state)
 		break;
 	}
 	default:
+                stage_name = "default ";
 		break;
 	}
+
+            printf("stage_name: %s\n", stage_name);
+            write_md5_sum(md5_result, log_file); 
+            printf("results_size: %zu\n", results_size); 
+        if (do_logging && stage_name) {
+            fwrite(stage_name, sizeof(char), strlen(stage_name), log_file); 
+            MD5((unsigned char*) buf, size, md5_result);
+            //write_md5_sum(md5_result, log_file); 
+        }
 	return results_size;
 }
 
