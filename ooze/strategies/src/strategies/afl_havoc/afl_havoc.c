@@ -312,7 +312,6 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
                         u64 random_byte = prng_state_UR(prng_state, size); 
 			byte_interesting(buf, random_byte, random_val);
 
-			//byte_interesting(buf, prng_state_UR(prng_state, size), (u8)prng_state_UR(prng_state, 256));
 			break;
 		}
 
@@ -326,12 +325,10 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 			if (prng_state_UR(prng_state, 2)) {
                         u8 random_val =  (u8) prng_state_UR(prng_state, size_interesting_16 >> 1);  
                         u64 random_byte = prng_state_UR(prng_state, size - 1); 
-				//two_byte_interesting_le(buf, (u64)prng_state_UR(prng_state, size - 1), (u8)prng_state_UR(prng_state, 256));
                                 two_byte_interesting_le(buf, random_byte, random_val); 
 			} else {
                         u8 random_val =  (u8) prng_state_UR(prng_state, size_interesting_16 >> 1);  
                         u64 random_byte = prng_state_UR(prng_state, size - 1); 
-				//two_byte_interesting_be(buf, (u64)prng_state_UR(prng_state, size - 1), (u8)prng_state_UR(prng_state, 256));
                                 two_byte_interesting_be(buf, random_byte, random_val); 
 			}
 			break;
@@ -349,12 +346,10 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
                         u8 random_val =  (u8) prng_state_UR(prng_state, sizeof_interesting_32 >> 2);  
                         u64 random_byte = prng_state_UR(prng_state, size - 3); 
                             four_byte_interesting_le(buf, random_byte, random_val);
-				//four_byte_interesting_le(buf, prng_state_UR(prng_state, size - 3), (u8)prng_state_UR(prng_state, 256));
 			} else {
                         u8 random_val =  (u8) prng_state_UR(prng_state, sizeof_interesting_32 >> 2);  
                         u64 random_byte = prng_state_UR(prng_state, size - 3); 
                             four_byte_interesting_be(buf, random_byte, random_val);
-				//four_byte_interesting_be(buf, prng_state_UR(prng_state, size - 3), (u8)prng_state_UR(prng_state, 256));
 			}
 			break;
 		}
@@ -363,7 +358,6 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
                         u8 random_val =  -((u8) 1 + (u8) prng_state_UR(prng_state, MAX_ARITH));  
                         u64 random_byte = prng_state_UR(prng_state, size); 
                         byte_add(buf, random_byte, random_val);
-			//byte_add(buf, prng_state_UR(prng_state, size), (u8)(-((s8)prng_state_UR(prng_state, MAX_ARITH))));
 			break;
 		}
 		// random add to byte at random position
@@ -384,32 +378,26 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
                         u64 random_byte = prng_state_UR(prng_state, size - 1); 
                         u16 random_val =  (u16)(-(1 + (s16)prng_state_UR(prng_state, MAX_ARITH)));
                             two_byte_add_le(buf, random_byte, random_val); 
-				//two_byte_add_le(buf, prng_state_UR(prng_state, size - 1), (u16)(-((s16)prng_state_UR(prng_state, MAX_ARITH))));
 			} else {
                         u64 random_byte = prng_state_UR(prng_state, size - 1); 
                         u16 random_val =  (u16)(-(1 + (s16)prng_state_UR(prng_state, MAX_ARITH)));
                             two_byte_add_be(buf, random_byte, random_val);
-				//two_byte_add_be(buf, prng_state_UR(prng_state, size - 1), (u16)(-((s16)prng_state_UR(prng_state, MAX_ARITH))));
 			}
 			break;
 		}
 		// random add to word, random endian
 		case 7: {
-                            printf("BEGIN: size: %lu, MAX_ARTIH: %d\n", size, MAX_ARITH); 
 			if (size < 2) {
 				break;
 			}
-                            printf("size: %lu, MAX_ARTIH: %d\n", size, MAX_ARITH); 
 			if (prng_state_UR(prng_state, 2)) {
                         u64 random_byte = prng_state_UR(prng_state, size - 1); 
                         u16 random_val =  1 + (u16)(prng_state_UR(prng_state, MAX_ARITH));
                             two_byte_add_le(buf, random_byte, random_val); 
-			//	two_byte_add_le(buf, prng_state_UR(prng_state, size - 1), (u16)prng_state_UR(prng_state, MAX_ARITH));
 			} else {
                         u64 random_byte = prng_state_UR(prng_state, size - 1); 
                         u16 random_val =  1 + (u16)(prng_state_UR(prng_state, MAX_ARITH));
                             two_byte_add_be(buf, random_byte, random_val); 
-			//	two_byte_add_be(buf, prng_state_UR(prng_state, size - 1), (u16)prng_state_UR(prng_state, MAX_ARITH));
 			}
 			break;
 		}
@@ -423,12 +411,10 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
                         u64 random_byte = prng_state_UR(prng_state, size - 3); 
                         u32 random_val =   (u32)(-(1 + (s32)prng_state_UR(prng_state, MAX_ARITH)));
                             four_byte_add_le(buf, random_byte, random_val); 
-				//four_byte_add_le(buf, prng_state_UR(prng_state, size - 3), (u32)(-((s32)prng_state_UR(prng_state, MAX_ARITH))));
 			} else {
                         u64 random_byte = prng_state_UR(prng_state, size - 3); 
-                        u32 random_val =  1 + (u32)(-(1 + (s32)prng_state_UR(prng_state, MAX_ARITH)));
+                        u32 random_val =  (u32)(-(1 + (s32)prng_state_UR(prng_state, MAX_ARITH)));
                             four_byte_add_be(buf, random_byte, random_val); 
-				//four_byte_add_be(buf, prng_state_UR(prng_state, size - 3), (u32)(-((s32)prng_state_UR(prng_state, MAX_ARITH))));
 			}
 			break;
 		}
@@ -442,12 +428,10 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
                         u64 random_byte = prng_state_UR(prng_state, size - 3); 
                         u32 random_val =  1 + (u32)(prng_state_UR(prng_state, MAX_ARITH));
                             four_byte_add_le(buf, random_byte, random_val); 
-				//four_byte_add_le(buf, prng_state_UR(prng_state, size - 3), (u32)prng_state_UR(prng_state, MAX_ARITH));
 			} else {
                         u64 random_byte = prng_state_UR(prng_state, size - 3); 
                         u32 random_val =  1 + (u32)(prng_state_UR(prng_state, MAX_ARITH));
                             four_byte_add_be(buf, random_byte, random_val); 
-			//	four_byte_add_be(buf, prng_state_UR(prng_state, size - 3), (u32)prng_state_UR(prng_state, MAX_ARITH));
 			}
 			break;
 		}
@@ -457,7 +441,6 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
                         u64 random_byte = prng_state_UR(prng_state, size); 
                         random_val = buf[random_byte] ^ random_val; 
 			byte_replace(buf, size, random_byte, random_val);
-			//byte_replace(buf, size, prng_state_UR(prng_state, size), (u8)1 + (u8)prng_state_UR(prng_state, 255));
 			break;
 		}
 		// delete bytes
@@ -473,7 +456,6 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 
 			// del_from in range {0, ..., size - del_len}
 			u64 del_from = prng_state_UR(prng_state, size - del_len + 1);
-                        printf("del_len: %lu, del_from: %lu\n", del_len, del_from);
 			n_byte_delete(buf, size, del_from, del_len);
 
 			size -= del_len;
@@ -485,9 +467,7 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
                                 print_buffer(buf, size);
 			// check that an insertion will never go over the max buffer size
                         u64 MAX_FILE = 1 * 1024 * 1024; 
-                        //printf("size + HAVOC: %lu, max_size: %lu\n", size + HAVOC_BLK_XL, state->max_size);
 			if (size + HAVOC_BLK_XL < MAX_FILE) {
-			//if (size + HAVOC_BLK_XL < state->max_size) {
 
 				// whether to clone a block of existing bytes or to insert a block of constant bytes
 				u8 do_copy = (u8)prng_state_UR(prng_state, 4);
@@ -499,46 +479,37 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 					// block size in range {0, ..., size};
 					block_size = afl_choose_block_len(prng_state, size);
 
-					// src offset in range {0, ..., size - block_size - 1}
-					//if (size - block_size == 0) {
-					//	break;
-					//}
 					src_offset = prng_state_UR(prng_state, size - block_size + 1);
 				} else
 					block_size = afl_choose_block_len(prng_state, HAVOC_BLK_XL);
 				// dest_offset in range {0, ..., size - 1}
 				u64 dest_offset = prng_state_UR(prng_state, size);
                                 u8* new_buf = calloc(1, size + block_size); 
+
                                 u8* tail = calloc(1, size - dest_offset); 
                                 memcpy(tail, buf + dest_offset, size - dest_offset); 
-                                printf("tail\n");
+
                                 print_buffer(tail, size - dest_offset); 
                                 print_buffer(buf, size);
+
                                 memcpy(new_buf, buf, dest_offset); 
+
                                 print_buffer(new_buf, size+block_size);
                                 printf("size: %lu, src_offset: %lu, dest_offset: %lu, block_size: %lu\n", size, src_offset, dest_offset, block_size);
 
 				if (do_copy) {
                                     printf("CASE1\n"); 
 					n_byte_copy_and_ins(buf, size, src_offset, dest_offset, block_size);
-					//n_byte_copy_and_ins(new_buf, size, src_offset, dest_offset, block_size);
 				} else {
                                     printf("CASE2\n");
 					// insert a block of constant bytes at dest_offset
 					u8 const_byte = (u8)(prng_state_UR(prng_state, 2) ? prng_state_UR(prng_state, 256) : buf[prng_state_UR(prng_state, size)]);
 					memset(buf + dest_offset, const_byte, block_size);
-					//memset(new_buf + dest_offset, const_byte, block_size);
 				}
-                                //print_buffer(buf, size + block_size);
-                                printf("AMBER\n");
                                 print_buffer(new_buf, size + block_size);
-                                //memcpy(new_buf + dest_offset + block_size, tail, size - dest_offset);
                                 memcpy(buf + dest_offset + block_size, tail, size - dest_offset);
                                 print_buffer(new_buf, size + block_size);
-                                //free(buf);
-                                //buf = new_buf;
-                                //
-                                //n_byte_copy_and_ins(buf, size, dest_offset + block_size, dest_offset, size - src_offset); 
+
 				// update size
 				size += block_size;
 			}
@@ -553,15 +524,10 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 
 			u64 block_size = 0;
 			// how many bytes to copy, in range {0, ..., size - 1}
-			//if (src_offset > dest_offset) {
-				block_size = afl_choose_block_len(prng_state, size - 1); //- src_offset);
-			//} else {
-			//	block_size = afl_choose_block_len(prng_state, size - 1); //dest_offset);
-			//}
+                        block_size = afl_choose_block_len(prng_state, size - 1); //- src_offset);
+
 			// offset of bytes to copy, anywhere from {0, ..., size - 1};
-                        printf("SIZE: %lu\n", size);
 			u64 src_offset = prng_state_UR(prng_state, size - block_size + 1);
-                        printf("SIZE: %lu\n", size);
 			// destination for bytes, anywhere from {0, ..., size - 1}.
 			u64 dest_offset = prng_state_UR(prng_state, size - block_size + 1);
                         printf("copy len: %lu, copy_from: %lu, copy_to: %lu\n", block_size, src_offset, dest_offset);
@@ -644,7 +610,7 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
                 printf("out_buf: %s\n", buf); 
                 print_buffer(buf, size);
                 MD5((unsigned char*) buf, size, md5_result);
-                //write_md5_sum(md5_result, log_file); 
+               // write_md5_sum(md5_result, log_file); 
 	}
                 print_buffer(buf, size);
         printf("hash: "); 
