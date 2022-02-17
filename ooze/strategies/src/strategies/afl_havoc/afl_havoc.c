@@ -254,6 +254,14 @@ afl_havoc_create(u8 *seed, size_t max_size, ...)
 	return state;
 }
 
+static inline void print_buffer(u8* buffer, u64 size) {
+    u64 i = 0;
+    for (i=0; i<size; i++) {
+            printf("%02x ", buffer[i]);
+    }
+    printf("\n");
+}
+
 static inline size_t
 afl_havoc(u8 *buf, size_t size, strategy_state *state)
 {
@@ -473,6 +481,8 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 		}
 		// Clone bytes (75%) or insert a block of constant bytes (25%).
 		case 13: {
+                             printf("CASE 13\n");
+                                print_buffer(buf, size);
 			// check that an insertion will never go over the max buffer size
                         u64 MAX_FILE = 1 * 1024 * 1024; 
                         //printf("size + HAVOC: %lu, max_size: %lu\n", size + HAVOC_BLK_XL, state->max_size);
@@ -499,21 +509,34 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 				// dest_offset in range {0, ..., size - 1}
 				u64 dest_offset = prng_state_UR(prng_state, size);
                                 u8* new_buf = calloc(1, size + block_size); 
+                                u8* tail = calloc(1, size - dest_offset); 
+                                memcpy(tail, buf + dest_offset, size - dest_offset); 
+                                printf("tail\n");
+                                print_buffer(tail, size - dest_offset); 
+                                print_buffer(buf, size);
                                 memcpy(new_buf, buf, dest_offset); 
+                                print_buffer(new_buf, size+block_size);
                                 printf("size: %lu, src_offset: %lu, dest_offset: %lu, block_size: %lu\n", size, src_offset, dest_offset, block_size);
 
 				if (do_copy) {
                                     printf("CASE1\n"); 
-					n_byte_copy_and_ins(new_buf, size, src_offset, dest_offset, block_size);
+					n_byte_copy_and_ins(buf, size, src_offset, dest_offset, block_size);
+					//n_byte_copy_and_ins(new_buf, size, src_offset, dest_offset, block_size);
 				} else {
                                     printf("CASE2\n");
 					// insert a block of constant bytes at dest_offset
 					u8 const_byte = (u8)(prng_state_UR(prng_state, 2) ? prng_state_UR(prng_state, 256) : buf[prng_state_UR(prng_state, size)]);
-					memset(new_buf + dest_offset, const_byte, block_size);
+					memset(buf + dest_offset, const_byte, block_size);
+					//memset(new_buf + dest_offset, const_byte, block_size);
 				}
-                                memcpy(new_buf + dest_offset + block_size, buf + dest_offset, size - dest_offset);
-                                free(buf);
-                                buf = new_buf;
+                                //print_buffer(buf, size + block_size);
+                                printf("AMBER\n");
+                                print_buffer(new_buf, size + block_size);
+                                //memcpy(new_buf + dest_offset + block_size, tail, size - dest_offset);
+                                memcpy(buf + dest_offset + block_size, tail, size - dest_offset);
+                                print_buffer(new_buf, size + block_size);
+                                //free(buf);
+                                //buf = new_buf;
                                 //
                                 //n_byte_copy_and_ins(buf, size, dest_offset + block_size, dest_offset, size - src_offset); 
 				// update size
@@ -619,10 +642,12 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 		}
 		}
                 printf("out_buf: %s\n", buf); 
+                print_buffer(buf, size);
                 MD5((unsigned char*) buf, size, md5_result);
-                write_md5_sum(md5_result, log_file); 
+                //write_md5_sum(md5_result, log_file); 
 	}
-        printf("out_buf: %s hash: ", buf); 
+                print_buffer(buf, size);
+        printf("hash: "); 
         fwrite(stage_name, sizeof(char), strlen(stage_name), log_file); 
         MD5((unsigned char*) buf, size, md5_result);
         write_md5_sum(md5_result, log_file); 
