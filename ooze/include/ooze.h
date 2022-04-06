@@ -37,12 +37,14 @@ typedef struct strategy_state {
 	u64 iteration;
 	// the maximum size of input that the strategy can produce.
 	size_t max_size;
+        // the initial size of the input buffer 
+        size_t size; 
 	// An optional pointer to an additional data structure required by the strategy.
 	// ex: dictionary_insert maintains a dictionary object, the pointer to that object goes here.
 	void *internal_state;
 } strategy_state;
 
-typedef strategy_state *(create_state)(u8 *seed, size_t max_size, ...);
+typedef strategy_state *(create_state)(u8 *seed, size_t max_size, size_t size, ...);
 typedef size_t(fuzz_function)(u8 *buffer, size_t size, strategy_state *state);
 typedef char *(serialize_state)(strategy_state *state);
 typedef strategy_state *(deserialize_state)(char *s_state_buffer, size_t state_buffer_size);

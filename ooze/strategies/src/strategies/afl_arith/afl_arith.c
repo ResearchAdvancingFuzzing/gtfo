@@ -81,11 +81,11 @@ afl_arith_update(strategy_state *state)
 
 // create a new afl_arith strategy_state object.
 static inline strategy_state *
-afl_arith_create(u8 *seed, size_t max_size, ...)
+afl_arith_create(u8 *seed, size_t max_size, size_t size, ...)
 {
 
 	// create new state and substates objects
-	strategy_state      *new_state = strategy_state_create(seed, max_size);
+	strategy_state      *new_state = strategy_state_create(seed, max_size, size);
 	afl_arith_substates *substates = calloc(1, sizeof(afl_arith_substates));
 
 	// fill in substates
@@ -107,11 +107,11 @@ afl_arith_create(u8 *seed, size_t max_size, ...)
 	det_four_byte_arith_be_populate(substates->det_four_byte_arith_be_strategy);
 
 	// create substates
-	substates->det_byte_arith_substate         = substates->det_byte_arith_strategy->create_state(seed, max_size);
-	substates->det_two_byte_arith_le_substate  = substates->det_two_byte_arith_le_strategy->create_state(seed, max_size);
-	substates->det_two_byte_arith_be_substate  = substates->det_two_byte_arith_be_strategy->create_state(seed, max_size);
-	substates->det_four_byte_arith_le_substate = substates->det_four_byte_arith_le_strategy->create_state(seed, max_size);
-	substates->det_four_byte_arith_be_substate = substates->det_four_byte_arith_be_strategy->create_state(seed, max_size);
+	substates->det_byte_arith_substate         = substates->det_byte_arith_strategy->create_state(seed, max_size, size);
+	substates->det_two_byte_arith_le_substate  = substates->det_two_byte_arith_le_strategy->create_state(seed, max_size, size);
+	substates->det_two_byte_arith_be_substate  = substates->det_two_byte_arith_be_strategy->create_state(seed, max_size, size);
+	substates->det_four_byte_arith_le_substate = substates->det_four_byte_arith_le_strategy->create_state(seed, max_size, size);
+	substates->det_four_byte_arith_be_substate = substates->det_four_byte_arith_be_strategy->create_state(seed, max_size, size);
 
 	new_state->internal_state = substates;
 

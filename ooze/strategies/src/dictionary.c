@@ -86,10 +86,10 @@ dictionary_entry_print(dictionary_entry *entry)
 // This function creates a fresh dictionary_entry.
 // Note that tokens do not contain a trailing null because they may be non-character data.
 inline dictionary_entry *
-dictionary_entry_create(u8 *token)
+dictionary_entry_create(u8 *token, u32 token_len)
 {
 	// This strlen() assumes a null-terminated string is supplied. Could be problematic for non-string tokens.
-	size_t token_len  = strlen((char *)token);
+	//size_t token_len  = strlen((char *)token);
 	u8    *token_copy = calloc(1, token_len);
 	// make a copy of the token
 	memcpy(token_copy, token, token_len);
@@ -323,6 +323,7 @@ and returns it.
     A good chunk of this code is borrowed from AFL.
 */
 
+
 inline dictionary *
 dictionary_load_file(char *filename, size_t max_entries, size_t max_token_len)
 {
@@ -355,6 +356,7 @@ dictionary_load_file(char *filename, size_t max_entries, size_t max_token_len)
 
 		// points to right side of curr line
 		u8 *rptr = 0;
+                u32 klen = 0;
 		cur_line++;
 
 		// Trim on left and right
@@ -382,7 +384,44 @@ dictionary_load_file(char *filename, size_t max_entries, size_t max_token_len)
 		// null terminate the token
 		*rptr = 0;
 
+                // HEATHER 
+    /* Skip alphanumerics and dashes (label). */
+
+    while (isalnum(*lptr) || *lptr == '_') lptr++;
+
+    /* If @number follows, parse that. */
+
+    if (*lptr == '@') {
+
+      lptr++;
+      if (atoi((const char*)lptr) > 0) continue;
+      while (isdigit(*lptr)) lptr++;
+
+    }
+
+    /* Skip whitespace and = signs. */
+
+    while (isspace(*lptr) || *lptr == '=') lptr++;
+
+    /* Consume opening '"'. */
+
+    if (*lptr != '"') {
+      printf("Malformed name=\"keyword\" pair in line %u.", cur_line);
+			exit(EXIT_FAILURE);
+    }
+
+    lptr++;
+
+    if (!*lptr) {
+      printf("Malformed name=\"keyword\" pair in line %u.", cur_line);
+			exit(EXIT_FAILURE);
+    }
+
+    // HEATHER END
+                
+
 		/* Skip keyword, find opening quote */
+    /*
 		while (*lptr != '"' && lptr != rptr)
 			lptr++;
 		// if we could not find the opening quote
@@ -403,10 +442,11 @@ dictionary_load_file(char *filename, size_t max_entries, size_t max_token_len)
 		// allocate a new entry
 		// new token
 		// +1 to ensure null terminator
-		u8 *new_token            = calloc(1, (unsigned long)(rptr - lptr));
+                */
+	u8 *new_token            = calloc(1, (unsigned long)(rptr - lptr));
 		u8 *new_token_start_addr = new_token;
 
-		/* Okay, let's copy data from lptr, handling \xNN escaping, \\, and \". */
+	 	/* Okay, let's copy data from lptr, handling \xNN escaping, \\, and \". */
 		while (*lptr) {
 
 			char *hexdigits = "0123456789abcdef";
@@ -424,6 +464,7 @@ dictionary_load_file(char *filename, size_t max_entries, size_t max_token_len)
 
 				if (*lptr == '\\' || *lptr == '"') {
 					*(new_token++) = *(lptr++);
+                                        klen++;
 					break;
 				}
 
@@ -438,14 +479,16 @@ dictionary_load_file(char *filename, size_t max_entries, size_t max_token_len)
 				         (strchr(hexdigits, tolower(lptr[2])) - hexdigits));
 #pragma clang diagnostic pop
 				lptr += 3;
+                                klen++;
 				break;
 
 			default:
 				*(new_token++) = *(lptr++);
+                                klen++;
 			}
 		}
 		// create a new entry
-		dictionary_entry *new_entry = dictionary_entry_create(new_token_start_addr);
+		dictionary_entry *new_entry = dictionary_entry_create(new_token_start_addr, klen);
 
 		// no longer need this buffer, as it's been copied into new_entry
 		free(new_token_start_addr);

@@ -389,12 +389,15 @@ fuzz(char *input_file_name, size_t max_size, u8 *seed, u64 iteration_count)
 	clock_t         before          = clock();
 	u8             *mutation_buffer = NULL;
 	u8             *clean_buffer    = calloc(1, max_size + 8);
-	strategy_state *state           = strategy.create_state(seed, max_size, 0, 0, 0);
+	strategy_state *state           = NULL; //strategy.create_state(seed, max_size, 0, 0, 0);
 	size_t          size            = 0;
 	size_t          clean_size      = 0;
+        int     log_count = 0;
 
 	// get input file
 	load_input_file(input_file_name, &mutation_buffer, &size, max_size);
+        //printf("FUZZ: size: %lu\n", size); 
+        state = strategy.create_state(seed, max_size, size, 0, 0, 0);
 
 	// save original input and original input size
 	clean_size = size;
@@ -410,6 +413,11 @@ fuzz(char *input_file_name, size_t max_size, u8 *seed, u64 iteration_count)
 
 	for (; i < iteration_count; i++) {
 
+        /*if (log_count % 1000 == 0) 
+            printf("log_count: %d\n", log_count); 
+        if (log_count >= 10000) 
+            exit(1);*/
+
 		// mutate the input with ooze
 		size = strategy.mutate(mutation_buffer, size, state);
 		// log_debug("iteration: %llu, size: %llu.", i, size);
@@ -422,6 +430,7 @@ fuzz(char *input_file_name, size_t max_size, u8 *seed, u64 iteration_count)
 
                 //write_to_file(state, mutation_buffer); 
 		run_and_report(mutation_buffer, size);
+                log_count += 1;
 
 		// reset mutation buffer and size.
 		memcpy(mutation_buffer, clean_buffer, clean_size);

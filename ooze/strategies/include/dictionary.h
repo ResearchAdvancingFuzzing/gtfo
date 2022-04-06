@@ -62,7 +62,7 @@ typedef struct dictionary {
 
 char *dictionary_entry_print(dictionary_entry *entry);
 
-dictionary_entry *dictionary_entry_create(u8 *token);
+dictionary_entry *dictionary_entry_create(u8 *token, u32 token_len);
 void              dictionary_entry_free(dictionary_entry *entry);
 dictionary_entry *dictionary_entry_copy(dictionary_entry *entry);
 
