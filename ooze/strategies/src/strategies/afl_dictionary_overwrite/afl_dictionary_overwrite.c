@@ -103,10 +103,10 @@ afl_dictionary_overwrite_free(strategy_state *state)
 }
 
 static inline strategy_state *
-afl_dictionary_overwrite_create(u8 *seed, size_t max_size, ...)
+afl_dictionary_overwrite_create(u8 *seed, size_t max_size, size_t size, ...)
 {
 	va_list va_l;
-	va_start(va_l, max_size);
+	va_start(va_l, size);
 
 	char  *dictionary_file_path = va_arg(va_l, char *);
 	size_t max_entry_cnt        = va_arg(va_l, size_t);
@@ -114,13 +114,14 @@ afl_dictionary_overwrite_create(u8 *seed, size_t max_size, ...)
 
 	va_end(va_l);
 
-	strategy_state *new_state = strategy_state_create(seed, max_size);
+	strategy_state *new_state = strategy_state_create(seed, max_size, size);
 	new_state->internal_state = dictionary_load_file(dictionary_file_path, max_entry_cnt, max_token_len);
 
 	return new_state;
 }
 
 // do the mutation
+#pragma clang diagnostic ignored "-Wunreachable-code"
 static inline size_t
 afl_dictionary_overwrite(u8 *buf, size_t size, strategy_state *state)
 {
@@ -129,13 +130,39 @@ afl_dictionary_overwrite(u8 *buf, size_t size, strategy_state *state)
 	u32               pos   = (u32)(state->iteration / dict->entry_cnt);
 	u32               which = (u32)(state->iteration % dict->entry_cnt);
 	dictionary_entry *entry = (*dict->entries)[which];
+	
+        // Sometimes we need to skip, we've added 1/4 ways to skip
+		printf("Dict entry size: %lu, replace pos: %u, orig_size: %lu\n", entry->len, pos, state->size);
+        while (entry->len > size - pos) {
+            // This is update state, need a way to update better
+            state->iteration++; 
+            dict  = (dictionary *)state->internal_state;
+            pos = (u32) (state->iteration / dict->entry_cnt); 
+            which = (u32) (state->iteration % dict->entry_cnt); 
+            entry = (*dict->entries)[which]; 
+            
+            // this is deterministic and shouldn't go on infinitely?
+	    	if (pos  >= state->size || dict->entry_cnt == 0) {
+            	printf("here_overwrite");
+				return 0;
+			}
+        }
+/*
+	    printf("state->iteration: %lu, dict->entry_cnt: %zu\n", state->iteration, dict->entry_cnt);
+	    printf("pos: %u, entry len: %lu, size: %lu, max_size: %lu, which: %u\n", pos, entry->len, state->max_size, state->size, which);
+*/
+	    if (pos >= state->max_size || dict->entry_cnt == 0) {
+			return 0;
+		}
+		/*
+        printf("out_buf_before: %.*s, ", (int) size, buf);
+        printf("adding: %.*s, ", (int) entry->len, entry->token); 
+        printf(" at i: %d, ", pos); 
+		*/
 
-	if (pos + entry->len > state->max_size || dict->entry_cnt == 0) {
-            printf("HEATHER: pos: %u, entry len: %lu, max_size: %lu\n", pos, entry->len, state->max_size); 
-		return 0;
-	}
 	// copy the token
 	memcpy(buf + pos, entry->token, entry->len);
+    //printf("out_buf_after: %s\n", buf); 
 
 	// update size if necessary.
 	if (pos + entry->len > size) {

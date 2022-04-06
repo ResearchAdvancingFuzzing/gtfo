@@ -92,11 +92,11 @@ afl_bit_flip_update(strategy_state *state)
 
 // create an afl_bit_flip strategy_state object.
 static inline strategy_state *
-afl_bit_flip_create(u8 *seed, size_t max_size, ...)
+afl_bit_flip_create(u8 *seed, size_t max_size, size_t size, ...)
 {
 
 	// create new state and substates objects
-	strategy_state         *new_state = strategy_state_create(seed, max_size);
+	strategy_state         *new_state = strategy_state_create(seed, max_size, size);
 	afl_bit_flip_substates *substates = calloc(1, sizeof(afl_bit_flip_substates));
 
 	// fill in substates
@@ -120,12 +120,12 @@ afl_bit_flip_create(u8 *seed, size_t max_size, ...)
 	det_four_byte_flip_populate(substates->det_four_byte_flip_strategy);
 
 	// create substates
-	substates->det_bit_flip_substate       = substates->det_bit_flip_strategy->create_state(seed, max_size);
-	substates->det_two_bit_flip_substate   = substates->det_two_bit_flip_strategy->create_state(seed, max_size);
-	substates->det_four_bit_flip_substate  = substates->det_four_bit_flip_strategy->create_state(seed, max_size);
-	substates->det_byte_flip_substate      = substates->det_byte_flip_strategy->create_state(seed, max_size);
-	substates->det_two_byte_flip_substate  = substates->det_two_byte_flip_strategy->create_state(seed, max_size);
-	substates->det_four_byte_flip_substate = substates->det_four_byte_flip_strategy->create_state(seed, max_size);
+	substates->det_bit_flip_substate       = substates->det_bit_flip_strategy->create_state(seed, max_size, size);
+	substates->det_two_bit_flip_substate   = substates->det_two_bit_flip_strategy->create_state(seed, max_size, size);
+	substates->det_four_bit_flip_substate  = substates->det_four_bit_flip_strategy->create_state(seed, max_size, size);
+	substates->det_byte_flip_substate      = substates->det_byte_flip_strategy->create_state(seed, max_size, size);
+	substates->det_two_byte_flip_substate  = substates->det_two_byte_flip_strategy->create_state(seed, max_size, size);
+	substates->det_four_byte_flip_substate = substates->det_four_byte_flip_strategy->create_state(seed, max_size, size);
 
 	new_state->internal_state = substates;
 

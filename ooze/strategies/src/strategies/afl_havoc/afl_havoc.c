@@ -35,24 +35,27 @@ static void write_md5_sum(unsigned char* md, FILE* fp) {
     int i;
     for (i = 0; i < MD5_DIGEST_LENGTH;  i++) { 
         fprintf(fp, "%02x", md[i]); 
-        printf("%02x", md[i]);
+        //printf("%02x", md[i]);
     }
     fprintf(fp, "\n"); 
+    //printf("\n");
+}
+/*
+static inline void print_buffer(u8* buffer, u64 size) {
+    u64 i = 0;
+    for (i=0; i<size; i++) {
+            printf("%02x ", buffer[i]);
+    }
     printf("\n");
 }
+*/
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-case-range"
 static inline void
 afl_havoc_update(strategy_state *state)
 {
-	//afl_havoc_substates *substates = (afl_havoc_substates *)state->internal_state;
 	state->iteration++;
-        printf("UPDATING\n");
-        //printf("prng state: %lu\n", substates->prng_state->state); 
-
-	//prng_state_update(substates->prng_state);
-        //printf("prng state: %lu\n", substates->prng_state->state); 
 }
 
 // serialize a state into a string!
@@ -224,9 +227,9 @@ afl_havoc_free(strategy_state *state)
 }
 
 static inline strategy_state *
-afl_havoc_create(u8 *seed, size_t max_size, ...)
+afl_havoc_create(u8 *seed, size_t max_size, size_t size, ...)
 {
-	strategy_state      *state     = strategy_state_create(seed, max_size);
+	strategy_state      *state     = strategy_state_create(seed, max_size, size);
 	afl_havoc_substates *substates = calloc(1, sizeof(afl_havoc_substates));
 	// get path to files describing dictionaries to use.
 	char *user_dict_file = getenv("USER_DICTIONARY_FILE");
@@ -254,13 +257,6 @@ afl_havoc_create(u8 *seed, size_t max_size, ...)
 	return state;
 }
 
-static inline void print_buffer(u8* buffer, u64 size) {
-    u64 i = 0;
-    for (i=0; i<size; i++) {
-            printf("%02x ", buffer[i]);
-    }
-    printf("\n");
-}
 
 static inline size_t
 afl_havoc(u8 *buf, size_t size, strategy_state *state)
@@ -280,7 +276,7 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 	static_assert(HAVOC_STACK_POW2 != 0, "HAVOC_STACK_POW2 can't be 0");
 
 	u32 use_stacking = (u8)1 << ((u32)1 + prng_state_UR(prng_state, HAVOC_STACK_POW2));
-        printf("use_stacking: %u\n", use_stacking); 
+        //printf("use_stacking: %u\n", use_stacking); 
 
 	u64 mutation_limit = 15;
 	if (substates->user_dict && substates->user_dict->entry_cnt)
@@ -296,7 +292,7 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 		}
 
 		u64 mutation_choice = prng_state_UR(prng_state, mutation_limit);
-                printf("switch value: %lu, size: %lu\n", mutation_choice, size);
+                //printf("switch value: %lu, size: %lu\n", mutation_choice, size);
 		switch (mutation_choice) {
 
 		// Flip a single bit somewhere
@@ -463,8 +459,8 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 		}
 		// Clone bytes (75%) or insert a block of constant bytes (25%).
 		case 13: {
-                             printf("CASE 13\n");
-                                print_buffer(buf, size);
+                             //printf("CASE 13\n");
+                                //print_buffer(buf, size);
 			// check that an insertion will never go over the max buffer size
                         u64 MAX_FILE = 1 * 1024 * 1024; 
 			if (size + HAVOC_BLK_XL < MAX_FILE) {
@@ -489,26 +485,26 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
                                 u8* tail = calloc(1, size - dest_offset); 
                                 memcpy(tail, buf + dest_offset, size - dest_offset); 
 
-                                print_buffer(tail, size - dest_offset); 
-                                print_buffer(buf, size);
+                                //print_buffer(tail, size - dest_offset); 
+                                //print_buffer(buf, size);
 
                                 memcpy(new_buf, buf, dest_offset); 
 
-                                print_buffer(new_buf, size+block_size);
-                                printf("size: %lu, src_offset: %lu, dest_offset: %lu, block_size: %lu\n", size, src_offset, dest_offset, block_size);
+                                //print_buffer(new_buf, size+block_size);
+                                //printf("size: %lu, src_offset: %lu, dest_offset: %lu, block_size: %lu\n", size, src_offset, dest_offset, block_size);
 
 				if (do_copy) {
-                                    printf("CASE1\n"); 
+                                    //printf("CASE1\n"); 
 					n_byte_copy_and_ins(buf, size, src_offset, dest_offset, block_size);
 				} else {
-                                    printf("CASE2\n");
+                                    //printf("CASE2\n");
 					// insert a block of constant bytes at dest_offset
 					u8 const_byte = (u8)(prng_state_UR(prng_state, 2) ? prng_state_UR(prng_state, 256) : buf[prng_state_UR(prng_state, size)]);
 					memset(buf + dest_offset, const_byte, block_size);
 				}
-                                print_buffer(new_buf, size + block_size);
+                                //print_buffer(new_buf, size + block_size);
                                 memcpy(buf + dest_offset + block_size, tail, size - dest_offset);
-                                print_buffer(new_buf, size + block_size);
+                                //print_buffer(new_buf, size + block_size);
 
 				// update size
 				size += block_size;
@@ -530,7 +526,7 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 			u64 src_offset = prng_state_UR(prng_state, size - block_size + 1);
 			// destination for bytes, anywhere from {0, ..., size - 1}.
 			u64 dest_offset = prng_state_UR(prng_state, size - block_size + 1);
-                        printf("copy len: %lu, copy_from: %lu, copy_to: %lu\n", block_size, src_offset, dest_offset);
+                        //printf("copy len: %lu, copy_from: %lu, copy_to: %lu\n", block_size, src_offset, dest_offset);
 
 			if (prng_state_UR(prng_state, 4)) {
 
@@ -607,19 +603,21 @@ afl_havoc(u8 *buf, size_t size, strategy_state *state)
 			break;
 		}
 		}
-                printf("out_buf: %s\n", buf); 
-                print_buffer(buf, size);
-                MD5((unsigned char*) buf, size, md5_result);
+                //printf("out_buf: %s\n", buf); 
+                //print_buffer(buf, size);
+                //MD5((unsigned char*) buf, size, md5_result);
                // write_md5_sum(md5_result, log_file); 
 	}
-                print_buffer(buf, size);
-        printf("hash: "); 
-        fwrite(stage_name, sizeof(char), strlen(stage_name), log_file); 
-        MD5((unsigned char*) buf, size, md5_result);
-        write_md5_sum(md5_result, log_file); 
+                //print_buffer(buf, size);
+        //printf("hash: "); 
+        if (do_logging) { 
+                fwrite(stage_name, sizeof(char), strlen(stage_name), log_file); 
+                MD5((unsigned char*) buf, size, md5_result);
+                write_md5_sum(md5_result, log_file); 
+        }
 	//prng_state_free(prng_state);
         //afl_havoc_update(state); 
-        printf("before exiting: prng state: %lu\n", substates->prng_state->state); 
+        //printf("before exiting: prng state: %lu\n", substates->prng_state->state); 
 	return size;
 }
 

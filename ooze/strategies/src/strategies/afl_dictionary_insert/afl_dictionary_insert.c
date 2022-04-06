@@ -107,16 +107,16 @@ afl_dictionary_insert_free(strategy_state *state)
 // creates the strategy_state for this strategy.
 // Needs a file to load into a dictionary.
 static inline strategy_state *
-afl_dictionary_insert_create(u8 *seed, size_t max_size, ...)
+afl_dictionary_insert_create(u8 *seed, size_t max_size, size_t size, ...)
 {
 	va_list va_l;
-	va_start(va_l, max_size);
+	va_start(va_l, size);
 
 	char *token_file_path = va_arg(va_l, char *);
 
 	va_end(va_l);
 
-	strategy_state *new_state = strategy_state_create(seed, max_size);
+	strategy_state *new_state = strategy_state_create(seed, max_size, size);
 	new_state->internal_state = dictionary_load_file(token_file_path, MAX_USER_DICT_ENTRIES, MAX_USER_DICT_ENTRY_LEN);
 
 	return new_state;
@@ -131,8 +131,15 @@ afl_dictionary_insert(u8 *buf, size_t size, strategy_state *state)
 	u32               pos   = (u32)(state->iteration / dict->entry_cnt);
 	u32               which = (u32)(state->iteration % dict->entry_cnt);
 	dictionary_entry *entry = (*dict->entries)[which];
-
-	if (size + entry->len > state->max_size || dict->entry_cnt == 0) {
+/*
+        printf("size: %zu, state->iteration: %lu, dict->entry_cnt: %zu\n", size, state->iteration, dict->entry_cnt); 
+        printf("pos: %u, entry len: %lu, max_size: %lu, which: %u\n", pos, entry->len, state->max_size, which); 
+        printf("out_buf_before: %.*s, ", (int) size, buf); 
+        printf("adding: %.*s, ", (int) entry->len, entry->token); 
+        printf("at i: %d\n", pos); 
+*/
+	if (pos >= state->size || size >= state->max_size || dict->entry_cnt == 0) {
+            printf("returning\n"); 
 		return 0;
 	}
 	// copy the token
