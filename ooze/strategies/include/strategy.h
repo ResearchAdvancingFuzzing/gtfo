@@ -47,6 +47,6 @@ char           *strategy_state_serialize(strategy_state *state, char *name);
 strategy_state *strategy_state_deserialize(char *s_state_buffer, size_t s_state_buffer_size);
 char           *strategy_state_print(strategy_state *state, char *strategy_name);
 void            strategy_state_update(strategy_state *state);
-strategy_state *strategy_state_create(u8 *seed, size_t max_size, size_t size, ...);
+strategy_state *strategy_state_create(u8 *seed, size_t max_size, size_t size, u8 *orig_buff, ...);
 
 #endif

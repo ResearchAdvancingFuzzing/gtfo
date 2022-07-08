@@ -126,8 +126,9 @@ destroy()
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wcast-align"
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static bool
-add(u8 *element, size_t element_size)
+add(u8 *element, size_t element_size, strategy_state *state)
 {
 	if (element_size != sizeof(u64)) {
 		log_fatal("this analysis only accepts 64 bit integers");

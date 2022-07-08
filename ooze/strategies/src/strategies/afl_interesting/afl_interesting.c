@@ -88,11 +88,11 @@ afl_interesting_update(strategy_state *state)
 
 // creates an afl_interesting strategy_state object.
 static inline strategy_state *
-afl_interesting_create(u8 *seed, size_t max_size, size_t size, ...)
+afl_interesting_create(u8 *seed, size_t max_size, size_t size, u8 *orig_buff, ...)
 {
 
 	// create new state and substates objects
-	strategy_state            *new_state = strategy_state_create(seed, max_size, size);
+	strategy_state            *new_state = strategy_state_create(seed, max_size, size, orig_buff);
 	afl_interesting_substates *substates = calloc(1, sizeof(afl_interesting_substates));
 
 	// fill in substates
@@ -114,11 +114,11 @@ afl_interesting_create(u8 *seed, size_t max_size, size_t size, ...)
 	det_four_byte_interesting_be_populate(substates->det_four_byte_interesting_be_strategy);
 
 	// create substates
-	substates->det_byte_interesting_substate         = substates->det_byte_interesting_strategy->create_state(seed, max_size, size);
-	substates->det_two_byte_interesting_le_substate  = substates->det_two_byte_interesting_le_strategy->create_state(seed, max_size, size);
-	substates->det_two_byte_interesting_be_substate  = substates->det_two_byte_interesting_be_strategy->create_state(seed, max_size, size);
-	substates->det_four_byte_interesting_le_substate = substates->det_four_byte_interesting_le_strategy->create_state(seed, max_size, size);
-	substates->det_four_byte_interesting_be_substate = substates->det_four_byte_interesting_be_strategy->create_state(seed, max_size, size);
+	substates->det_byte_interesting_substate         = substates->det_byte_interesting_strategy->create_state(seed, max_size, size, orig_buff);
+	substates->det_two_byte_interesting_le_substate  = substates->det_two_byte_interesting_le_strategy->create_state(seed, max_size, size, orig_buff);
+	substates->det_two_byte_interesting_be_substate  = substates->det_two_byte_interesting_be_strategy->create_state(seed, max_size, size, orig_buff);
+	substates->det_four_byte_interesting_le_substate = substates->det_four_byte_interesting_le_strategy->create_state(seed, max_size, size, orig_buff);
+	substates->det_four_byte_interesting_be_substate = substates->det_four_byte_interesting_be_strategy->create_state(seed, max_size, size, orig_buff);
 
 	new_state->internal_state = substates;
 

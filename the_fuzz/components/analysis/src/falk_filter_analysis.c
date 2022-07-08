@@ -145,8 +145,9 @@ add_to_analysis(void *element, size_t element_size)
 	analysis_buffer[bit / 8] |= (u8)(1 << (bit % 8));
 }
 
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static bool
-check_add_to_analysis(u8 *element, size_t element_size)
+check_add_to_analysis(u8 *element, size_t element_size, strategy_state * state)
 {
 	if (analysis_contains((void *)element, element_size)) {
 		return 1;

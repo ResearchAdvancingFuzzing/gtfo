@@ -227,9 +227,9 @@ afl_havoc_free(strategy_state *state)
 }
 
 static inline strategy_state *
-afl_havoc_create(u8 *seed, size_t max_size, size_t size, ...)
+afl_havoc_create(u8 *seed, size_t max_size, size_t size, u8 *orig_buff, ...)
 {
-	strategy_state      *state     = strategy_state_create(seed, max_size, size);
+	strategy_state      *state     = strategy_state_create(seed, max_size, size, orig_buff);
 	afl_havoc_substates *substates = calloc(1, sizeof(afl_havoc_substates));
 	// get path to files describing dictionaries to use.
 	char *user_dict_file = getenv("USER_DICTIONARY_FILE");

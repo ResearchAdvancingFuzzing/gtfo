@@ -107,16 +107,16 @@ afl_dictionary_insert_free(strategy_state *state)
 // creates the strategy_state for this strategy.
 // Needs a file to load into a dictionary.
 static inline strategy_state *
-afl_dictionary_insert_create(u8 *seed, size_t max_size, size_t size, ...)
+afl_dictionary_insert_create(u8 *seed, size_t max_size, size_t size, u8 *orig_buff, ...)
 {
 	va_list va_l;
-	va_start(va_l, size);
+	va_start(va_l, orig_buff);
 
 	char *token_file_path = va_arg(va_l, char *);
 
 	va_end(va_l);
 
-	strategy_state *new_state = strategy_state_create(seed, max_size, size);
+	strategy_state *new_state = strategy_state_create(seed, max_size, size, orig_buff);
 	new_state->internal_state = dictionary_load_file(token_file_path, MAX_USER_DICT_ENTRIES, MAX_USER_DICT_ENTRY_LEN);
 
 	return new_state;

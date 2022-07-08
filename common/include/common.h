@@ -19,6 +19,7 @@
 #include "common/definitions.h"
 #include "common/logger.h"
 #include "common/sized_buffer.h"
+#include "common/strategy_state.h"
 #include "common/types.h"
 
 #ifdef KVM_VMX_PT_SUPPORTED

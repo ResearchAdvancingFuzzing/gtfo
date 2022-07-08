@@ -171,8 +171,9 @@ has_new_bits(u8 *trace_bits, u8 *virgin_map)
 }
 
 // return value is true if the input was previously seen
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static bool
-add(u8 *element, size_t element_size)
+add(u8 *element, size_t element_size, strategy_state *state)
 {
 	if (element_size != map_size) {
 		log_fatal("illegal element size");

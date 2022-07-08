@@ -94,9 +94,9 @@ rand_byte_ins_print(strategy_state *state)
 
 // create a rand_byte_ins strategy_state object.
 static inline strategy_state *
-rand_byte_ins_create(u8 *seed, size_t max_size, size_t size, ...)
+rand_byte_ins_create(u8 *seed, size_t max_size, size_t size, u8 *orig_buff, ...)
 {
-	strategy_state *new_state = strategy_state_create(seed, max_size, size);
+	strategy_state *new_state = strategy_state_create(seed, max_size, size, orig_buff);
 	new_state->internal_state = prng_state_create((u64)*new_state->seed, 0);
 	return new_state;
 }

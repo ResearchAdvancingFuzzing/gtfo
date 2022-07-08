@@ -40,7 +40,7 @@ strategy_state_copy(strategy_state *state)
 
 // this function creates a new strategy_state object.
 inline strategy_state *
-strategy_state_create(u8 *seed, size_t max_size, size_t size, ...)
+strategy_state_create(u8 *seed, size_t max_size, size_t size,  u8* orig_buff, ...)
 {
 
 	strategy_state *new_state = calloc(1, sizeof(strategy_state));
@@ -49,6 +49,7 @@ strategy_state_create(u8 *seed, size_t max_size, size_t size, ...)
 	new_state->iteration = 0;
 	new_state->max_size  = max_size;
         new_state->size      = size; 
+        new_state->orig_buff = orig_buff;
 	memcpy(new_state->seed, seed, 32);
 
 	return new_state;

@@ -39,8 +39,10 @@ static void write_md5_sum(unsigned char* md, FILE* fp) {
     int i;
     for (i = 0; i < MD5_DIGEST_LENGTH; i++) {
         fprintf(fp, "%02x", md[i]);
+        printf("%02x", md[i]);
     }
     fprintf(fp, "\n");
+    printf("\n");
 } 
 
 
@@ -92,11 +94,11 @@ afl_bit_flip_update(strategy_state *state)
 
 // create an afl_bit_flip strategy_state object.
 static inline strategy_state *
-afl_bit_flip_create(u8 *seed, size_t max_size, size_t size, ...)
+afl_bit_flip_create(u8 *seed, size_t max_size, size_t size, u8 *orig_buff, ...)
 {
 
 	// create new state and substates objects
-	strategy_state         *new_state = strategy_state_create(seed, max_size, size);
+	strategy_state         *new_state = strategy_state_create(seed, max_size, size, orig_buff);
 	afl_bit_flip_substates *substates = calloc(1, sizeof(afl_bit_flip_substates));
 
 	// fill in substates
@@ -120,12 +122,12 @@ afl_bit_flip_create(u8 *seed, size_t max_size, size_t size, ...)
 	det_four_byte_flip_populate(substates->det_four_byte_flip_strategy);
 
 	// create substates
-	substates->det_bit_flip_substate       = substates->det_bit_flip_strategy->create_state(seed, max_size, size);
-	substates->det_two_bit_flip_substate   = substates->det_two_bit_flip_strategy->create_state(seed, max_size, size);
-	substates->det_four_bit_flip_substate  = substates->det_four_bit_flip_strategy->create_state(seed, max_size, size);
-	substates->det_byte_flip_substate      = substates->det_byte_flip_strategy->create_state(seed, max_size, size);
-	substates->det_two_byte_flip_substate  = substates->det_two_byte_flip_strategy->create_state(seed, max_size, size);
-	substates->det_four_byte_flip_substate = substates->det_four_byte_flip_strategy->create_state(seed, max_size, size);
+	substates->det_bit_flip_substate       = substates->det_bit_flip_strategy->create_state(seed, max_size, size, orig_buff);
+	substates->det_two_bit_flip_substate   = substates->det_two_bit_flip_strategy->create_state(seed, max_size, size, orig_buff);
+	substates->det_four_bit_flip_substate  = substates->det_four_bit_flip_strategy->create_state(seed, max_size, size, orig_buff);
+	substates->det_byte_flip_substate      = substates->det_byte_flip_strategy->create_state(seed, max_size, size, orig_buff);
+	substates->det_two_byte_flip_substate  = substates->det_two_byte_flip_strategy->create_state(seed, max_size, size, orig_buff);
+	substates->det_four_byte_flip_substate = substates->det_four_byte_flip_strategy->create_state(seed, max_size, size, orig_buff);
 
 	new_state->internal_state = substates;
 
@@ -446,6 +448,7 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
                     // if substrategy is complete
                     if (!size) {
                             substates->substrategy_complete = 1;
+							finished = true; 
                             //size                            = orig_size; // need to reset bc mutation is not complete
                     }
                     break;
@@ -516,7 +519,7 @@ afl_bit_flip(u8 *buf, size_t size, strategy_state *state)
             size = orig_size;
         // log input here
         if (do_logging && stage_name) { 
-            //printf("buf: %s\n", buf); 
+            printf("buf: %s\n", buf); 
             fwrite(stage_name, sizeof(char), strlen(stage_name), log_file); 
             MD5((unsigned char*) buf, size, md5_result);
             write_md5_sum(md5_result, log_file); 

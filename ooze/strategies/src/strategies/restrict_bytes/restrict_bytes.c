@@ -102,9 +102,9 @@ load_module(char *module_name)
 
 // create a restrict_bytes strategy_state object.
 static inline strategy_state *
-restrict_bytes_create(u8 *seed, size_t max_size, size_t size, ...)
+restrict_bytes_create(u8 *seed, size_t max_size, size_t size, u8 *orig_buff, ...)
 {
-	strategy_state *new_state = strategy_state_create(seed, max_size, size);
+	strategy_state *new_state = strategy_state_create(seed, max_size, size, orig_buff);
 
 	char *env_ooze_strategy = getenv("OOZE_MODULE_NAME");
 	if (env_ooze_strategy == NULL) {

@@ -39,6 +39,7 @@ install(FILES
         "include/common/annotations.h/"
         "include/common.h/"
         "include/common/definitions.h"
+        "include/common/strategy_state.h"
         "include/common/logger.h"
         "include/common/sized_buffer.h" DESTINATION gtfo/include/)
 

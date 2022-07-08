@@ -18,7 +18,7 @@
 #include <stdbool.h>
 #define VERSION_ONE 1
 
-typedef bool(analysis_add_function)(u8 *element, size_t element_size);
+typedef bool(analysis_add_function)(u8 *element, size_t element_size, strategy_state* state); 
 typedef void(analysis_init_function)(char *filename);
 typedef void(analysis_save_function)(char *filename);
 typedef void(analysis_destroy_function)(void);

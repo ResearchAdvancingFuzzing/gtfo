@@ -103,10 +103,10 @@ afl_dictionary_overwrite_free(strategy_state *state)
 }
 
 static inline strategy_state *
-afl_dictionary_overwrite_create(u8 *seed, size_t max_size, size_t size, ...)
+afl_dictionary_overwrite_create(u8 *seed, size_t max_size, size_t size, u8 *orig_buff, ...)
 {
 	va_list va_l;
-	va_start(va_l, size);
+	va_start(va_l, orig_buff);
 
 	char  *dictionary_file_path = va_arg(va_l, char *);
 	size_t max_entry_cnt        = va_arg(va_l, size_t);
@@ -114,7 +114,7 @@ afl_dictionary_overwrite_create(u8 *seed, size_t max_size, size_t size, ...)
 
 	va_end(va_l);
 
-	strategy_state *new_state = strategy_state_create(seed, max_size, size);
+	strategy_state *new_state = strategy_state_create(seed, max_size, size, orig_buff);
 	new_state->internal_state = dictionary_load_file(dictionary_file_path, max_entry_cnt, max_token_len);
 
 	return new_state;

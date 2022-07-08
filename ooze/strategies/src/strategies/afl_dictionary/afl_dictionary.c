@@ -389,10 +389,10 @@ afl_dictionary_free(strategy_state *state)
 }
 
 static inline strategy_state *
-afl_dictionary_create(u8 *seed, size_t max_size, size_t size, ...)
+afl_dictionary_create(u8 *seed, size_t max_size, size_t size, u8 *orig_buff, ...)
 {
 	printf("AFL DICTIONARY CREATE: size: %lu\n", size);
-	strategy_state           *new_state     = strategy_state_create(seed, max_size, size);
+	strategy_state           *new_state     = strategy_state_create(seed, max_size, size, orig_buff);
 	afl_dictionary_substates *new_substates = calloc(1, sizeof(afl_dictionary_substates));
 	// get path to files describing dictionaries to use.
 	char *user_dict_file = getenv("USER_DICTIONARY_FILE");
@@ -411,15 +411,15 @@ afl_dictionary_create(u8 *seed, size_t max_size, size_t size, ...)
 		// set starting substrategy to user_dictionary_overwrite
 		new_substates->current_substrategy = USER_DICTIONARY_OVERWRITE;
 
-		new_substates->user_overwrite_substate = new_substates->overwrite_strategy->create_state(seed, max_size, size, user_dict_file, MAX_USER_DICT_ENTRIES, MAX_USER_DICT_ENTRY_LEN);
-		new_substates->user_insert_substate    = new_substates->insert_strategy->create_state(seed, max_size, size, user_dict_file);
+		new_substates->user_overwrite_substate = new_substates->overwrite_strategy->create_state(seed, max_size, size, orig_buff, user_dict_file, MAX_USER_DICT_ENTRIES, MAX_USER_DICT_ENTRY_LEN);
+		new_substates->user_insert_substate    = new_substates->insert_strategy->create_state(seed, max_size, size, orig_buff, user_dict_file);
 	}
 	if (auto_dict_file) {
 		// if starting substrategy is not set, set it to auto_dictionary_overwrite
 		if (!new_substates->current_substrategy) {
 			new_substates->current_substrategy = AUTO_DICTIONARY_OVERWRITE;
 		}
-		new_substates->auto_overwrite_substate = new_substates->auto_overwrite_strategy->create_state(seed, max_size, size, auto_dict_file, MAX_AUTO_DICT_ENTRIES, MAX_AUTO_DICT_ENTRY_LEN);
+		new_substates->auto_overwrite_substate = new_substates->auto_overwrite_strategy->create_state(seed, max_size, size, orig_buff, auto_dict_file, MAX_AUTO_DICT_ENTRIES, MAX_AUTO_DICT_ENTRY_LEN);
 	}
 	// if no user_dict file and no auto_dict file, set current substrategy
 	// to u8 max, skipping all strategies in the mutate function.

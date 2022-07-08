@@ -95,10 +95,16 @@ init_count_class16(void)
 
 // takes a bitmap from the forkserver and performs loop binning
 // taken from afl-fuzz.c
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
 static inline void
 classify_counts(u64 *mem)
 {
+	printf("CLASSIFY COUNTS:\n");
 	u32 i = (u32)map_size >> 3;
+	u32 iter;
+	for (iter = 0; iter < i; iter++) {
+		printf("%lu\n", mem[iter]);
+	}
 	while (i--) {
 		/* Optimize for sparse bitmaps. */
 		if (unlikely(*mem)) {
@@ -167,8 +173,8 @@ init_forkserver(char *target, char *target_argv[])
 		if (dup2(st_pipe[1], FORKSRV_FD + 1) < 0) {
 			log_fatal("dup2() failed");
 		}
-		fsrv_ctl_fd = ctl_pipe[1];
-		fsrv_st_fd  = st_pipe[0];
+		//fsrv_ctl_fd = ctl_pipe[1];
+		//fsrv_st_fd  = st_pipe[0];
 
 		close(ctl_pipe[0]);
 		close(ctl_pipe[1]);
@@ -297,7 +303,7 @@ static char *
 fork_run()
 {
 	static struct itimerval it;
-	static u32              prev_timed_out = false;
+	static u32              prev_timed_out = 0;
 	memset(trace_bits, 0, map_size);
 	MEM_BARRIER();
 
@@ -438,6 +444,7 @@ init()
 
 	// Setup environment variable
 	char shm_str[40];
+	memset(shm_str, 0, sizeof(shm_str));
 	snprintf(shm_str, sizeof(shm_str) - 1, "%d", shm_id);
 	setenv(SHM_ENV_VAR, shm_str, 1);
 

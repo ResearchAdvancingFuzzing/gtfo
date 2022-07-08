@@ -361,8 +361,9 @@ decode_and_hash(u8 *pt_buffer, size_t size, u32 *tnt_hash, u32 *tip_hash, u32 *f
 }
 // END: taken and modified from https://github.com/andikleen/simple-pt/blob/master/fastdecode.c
 
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static bool
-add(u8 *element, size_t size)
+add(u8 *element, size_t size, strategy_state * state)
 {
 	u32 hash[3] = {0};
 

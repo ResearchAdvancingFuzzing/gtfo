@@ -316,7 +316,7 @@ report_interesting(u8 *input, size_t size, char *reason, u8 *results, size_t res
 
 // run an execution and report results
 static void
-run_and_report(u8 *input, size_t size)
+run_and_report(u8 *input, size_t size, strategy_state* state)
 {
 	static u8    *results      = NULL;
 	static size_t results_size = 0;
@@ -337,7 +337,7 @@ run_and_report(u8 *input, size_t size)
 
 	if (results_size > 0 && crc) {
 		// if not interesting, report coverage at least.
-		if (!analysis.add(results, results_size)) {
+		if (!analysis.add(results, results_size, state)) {
 			// log_debug("reporting coverage .");
 			report_coverage(input, size, results, results_size, crc);
 		}
@@ -381,7 +381,6 @@ write_to_file(strategy_state* state, u8* input) {
 }
 */
     
-
 // fuzz a program.
 static void
 fuzz(char *input_file_name, size_t max_size, u8 *seed, u64 iteration_count)
@@ -397,14 +396,15 @@ fuzz(char *input_file_name, size_t max_size, u8 *seed, u64 iteration_count)
 	// get input file
 	load_input_file(input_file_name, &mutation_buffer, &size, max_size);
         //printf("FUZZ: size: %lu\n", size); 
-        state = strategy.create_state(seed, max_size, size, 0, 0, 0);
+        state = strategy.create_state(seed, max_size, size, clean_buffer, 0, 0, 0);
 
 	// save original input and original input size
 	clean_size = size;
 	memcpy(clean_buffer, mutation_buffer, size);
 
 	// perform a fuzz run on the original input.
-	run_and_report(mutation_buffer, size);
+	printf("OG");
+	run_and_report(mutation_buffer, size, state);
 
 	// log_debug("max size: %llu", max_size);
 	// log_debug("iteration_count: %llu", iteration_count);
@@ -425,12 +425,13 @@ fuzz(char *input_file_name, size_t max_size, u8 *seed, u64 iteration_count)
 		if (size == 0) {
 			break;
 		}
-		// update state.
-		strategy.update_state(state);
 
                 //write_to_file(state, mutation_buffer); 
-		run_and_report(mutation_buffer, size);
+		run_and_report(mutation_buffer, size, state);
                 log_count += 1;
+
+		// update state.
+		strategy.update_state(state);
 
 		// reset mutation buffer and size.
 		memcpy(mutation_buffer, clean_buffer, clean_size);
